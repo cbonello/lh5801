@@ -36,6 +36,6 @@ class LH5801Flags {
   LH5801Flags clone() => LH5801Flags(h: h, v: v, z: z, ie: ie, c: c);
 
   // ignore: avoid_positional_boolean_parameters
-  int boolToInt(bool value) => value ? 1 : 0;
-  bool intToBool(int value) => value != 0;
+  static int boolToInt(bool value) => value ? 1 : 0;
+  static bool intToBool(int value) => value != 0;
 }
