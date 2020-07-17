@@ -10,11 +10,11 @@ LH5801Flags _$LH5801FlagsFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       allowedKeys: const ['h', 'v', 'z', 'ie', 'c', 'statusRegister']);
   return LH5801Flags(
-    h: json['h'] as int,
-    v: json['v'] as int,
-    z: json['z'] as int,
-    ie: json['ie'] as int,
-    c: json['c'] as int,
+    h: json['h'] as bool,
+    v: json['v'] as bool,
+    z: json['z'] as bool,
+    ie: json['ie'] as bool,
+    c: json['c'] as bool,
   )..statusRegister = json['statusRegister'] as int;
 }
 
