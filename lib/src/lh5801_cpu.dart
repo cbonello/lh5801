@@ -44,4 +44,16 @@ class LH5801CPU extends LH5801State {
 
   int _me0(int address) => address & 0xFFFF;
   int _me1(int address) => 0x10000 | address & 0xFFFF;
+
+  int _readOp8() {
+    final int op8 = _memRead(_p.value);
+    _p.value += 1;
+    return op8;
+  }
+
+  int _readOp16([int address]) {
+    final int op8H = _readOp8();
+    final int op8L = _readOp8();
+    return op8H << 8 | op8L;
+  }
 }
