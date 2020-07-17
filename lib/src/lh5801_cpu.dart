@@ -34,4 +34,14 @@ class LH5801CPU extends LH5801State {
   void NMI() => _ir0 = true;
 
   void BFI() => throw Exception();
+
+  @override
+  void reset() {
+    super.reset();
+    _p.high = _memReadHandler(_me0(0xFFFE));
+    _p.low = _memReadHandler(_me0(0xFFFF));
+  }
+
+  int _me0(int address) => address & 0xFFFF;
+  int _me1(int address) => 0x10000 | address & 0xFFFF;
 }
