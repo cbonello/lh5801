@@ -16,18 +16,18 @@ class LH5801CPU extends LH5801State {
     void Function(bool) pv,
     void Function(int) dataBus,
   })  : _clockFrequency = clockFrequency,
-        _memReadHandler = memRead,
-        _memWriteHandler = memWrite,
-        _puHandler = pu,
-        _pvHandler = pv,
-        _dataBusHandler = dataBus;
+        _memRead = memRead,
+        _memWrite = memWrite,
+        _puFlipFlop = pu,
+        _pvFlipFlop = pv,
+        _dataBus = dataBus;
 
-  int _clockFrequency;
-  int Function(int) _memReadHandler;
-  void Function(int, int) _memWriteHandler;
-  void Function(bool) _puHandler;
-  void Function(bool) _pvHandler;
-  void Function(int) _dataBusHandler;
+  final int _clockFrequency;
+  final int Function(int) _memRead;
+  final void Function(int, int) _memWrite;
+  final void Function(bool) _puFlipFlop;
+  final void Function(bool) _pvFlipFlop;
+  final void Function(int) _dataBus;
 
   void MI() => _ir2 = true;
 
@@ -38,8 +38,8 @@ class LH5801CPU extends LH5801State {
   @override
   void reset() {
     super.reset();
-    _p.high = _memReadHandler(_me0(0xFFFE));
-    _p.low = _memReadHandler(_me0(0xFFFF));
+    _p.high = _memRead(_me0(0xFFFE));
+    _p.low = _memRead(_me0(0xFFFF));
   }
 
   int _me0(int address) => address & 0xFFFF;
