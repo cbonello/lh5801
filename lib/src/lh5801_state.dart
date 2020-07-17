@@ -4,22 +4,51 @@ part of 'lh5801_cpu.dart';
   createFactory: true,
   disallowUnrecognizedKeys: true,
 )
-class Register16 {
-  Register16([this.value = 0x0000]);
+class Register8 extends Object {
+  Register8([int value = 0x00]) : _value = value & 0xFF;
+
+  factory Register8.fromJson(Map<String, dynamic> json) => _$Register8FromJson(json);
+
+  Map<String, dynamic> toJson() => _$Register8ToJson(this);
+
+  int _value;
+
+  int get value => _value;
+  set value(int newValue) => _value = newValue & 0xFF;
+
+  void reset() => _value = 0x00;
+
+  Register8 clone() => Register8(_value);
+}
+
+@JsonSerializable(
+  createFactory: true,
+  disallowUnrecognizedKeys: true,
+)
+class Register16 extends Object {
+  Register16([int initialValue = 0x0000]) {
+    value = initialValue;
+  }
 
   factory Register16.fromJson(Map<String, dynamic> json) => _$Register16FromJson(json);
 
   Map<String, dynamic> toJson() => _$Register16ToJson(this);
 
-  int value;
+  final List<Register8> _bytes = <Register8>[Register8(), Register8()];
 
-  int get high => (value >> 8) & 0xFF;
-  set high(int h) => value = (h << 8) | (value & 0xFF);
+  int get value => _bytes[1].value << 8 | _bytes[0].value;
+  set value(int newValue) {
+    high = newValue >> 8;
+    low = newValue & 0xFF;
+  }
 
-  int get low => value & 0xFF;
-  set low(int l) => value = (value & 0xFF00) | (l & 0xFF);
+  int get high => _bytes[1].value;
+  set high(int h) => _bytes[1].value = h & 0xFF;
 
-  void reset() => value = 0x0000;
+  int get low => _bytes[0].value;
+  set low(int l) => _bytes[0].value = l & 0xFF;
+
+  void reset() => high = low = 0x00;
 
   Register16 clone() => Register16(value);
 }
@@ -32,7 +61,7 @@ class LH5801State {
   LH5801State({
     Register16 p,
     Register16 s,
-    int a = 0x00,
+    Register8 a,
     Register16 x,
     Register16 y,
     Register16 u,
@@ -48,7 +77,7 @@ class LH5801State {
     bool hlt = false,
     int cycleCounter = 0,
   })  : _p = p ?? Register16(),
-        _a = a,
+        _a = a ?? Register8(),
         _s = s ?? Register16(),
         _x = x ?? Register16(),
         _y = y ?? Register16(),
@@ -74,7 +103,7 @@ class LH5801State {
   // Program counter.
   Register16 _s;
   // Accumulator.
-  int _a;
+  Register8 _a;
   // General purpose registers.
   Register16 _x, _y, _u;
   // Timer counter (9-bit).
@@ -101,7 +130,7 @@ class LH5801State {
   void reset() {
     _p.reset();
     _s.reset();
-    _a = 0x00;
+    _a.reset();
     _x.reset();
     _y.reset();
     _u.reset();

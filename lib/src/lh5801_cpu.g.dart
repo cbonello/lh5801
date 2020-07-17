@@ -6,11 +6,21 @@ part of 'lh5801_cpu.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+Register8 _$Register8FromJson(Map<String, dynamic> json) {
+  $checkKeys(json, allowedKeys: const ['value']);
+  return Register8(
+    json['value'] as int,
+  );
+}
+
+Map<String, dynamic> _$Register8ToJson(Register8 instance) => <String, dynamic>{
+      'value': instance.value,
+    };
+
 Register16 _$Register16FromJson(Map<String, dynamic> json) {
   $checkKeys(json, allowedKeys: const ['value', 'high', 'low']);
-  return Register16(
-    json['value'] as int,
-  )
+  return Register16()
+    ..value = json['value'] as int
     ..high = json['high'] as int
     ..low = json['low'] as int;
 }
