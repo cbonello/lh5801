@@ -97,7 +97,10 @@ InstructionDescriptor _illegalInstruction(int opcode) => InstructionDescriptor(
       opcode,
       1,
       'ILL',
-      const <Operand>[],
+      const <Operand>[
+        Operand(OperandType.none(), null),
+        Operand(OperandType.none(), null),
+      ],
       const CyclesCount(0, 0),
     );
 
@@ -1478,7 +1481,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
 ];
 
 // InstructionTable ...
-final List<InstructionDescriptor> InstructionTable = <InstructionDescriptor>[
+final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   // 0x00
   const InstructionDescriptor(
     // SBC XL
