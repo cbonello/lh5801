@@ -194,4 +194,178 @@ class LH5801CPU extends LH5801State {
     _a.value = tmp;
     _memWrite(address, tmp >> 4);
   }
+
+  void _eor(int value) {
+    _a.value ^= value;
+    _t.z = _a.value == 0;
+  }
+
+  void _incRegister8(Register8 register) {
+    register.value = _binaryAdd(register.value, 1);
+  }
+
+  void _incRegister16(Register16 register) {
+    register.value += 1;
+  }
+
+  void _ita() {
+    // TODO Handle IN
+    _a.value = 0;
+    _t.z = _a.value == 0;
+  }
+
+  void _jmp(int address) => _p.value = address;
+
+  void _lda(int value) {
+    _a.value = value;
+    _t.z = _a.value == 0;
+  }
+
+  void _lde(Register16 register) {
+    _a.value = _memRead(_me0(register.value));
+    _decRegister16(register);
+    _t.z = _a.value == 0;
+  }
+
+  void _ldx(Register16 register) => _x.value = register.value;
+
+  void _lin(Register16 register) {
+    _a.value = _memRead(_me0(register.value));
+    _incRegister16(register);
+    _t.z = _a.value == 0;
+  }
+
+  int _lop(int addCyclesTable, int d) {
+    int cycles = 0;
+    _u.low--;
+    if (_u.low >= 0) {
+      cycles += addCyclesTable;
+      _p.value -= d;
+    }
+    return cycles;
+  }
+
+  void _orAccumulator(int value) {
+    _a.value |= value;
+    _t.z = _a.value == 0;
+  }
+
+  void _orMemory(int address, int value) {
+    final int m = _memRead(address);
+    final int orValue = value | m;
+    _memWrite(address, orValue);
+    _t.z = orValue == 0;
+  }
+
+  int _pop8() {
+    _incRegister16(_s);
+    return _memRead(_me0(_s.value));
+  }
+
+  int _pop16() {
+    final int h = _pop8();
+    final int l = _pop8();
+    return h << 8 | l;
+  }
+
+  void _popAccumulator() {
+    _a.value = _pop8();
+    _t.z = _a.value == 0;
+  }
+
+  void _popRegister(Register16 register) {
+    register.high = _pop8();
+    register.low = _pop8();
+  }
+
+  void _push8(int value) {
+    _memWrite(_me0(_s.value), value);
+    _decRegister16(_s);
+  }
+
+  void _push16(int value) {
+    _push8(value & 0xFF);
+    _push8(value >> 8);
+  }
+
+  void _rol() {
+    final int accumulator = _a.value;
+    _a.value = accumulator << 1 | LH5801Flags.boolToInt(_t.c);
+    _t.h = _a.value & 0x10 != 0;
+    _t.v = (accumulator >= 0x40) && (accumulator < 0xC0);
+    _t.z = _a.value == 0;
+    _t.c = (accumulator & 0x80) != 0;
+  }
+
+  void _ror() {
+    final int accumulator = _a.value;
+    _a.value = LH5801Flags.boolToInt(_t.c) << 7 | (accumulator >> 1);
+    _t.h = _a.value & 0x08 != 0;
+    _t.v = ((accumulator & 0x01) != 0 && (_a.value & 0x02) != 0) ||
+        ((accumulator & 0x02) != 0 && (_a.value & 0x01) != 0);
+    _t.z = _a.value == 0;
+    _t.c = (accumulator & 0x01) != 0;
+  }
+
+  void _rti() {
+    _popRegister(_p);
+    _t.statusRegister = _pop8();
+  }
+
+  void _rtn() => _popRegister(_p);
+
+  void _sbc(int value) => _a.value = _binaryAdd(_a.value, value ^ 0xFF + 1, carry: _t.c);
+
+  void _sde(Register16 register) => _memWrite(register.value, _a.value);
+
+  void _shl() {
+    final int accumulator = _a.value;
+    _a.value <<= 1;
+    _t.h = (accumulator & 0x08) != 0;
+    _t.v = accumulator >= 0x40 && accumulator < 0xC0;
+    _t.z = _a.value == 0;
+    _t.c = (accumulator & 0x80) != 0;
+  }
+
+  void _shr() {
+    final int accumulator = _a.value;
+    _a.value >>= 1;
+    _t.h = (_a.value & 0x08) != 0;
+    _t.v = ((accumulator & 0x01) != 0 && (_a.value & 0x02) != 0) ||
+        ((accumulator & 0x02) != 0 && (_a.value & 0x01) != 0);
+    _t.z = _a.value == 0;
+    _t.c = (accumulator & 0x01) != 0;
+  }
+
+  void _sin(Register16 register) => _memWrite(_me0(register.value), _a.value);
+
+  void _sjp(int address) {
+    _push16(_p.value);
+    _p.value = address;
+  }
+
+  void _tin() {
+    final int m = _memRead(_me0(_x.value));
+    _memWrite(_me0(_y.value), m);
+    _y.value++;
+    _x.value++;
+  }
+
+  void _tta() {
+    _a.value = _t.statusRegister;
+    _t.z = _a.value == 0;
+  }
+
+  int _vector(int addCyclesTable, bool cond, int vectorID) {
+    int cycles = 0;
+    if (cond) {
+      cycles += addCyclesTable;
+      _push16(_p.value);
+      final int h = _memRead(_me0(0xFF00 + vectorID));
+      final int l = _memRead(_me0(0xFF00 + vectorID + 1));
+      _p.value = (h << 8) | l;
+    }
+    _t.z = false;
+    return cycles;
+  }
 }
