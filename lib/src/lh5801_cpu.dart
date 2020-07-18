@@ -70,9 +70,7 @@ class LH5801CPU extends LH5801State {
     return sum & 0xFF;
   }
 
-  void _addAccumulator(int value) {
-    _a.value = _binaryAdd(_a.value, value, carry: _t.c);
-  }
+  void _addAccumulator(int value) => _a.value = _binaryAdd(_a.value, value, carry: _t.c);
 
   void _addMemory(int address, int value) {
     final int m = _memRead(address);
@@ -138,9 +136,7 @@ class LH5801CPU extends LH5801State {
     return cpuCycles;
   }
 
-  void _bit(int value1, int value2) {
-    _t.z = (value1 & value2) == 0;
-  }
+  void _bit(int value1, int value2) => _t.z = (value1 & value2) == 0;
 
   void _cin() {
     final int m = _memRead(_me0(_x.value));
@@ -148,9 +144,7 @@ class LH5801CPU extends LH5801State {
     _x.value += 1;
   }
 
-  void _cpi(int value1, int value2) {
-    _binaryAdd(value1, value2 ^ 0xFF + 1);
-  }
+  void _cpi(int value1, int value2) => _binaryAdd(value1, value2 ^ 0xFF + 1);
 
   int _bcdAdd(int left, int right, {bool carry}) {
     int result = _binaryAdd(left, right, carry: carry);
@@ -169,10 +163,9 @@ class LH5801CPU extends LH5801State {
   void _dca(int value) => _a.value = _bcdAdd(_a.value + 0x66, value, carry: _t.c);
 
   void _dcs(int value) {
-    int v = value;
-    if (_t.c) {
-      v++;
-    }
+    assert(LH5801Flags.boolToInt(true) == 1);
+    assert(LH5801Flags.boolToInt(false) == 0);
+    final int v = value + LH5801Flags.boolToInt(_t.c);
     _a.value = _bcdAdd(_a.value, v ^ 0xFF + 1);
   }
 
@@ -200,13 +193,10 @@ class LH5801CPU extends LH5801State {
     _t.z = _a.value == 0;
   }
 
-  void _incRegister8(Register8 register) {
-    register.value = _binaryAdd(register.value, 1);
-  }
+  void _incRegister8(Register8 register) =>
+      register.value = _binaryAdd(register.value, 1);
 
-  void _incRegister16(Register16 register) {
-    register.value += 1;
-  }
+  void _incRegister16(Register16 register) => register.value += 1;
 
   void _ita() {
     // TODO Handle IN
