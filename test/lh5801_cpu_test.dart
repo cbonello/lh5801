@@ -150,6 +150,24 @@ void main() {
         expect(system.cpu.t.v, isFalse);
         expect(system.cpu.t.h, isTrue);
       });
+
+      test('SBC #(U): A = 56, #(U) = 33, C = 0', () {
+        system.load(0x0000, <int>[0xFD, 0x21]);
+        system.load(0x10000, <int>[33]);
+        system.cpu.a.value = 56;
+        system.cpu.u.value = 0x0000;
+        system.cpu.t.c = false;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(22));
+
+        expect(system.cpu.t.c, isTrue);
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.v, isFalse);
+        expect(system.cpu.t.h, isTrue);
+      });
     });
 
     group('ADC [page 25]', () {
@@ -213,6 +231,24 @@ void main() {
         system.load(0x10000, <int>[51]);
         system.cpu.a.value = 2;
         system.cpu.y.value = 0x0000;
+        system.cpu.t.c = false;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(53));
+
+        expect(system.cpu.t.c, isFalse);
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.v, isFalse);
+        expect(system.cpu.t.h, isFalse);
+      });
+
+      test('ADC #(U): A = 2, #(U) = 51, C = 0', () {
+        system.load(0x0000, <int>[0xFD, 0x23]);
+        system.load(0x10000, <int>[51]);
+        system.cpu.a.value = 2;
+        system.cpu.u.value = 0x0000;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -311,6 +347,48 @@ void main() {
         expect(system.cpu.t.ie, equals(flags.ie));
         expect(system.cpu.t.c, equals(flags.c));
       });
+
+      test('LDA #(U): #(U) = 0', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x25]);
+        system.load(0x10000, <int>[0]);
+        system.cpu.a.value = 2;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(10));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('LDA #(U): #(U) = -3', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x25]);
+        system.load(0x10000, <int>[0xFD]); // -3
+        system.cpu.a.value = 2;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(10));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0xFD));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
     });
 
     group('CPA [page 31]', () {
@@ -376,6 +454,19 @@ void main() {
         system.load(0x10000, <int>[80]);
         system.cpu.a.value = 84;
         system.cpu.y.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.t.c, isTrue);
+        expect(system.cpu.t.z, isFalse);
+      });
+
+      test('CPA #(U): A=84, #(U) = 80', () {
+        system.load(0x0000, <int>[0xFD, 0x27]);
+        system.load(0x10000, <int>[80]);
+        system.cpu.a.value = 84;
+        system.cpu.u.value = 0x0000;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -469,6 +560,48 @@ void main() {
         expect(system.cpu.t.ie, equals(flags.ie));
         expect(system.cpu.t.c, equals(flags.c));
       });
+
+      test('AND #(U): A=0xF0, #(U) = 0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x29]);
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0xF0;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('AND #(U): A=0xFF, #(U) = 0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x29]);
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0xFF;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0x0F));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
     });
 
     group('POP [page 37]', () {
@@ -499,6 +632,22 @@ void main() {
         expect(system.cpu.p.value, equals(2));
 
         expect(system.cpu.y.value, equals(0x2030));
+        expect(system.cpu.s.value, equals(0x46FD + 2));
+
+        expect(system.cpu.t.statusRegister, equals(statusRegister));
+      });
+
+      test('POP U: [S]=0xF0, #(U) = 0x0F', () {
+        final int statusRegister = system.cpu.t.statusRegister;
+
+        system.load(0x0000, <int>[0xFD, 0x2A]);
+        system.load(0x46FE, <int>[0x20, 0x30]);
+        system.cpu.s.value = 0x46FD;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(15));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.u.value, equals(0x2030));
         expect(system.cpu.s.value, equals(0x46FD + 2));
 
         expect(system.cpu.t.statusRegister, equals(statusRegister));
@@ -576,6 +725,48 @@ void main() {
         system.load(0x10000, <int>[0x0F]);
         system.cpu.a.value = 0x04;
         system.cpu.y.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0x0F));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('ORA #(U): A=0x00, #(U) = 0x00', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2B]);
+        system.load(0x10000, <int>[0x00]);
+        system.cpu.a.value = 0x00;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('ORA #(U): A=0x04, #(U) = 0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2B]);
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0x04;
+        system.cpu.u.value = 0x0000;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -769,6 +960,69 @@ void main() {
         expect(system.cpu.t.c, isFalse);
         expect(system.cpu.t.h, isFalse);
       });
+
+      test('DCS #(U): A=0x42, #(U) = 0x31, C=1', () {
+        system.load(0x0000, <int>[0xFD, 0x2C]);
+        system.load(0x10000, <int>[0x31]);
+        system.cpu.a.value = 0x42;
+        system.cpu.u.value = 0x0000;
+        system.cpu.t.c = true;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(17));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.t.c, isTrue);
+        expect(system.cpu.t.h, isTrue);
+        expect(system.cpu.a.value, 0x11);
+      });
+
+      test('DCS #(U): A=0x42, #(U) = 0x31, C=0', () {
+        system.load(0x0000, <int>[0xFD, 0x2C]);
+        system.load(0x10000, <int>[0x31]);
+        system.cpu.a.value = 0x42;
+        system.cpu.u.value = 0x0000;
+        system.cpu.t.c = false;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(17));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, 0x10);
+
+        expect(system.cpu.t.c, isTrue);
+        expect(system.cpu.t.h, isTrue);
+      });
+
+      test('DCS #(U): A=0x23, #(U) = 0x54, C=1', () {
+        system.load(0x0000, <int>[0xFD, 0x2C]);
+        system.load(0x10000, <int>[0x54]);
+        system.cpu.a.value = 0x23;
+        system.cpu.u.value = 0x0000;
+        system.cpu.t.c = true;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(17));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, 0x69);
+
+        expect(system.cpu.t.c, isFalse);
+        expect(system.cpu.t.h, isFalse);
+      });
+
+      test('DCS #(U): A=0x23, #(U) = 0x54, C=0', () {
+        system.load(0x0000, <int>[0xFD, 0x2C]);
+        system.load(0x10000, <int>[0x54]);
+        system.cpu.a.value = 0x23;
+        system.cpu.u.value = 0x0000;
+        system.cpu.t.c = false;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(17));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, 0x68);
+
+        expect(system.cpu.t.c, isFalse);
+        expect(system.cpu.t.h, isFalse);
+      });
     });
 
     group('EOR [page 30]', () {
@@ -857,6 +1111,49 @@ void main() {
         expect(system.cpu.t.ie, equals(flags.ie));
         expect(system.cpu.t.c, equals(flags.c));
       });
+
+      test('EOR #(U): A=0x36, #(U) = 0x6D', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2D]);
+        system.load(0x10000, <int>[0x6D]);
+        system.cpu.a.value = 0x36;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0x5B));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('EOR #(U): A=0x00, #(U) = 0x00', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2D]);
+        system.load(0x10000, <int>[0x00]);
+        system.cpu.a.value = 0x00;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.cpu.a.value, equals(0x00));
+
+        expect(system.cpu.t.h, equals(flags.h));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
     });
 
     group('STA [page 35]', () {
@@ -881,6 +1178,21 @@ void main() {
         system.load(0x0000, <int>[0xFD, 0x1E]);
         system.cpu.a.value = 0x33;
         system.cpu.y.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(10));
+        expect(system.cpu.p.value, equals(2));
+
+        expect(system.memRead(0x10000 | system.cpu.x.value), equals(system.cpu.a.value));
+
+        expect(system.cpu.t.statusRegister, equals(statusRegister));
+      });
+
+      test('STA #(U): A=0x33', () {
+        final int statusRegister = system.cpu.t.statusRegister;
+
+        system.load(0x0000, <int>[0xFD, 0x2E]);
+        system.cpu.a.value = 0x33;
+        system.cpu.u.value = 0x0000;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -965,6 +1277,50 @@ void main() {
         system.load(0x10000, <int>[0x0F]);
         system.cpu.a.value = 0x82;
         system.cpu.y.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        // Accumulator should not be updated.
+        expect(system.cpu.a.value, equals(0x82));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('BIT #(U): A=0x80, #(U)=0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2F]);
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0x80;
+        system.cpu.u.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        // Accumulator should not be updated.
+        expect(system.cpu.a.value, equals(0x80));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('BIT #(U): A=0x82, #(U)=0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x0000, <int>[0xFD, 0x2F]);
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0x82;
+        system.cpu.u.value = 0x0000;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
