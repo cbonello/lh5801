@@ -125,6 +125,7 @@ void main() {
         expect(system.cpu.p.value, equals(2));
 
         expect(system.cpu.a.value, equals(22));
+
         expect(system.cpu.t.c, isTrue);
         expect(system.cpu.t.z, isFalse);
         expect(system.cpu.t.v, isFalse);
@@ -180,6 +181,7 @@ void main() {
         expect(system.cpu.p.value, equals(2));
 
         expect(system.cpu.a.value, equals(53));
+
         expect(system.cpu.t.c, isFalse);
         expect(system.cpu.t.z, isFalse);
         expect(system.cpu.t.v, isFalse);
@@ -200,8 +202,9 @@ void main() {
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isTrue);
@@ -219,8 +222,9 @@ void main() {
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0xFD));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isFalse);
@@ -300,8 +304,9 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isTrue);
@@ -319,8 +324,9 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0x0F));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isFalse);
@@ -343,6 +349,7 @@ void main() {
 
         expect(system.cpu.x.value, equals(0x2030));
         expect(system.cpu.s.value, equals(0x46FD + 2));
+
         expect(system.cpu.t.statusRegister, equals(statusRegister));
       });
     });
@@ -360,8 +367,9 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isTrue);
@@ -379,8 +387,9 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0x0F));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isFalse);
@@ -465,9 +474,10 @@ void main() {
         expect(cycles, equals(17));
         expect(system.cpu.p.value, equals(2));
 
+        expect(system.cpu.a.value, 0x10);
+
         expect(system.cpu.t.c, isTrue);
         expect(system.cpu.t.h, isTrue);
-        expect(system.cpu.a.value, 0x10);
       });
 
       test('A=0x23, #(X) = 0x54, C=1', () {
@@ -479,9 +489,10 @@ void main() {
         expect(cycles, equals(17));
         expect(system.cpu.p.value, equals(2));
 
+        expect(system.cpu.a.value, 0x69);
+
         expect(system.cpu.t.c, isFalse);
         expect(system.cpu.t.h, isFalse);
-        expect(system.cpu.a.value, 0x69);
       });
 
       test('A=0x23, #(X) = 0x54, C=0', () {
@@ -493,9 +504,10 @@ void main() {
         expect(cycles, equals(17));
         expect(system.cpu.p.value, equals(2));
 
+        expect(system.cpu.a.value, 0x68);
+
         expect(system.cpu.t.c, isFalse);
         expect(system.cpu.t.h, isFalse);
-        expect(system.cpu.a.value, 0x68);
       });
     });
 
@@ -512,8 +524,9 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0x5B));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.h, equals(flags.h));
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isFalse);
@@ -531,9 +544,11 @@ void main() {
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
 
-        // Z should be the only flag updated.
         expect(system.cpu.a.value, equals(0x00));
+
         expect(system.cpu.t.h, equals(flags.h));
+
+        // Z should be the only flag updated.
         expect(system.cpu.t.v, equals(flags.v));
         expect(system.cpu.t.z, isTrue);
         expect(system.cpu.t.ie, equals(flags.ie));
@@ -554,7 +569,54 @@ void main() {
         expect(system.cpu.p.value, equals(2));
 
         expect(system.memRead(0x10000 | system.cpu.x.value), equals(system.cpu.a.value));
+
         expect(system.cpu.t.statusRegister, equals(statusRegister));
+      });
+    });
+
+    group('BIT #(X) [page 32]', () {
+      setUp(() => system.load(0x0000, <int>[0xFD, 0x0F]));
+
+      test('A=0x80, #(X)=0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0x80;
+        system.cpu.x.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        // Accumulator should not be updated.
+        expect(system.cpu.a.value, equals(0x80));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isTrue);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
+      });
+
+      test('A=0x82, #(X)=0x0F', () {
+        final LH5801Flags flags = system.cpu.t.clone();
+
+        system.load(0x10000, <int>[0x0F]);
+        system.cpu.a.value = 0x82;
+        system.cpu.x.value = 0x0000;
+        cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(2));
+
+        // Accumulator should not be updated.
+        expect(system.cpu.a.value, equals(0x82));
+
+        // Z should be the only flag updated.
+        expect(system.cpu.t.h, equals(flags.h));
+        expect(system.cpu.t.v, equals(flags.v));
+        expect(system.cpu.t.z, isFalse);
+        expect(system.cpu.t.ie, equals(flags.ie));
+        expect(system.cpu.t.c, equals(flags.c));
       });
     });
   });
