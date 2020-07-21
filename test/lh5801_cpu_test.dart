@@ -84,9 +84,9 @@ void main() {
         for (final bool carry in <bool>[true, false]) {
           for (int op1 = 0; op1 < 256; op1++) {
             for (int op2 = 0; op2 < 256; op2++) {
-              system.load(0x10000, <int>[op2]);
+              system.load(0x10001, <int>[op2]);
               system.cpu.a.value = op1;
-              system.cpu.x.value = 0x0000;
+              system.cpu.x.value = 0x0001;
               system.cpu.t.c = carry;
               system.step(0x0000);
               expect(system.cpu.p.value, equals(2));
@@ -117,9 +117,9 @@ void main() {
 
       test('SBC #(X): A = 56, #(X) = 33, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x01]);
-        system.load(0x10000, <int>[33]);
+        system.load(0x10001, <int>[33]);
         system.cpu.a.value = 56;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -135,9 +135,9 @@ void main() {
 
       test('SBC #(Y): A = 56, #(Y) = 33, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x11]);
-        system.load(0x10000, <int>[33]);
+        system.load(0x10001, <int>[33]);
         system.cpu.a.value = 56;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -153,9 +153,9 @@ void main() {
 
       test('SBC #(U): A = 56, #(U) = 33, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x21]);
-        system.load(0x10000, <int>[33]);
+        system.load(0x10001, <int>[33]);
         system.cpu.a.value = 56;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -177,9 +177,9 @@ void main() {
         for (final bool carry in <bool>[true, false]) {
           for (int op1 = 0; op1 < 256; op1++) {
             for (int op2 = 0; op2 < 256; op2++) {
-              system.load(0x10000, <int>[op2]);
+              system.load(0x10001, <int>[op2]);
               system.cpu.a.value = op1;
-              system.cpu.x.value = 0x0000;
+              system.cpu.x.value = 0x0001;
               system.cpu.t.c = carry;
               system.step(0x0000);
               expect(system.cpu.p.value, equals(2));
@@ -210,9 +210,9 @@ void main() {
 
       test('ADC #(X): A = 2, #(X) = 51, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x03]);
-        system.load(0x10000, <int>[51]);
+        system.load(0x10001, <int>[51]);
         system.cpu.a.value = 2;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -228,9 +228,9 @@ void main() {
 
       test('ADC #(Y): A = 2, #(Y) = 51, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x13]);
-        system.load(0x10000, <int>[51]);
+        system.load(0x10001, <int>[51]);
         system.cpu.a.value = 2;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -246,9 +246,9 @@ void main() {
 
       test('ADC #(U): A = 2, #(U) = 51, C = 0', () {
         system.load(0x0000, <int>[0xFD, 0x23]);
-        system.load(0x10000, <int>[51]);
+        system.load(0x10001, <int>[51]);
         system.cpu.a.value = 2;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
@@ -268,9 +268,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x05]);
-        system.load(0x10000, <int>[0]);
+        system.load(0x10001, <int>[0]);
         system.cpu.a.value = 2;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -289,9 +289,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x05]);
-        system.load(0x10000, <int>[0xFD]); // -3
+        system.load(0x10001, <int>[0xFD]); // -3
         system.cpu.a.value = 2;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -310,9 +310,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x15]);
-        system.load(0x10000, <int>[0]);
+        system.load(0x10001, <int>[0]);
         system.cpu.a.value = 2;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -331,9 +331,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x15]);
-        system.load(0x10000, <int>[0xFD]); // -3
+        system.load(0x10001, <int>[0xFD]); // -3
         system.cpu.a.value = 2;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -352,9 +352,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x25]);
-        system.load(0x10000, <int>[0]);
+        system.load(0x10001, <int>[0]);
         system.cpu.a.value = 2;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -373,9 +373,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x25]);
-        system.load(0x10000, <int>[0xFD]); // -3
+        system.load(0x10001, <int>[0xFD]); // -3
         system.cpu.a.value = 2;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -397,9 +397,9 @@ void main() {
 
         for (int op1 = 0; op1 < 256; op1++) {
           for (int op2 = 0; op2 < 256; op2++) {
-            system.load(0x10000, <int>[op2]);
+            system.load(0x10001, <int>[op2]);
             system.cpu.a.value = op1;
-            system.cpu.x.value = 0x0000;
+            system.cpu.x.value = 0x0001;
             system.step(0x0000);
             expect(system.cpu.p.value, equals(2));
 
@@ -438,9 +438,9 @@ void main() {
 
       test('CPA #(X): A=84, #(X) = 80', () {
         system.load(0x0000, <int>[0xFD, 0x07]);
-        system.load(0x10000, <int>[80]);
+        system.load(0x10001, <int>[80]);
         system.cpu.a.value = 84;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -451,9 +451,9 @@ void main() {
 
       test('CPA #(Y): A=84, #(Y) = 80', () {
         system.load(0x0000, <int>[0xFD, 0x17]);
-        system.load(0x10000, <int>[80]);
+        system.load(0x10001, <int>[80]);
         system.cpu.a.value = 84;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -464,9 +464,9 @@ void main() {
 
       test('CPA #(U): A=84, #(U) = 80', () {
         system.load(0x0000, <int>[0xFD, 0x27]);
-        system.load(0x10000, <int>[80]);
+        system.load(0x10001, <int>[80]);
         system.cpu.a.value = 84;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -481,9 +481,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x09]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xF0;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -502,9 +502,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x09]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xFF;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -523,9 +523,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x19]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xF0;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -544,9 +544,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x19]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xFF;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -565,9 +565,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x29]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xF0;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -586,9 +586,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x29]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0xFF;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -659,9 +659,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0B]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -680,9 +680,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0B]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x04;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -701,9 +701,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1B]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -722,9 +722,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1B]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x04;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -743,9 +743,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2B]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -764,9 +764,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2B]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x04;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -793,9 +793,9 @@ void main() {
               for (int op2Digit1 = 0; op2Digit1 < 10; op2Digit1++) {
                 for (int op2Digit2 = 0; op2Digit2 < 10; op2Digit2++) {
                   final int op2 = (op2Digit1 << 4) | op2Digit2;
-                  system.load(0x10000, <int>[op2]);
+                  system.load(0x10001, <int>[op2]);
                   system.cpu.a.value = op1;
-                  system.cpu.x.value = 0x0000;
+                  system.cpu.x.value = 0x0001;
                   system.cpu.t.c = carry;
                   system.step(0x0000);
                   expect(system.cpu.p.value, equals(2));
@@ -837,9 +837,9 @@ void main() {
 
       test('DCS #(X): A=0x42, #(X) = 0x31, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x0C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -852,9 +852,9 @@ void main() {
 
       test('DCS #(X): A=0x42, #(X) = 0x31, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x0C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -868,9 +868,9 @@ void main() {
 
       test('DCS #(X): A=0x23, #(X) = 0x54, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x0C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -884,9 +884,9 @@ void main() {
 
       test('DCS #(X): A=0x23, #(X) = 0x54, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x0C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -900,9 +900,9 @@ void main() {
 
       test('DCS #(Y): A=0x42, #(Y) = 0x31, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x1C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -915,9 +915,9 @@ void main() {
 
       test('DCS #(Y): A=0x42, #(Y) = 0x31, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x1C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -931,9 +931,9 @@ void main() {
 
       test('DCS #(Y): A=0x23, #(Y) = 0x54, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x1C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -947,9 +947,9 @@ void main() {
 
       test('DCS #(Y): A=0x23, #(Y) = 0x54, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x1C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -963,9 +963,9 @@ void main() {
 
       test('DCS #(U): A=0x42, #(U) = 0x31, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x2C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -978,9 +978,9 @@ void main() {
 
       test('DCS #(U): A=0x42, #(U) = 0x31, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x2C]);
-        system.load(0x10000, <int>[0x31]);
+        system.load(0x10001, <int>[0x31]);
         system.cpu.a.value = 0x42;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -994,9 +994,9 @@ void main() {
 
       test('DCS #(U): A=0x23, #(U) = 0x54, C=1', () {
         system.load(0x0000, <int>[0xFD, 0x2C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = true;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -1010,9 +1010,9 @@ void main() {
 
       test('DCS #(U): A=0x23, #(U) = 0x54, C=0', () {
         system.load(0x0000, <int>[0xFD, 0x2C]);
-        system.load(0x10000, <int>[0x54]);
+        system.load(0x10001, <int>[0x54]);
         system.cpu.a.value = 0x23;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         system.cpu.t.c = false;
         cycles = system.step(0x0000);
         expect(cycles, equals(17));
@@ -1030,9 +1030,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0D]);
-        system.load(0x10000, <int>[0x6D]);
+        system.load(0x10001, <int>[0x6D]);
         system.cpu.a.value = 0x36;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1051,9 +1051,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0D]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1073,9 +1073,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1D]);
-        system.load(0x10000, <int>[0x6D]);
+        system.load(0x10001, <int>[0x6D]);
         system.cpu.a.value = 0x36;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1094,9 +1094,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1D]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1116,9 +1116,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2D]);
-        system.load(0x10000, <int>[0x6D]);
+        system.load(0x10001, <int>[0x6D]);
         system.cpu.a.value = 0x36;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1137,9 +1137,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2D]);
-        system.load(0x10000, <int>[0x00]);
+        system.load(0x10001, <int>[0x00]);
         system.cpu.a.value = 0x00;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1162,7 +1162,7 @@ void main() {
 
         system.load(0x0000, <int>[0xFD, 0x0E]);
         system.cpu.a.value = 0x33;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -1177,7 +1177,7 @@ void main() {
 
         system.load(0x0000, <int>[0xFD, 0x1E]);
         system.cpu.a.value = 0x33;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -1192,7 +1192,7 @@ void main() {
 
         system.load(0x0000, <int>[0xFD, 0x2E]);
         system.cpu.a.value = 0x33;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(10));
         expect(system.cpu.p.value, equals(2));
@@ -1208,9 +1208,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x80;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1230,9 +1230,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x0F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x82;
-        system.cpu.x.value = 0x0000;
+        system.cpu.x.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1252,9 +1252,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x80;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1274,9 +1274,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x1F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x82;
-        system.cpu.y.value = 0x0000;
+        system.cpu.y.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1296,9 +1296,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x80;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
@@ -1318,9 +1318,9 @@ void main() {
         final LH5801Flags flags = system.cpu.t.clone();
 
         system.load(0x0000, <int>[0xFD, 0x2F]);
-        system.load(0x10000, <int>[0x0F]);
+        system.load(0x10001, <int>[0x0F]);
         system.cpu.a.value = 0x82;
-        system.cpu.u.value = 0x0000;
+        system.cpu.u.value = 0x0001;
         cycles = system.step(0x0000);
         expect(cycles, equals(11));
         expect(system.cpu.p.value, equals(2));
