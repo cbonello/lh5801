@@ -478,10 +478,10 @@ class LH5801CPU extends LH5801State {
         break;
 
       case 0x40: // INC XH
-        x.high++;
+        x.high = _binaryAdd(x.high, 1);
         break;
       case 0x42: // DEC XH
-        x.high = _binaryAdd(x.high, 0x01 ^ 0xFF + 1);
+        x.high = _binaryAdd(x.high, 0xFF);
         break;
       case 0x48: // LDX S
         _ldx(s);
@@ -512,7 +512,7 @@ class LH5801CPU extends LH5801State {
         y.high = _binaryAdd(y.high, 1);
         break;
       case 0x52: // DEC YH
-        y.high = _binaryAdd(y.high, 0x01 ^ 0xFF + 1);
+        y.high = _binaryAdd(y.high, 0xFF);
         break;
       case 0x58: // LDX P
         _ldx(p);
@@ -540,7 +540,7 @@ class LH5801CPU extends LH5801State {
         u.high = _binaryAdd(u.high, 1);
         break;
       case 0x62: // DEC UH
-        u.high = _binaryAdd(u.high, 0x01 ^ 0xFF + 1);
+        u.high = _binaryAdd(u.high, 0xFF);
         break;
       case 0x69: // ANI #(U), i
         _andMemory(_me1(u.value), _readOp8());
