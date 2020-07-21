@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'package:lh5801/lh5801.dart';
 
 void main() {
-  group('State', () {
+  group('LH5801State', () {
     group('Register8', () {
       test('should be initialized properly', () {
         Register8 reg = Register8();
@@ -22,10 +22,10 @@ void main() {
         expect(reg.value, equals(0));
       });
 
-      test('clone() should return a new Register8 instance', () {
+      test('clone() should return an identical Register8 instance', () {
         final Register8 reg1 = Register8(128);
         final Register8 reg2 = reg1.clone();
-        expect(reg1.hashCode, isNot(equals(reg2.hashCode)));
+        expect(reg1, equals(reg2));
       });
     });
 
@@ -73,16 +73,10 @@ void main() {
         expect(reg.value, equals(0));
       });
 
-      test('reset() should set the register value to zero', () {
-        final Register16 reg = Register16(256);
-        reg.reset();
-        expect(reg.value, equals(0));
-      });
-
-      test('clone() should return a new Register16 instance', () {
+      test('clone() should return an identical Register16 instance', () {
         final Register16 reg1 = Register16(128);
         final Register16 reg2 = reg1.clone();
-        expect(reg1.hashCode, isNot(equals(reg2.hashCode)));
+        expect(reg1, equals(reg2));
       });
     });
   });

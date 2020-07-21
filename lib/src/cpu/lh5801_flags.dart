@@ -7,8 +7,13 @@ part 'lh5801_flags.g.dart';
   disallowUnrecognizedKeys: true,
 )
 class LH5801Flags {
-  LH5801Flags(
-      {this.h = false, this.v = false, this.z = false, this.ie = false, this.c = false});
+  LH5801Flags({
+    this.h = false,
+    this.v = false,
+    this.z = false,
+    this.ie = false,
+    this.c = false,
+  });
 
   factory LH5801Flags.fromJson(Map<String, dynamic> json) => _$LH5801FlagsFromJson(json);
 
@@ -38,4 +43,18 @@ class LH5801Flags {
   // ignore: avoid_positional_boolean_parameters
   static int boolToInt(bool value) => value ? 1 : 0;
   static bool intToBool(int value) => value != 0;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LH5801Flags &&
+          runtimeType == other.runtimeType &&
+          h == other.h &&
+          v == other.v &&
+          z == other.z &&
+          ie == other.ie &&
+          c == other.c;
+
+  @override
+  int get hashCode => h.hashCode ^ v.hashCode ^ z.hashCode ^ ie.hashCode ^ c.hashCode;
 }
