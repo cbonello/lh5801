@@ -437,5 +437,63 @@ void main() {
         testBITRReg2(system, 0x2F, system.cpu.u);
       });
     });
+
+    group('INC [page 30]', () {
+      test('INC XH: XH=-128', () {
+        testIncReg8(
+          system,
+          0x40,
+          () => system.cpu.x.high,
+          (int value) => system.cpu.x.high = value,
+        );
+      });
+
+      test('INC YH: YH=-128', () {
+        testIncReg8(
+          system,
+          0x50,
+          () => system.cpu.y.high,
+          (int value) => system.cpu.y.high = value,
+        );
+      });
+
+      test('INC UH: UH=-128', () {
+        testIncReg8(
+          system,
+          0x60,
+          () => system.cpu.u.high,
+          (int value) => system.cpu.u.high = value,
+        );
+      });
+    });
+
+    group('DEC [page 30]', () {
+      test('DEC XH: XH=0x00', () {
+        testDecReg8(
+          system,
+          0x42,
+          () => system.cpu.x.high,
+          (int value) => system.cpu.x.high = value,
+        );
+      });
+
+      test('DEC YH: YH=0x00', () {
+        testDecReg8(
+          system,
+          0x52,
+          () => system.cpu.y.high,
+          (int value) => system.cpu.y.high = value,
+        );
+      });
+
+      test('DEC UH: UH=0x00', () {
+        testDecReg8(
+          system,
+          0x62,
+          () => system.cpu.u.high,
+          (int value) => system.cpu.u.high = value,
+        );
+      });
+    });
   });
 }

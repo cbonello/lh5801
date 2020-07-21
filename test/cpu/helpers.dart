@@ -415,3 +415,39 @@ void testBITRReg2(System system, int opcode, Register16 register) {
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, equals(flags.c));
 }
+
+void testIncReg8(System system, int opcode, int Function() get, void Function(int) set) {
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, <int>[0xFD, opcode]);
+  set(0x80); // -128
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(2));
+
+  expect(get(), equals(0x81)); // -127
+
+  expect(system.cpu.t.h, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isFalse);
+}
+
+void testDecReg8(System system, int opcode, int Function() get, void Function(int) set) {
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, <int>[0xFD, opcode]);
+  set(0x00);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(2));
+
+  expect(get(), equals(0xFF));
+
+  expect(system.cpu.t.h, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isFalse);
+}
