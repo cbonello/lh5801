@@ -498,6 +498,23 @@ void main() {
       test('STX U', () {
         testSTXReg(system, 0x6A, system.cpu.u);
       });
+
+      test('STX S', () {
+        testSTXReg(system, 0x4E, system.cpu.s);
+      });
+
+      test('STX P', () {
+        final List<int> opcodes = <int>[0xFD, 0x5E];
+        final int statusRegister = system.cpu.t.statusRegister;
+
+        system.load(0x0020, opcodes);
+        system.cpu.x.value = 0x1234;
+        final int cycles = system.step(0x0020);
+        expect(cycles, equals(17));
+        expect(system.cpu.p.value, equals(0x1234));
+
+        expect(system.cpu.t.statusRegister, statusRegister);
+      });
     });
 
     group('ORI [page 29]', () {
