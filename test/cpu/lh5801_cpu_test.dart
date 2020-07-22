@@ -537,11 +537,25 @@ void main() {
       });
 
       test('BII #(Y)', () {
-        testBIIRReg(system, 0x5D, system.cpu.u, me1: true);
+        testBIIRReg(system, 0x5D, system.cpu.y, me1: true);
       });
 
       test('BII #(U)', () {
         testBIIRReg(system, 0x6D, system.cpu.u, me1: true);
+      });
+    });
+
+    group('ADI [page 26]', () {
+      test('ADI #(X)', () {
+        testADIRReg(system, 0x4F, system.cpu.x, me1: true);
+      });
+
+      test('ADI #(Y)', () {
+        testADIRReg(system, 0x5F, system.cpu.y, me1: true);
+      });
+
+      test('ADI #(U)', () {
+        testADIRReg(system, 0x6F, system.cpu.u, me1: true);
       });
     });
   });
