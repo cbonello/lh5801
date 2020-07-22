@@ -537,5 +537,15 @@ void main() {
         testANIRReg2(system, 0x69, system.cpu.u, me1: true);
       });
     });
+
+    group('STX [page 35]', () {
+      test('STX Y', () {
+        testSTXReg(system, 0x5A, system.cpu.y);
+      });
+
+      test('STX U', () {
+        testSTXReg(system, 0x6A, system.cpu.u);
+      });
+    });
   });
 }

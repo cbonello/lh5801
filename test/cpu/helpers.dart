@@ -538,3 +538,18 @@ void testLDXReg(System system, int opcode, Register16 register) {
 
   expect(system.cpu.t.statusRegister, statusRegister);
 }
+
+void testSTXReg(System system, int opcode, Register16 register) {
+  final List<int> opcodes = <int>[0xFD, opcode];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.cpu.x.value = 25;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(11));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(register.value, equals(25));
+
+  expect(system.cpu.t.statusRegister, statusRegister);
+}
