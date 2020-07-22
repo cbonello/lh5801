@@ -12,8 +12,6 @@ int unsignedByteToInt(int value) {
 
 void main() {
   final System system = System();
-  int cycles;
-
   group('LH5801CPU', () {
     setUp(() {
       system.resetMemories();
@@ -57,15 +55,15 @@ void main() {
         }
       });
 
-      test('SBC #(X): A = 56, #(X) = 33, C = 0', () {
+      test('SBC #(X): A=56, #(X)=33, C=0', () {
         testSBCRReg(system, 0x01, system.cpu.x);
       });
 
-      test('SBC #(Y): A = 56, #(Y) = 33, C = 0', () {
+      test('SBC #(Y): A=56, #(Y)=33, C=0', () {
         testSBCRReg(system, 0x11, system.cpu.y);
       });
 
-      test('SBC #(U): A = 56, #(U) = 33, C = 0', () {
+      test('SBC #(U): A=56, #(U)=33, C=0', () {
         testSBCRReg(system, 0x21, system.cpu.u);
       });
     });
@@ -108,40 +106,40 @@ void main() {
         }
       });
 
-      test('ADC #(X): A = 2, #(X) = 51, C = 0', () {
+      test('ADC #(X): A=2, #(X)=51, C=0', () {
         testADCRReg(system, 0x03, system.cpu.x);
       });
 
-      test('ADC #(Y): A = 2, #(Y) = 51, C = 0', () {
+      test('ADC #(Y): A=2, #(Y)=51, C=0', () {
         testADCRReg(system, 0x13, system.cpu.y);
       });
 
-      test('ADC #(U): A = 2, #(U) = 51, C = 0', () {
+      test('ADC #(U): A=2, #(U)=51, C=0', () {
         testADCRReg(system, 0x23, system.cpu.u);
       });
     });
 
     group('LDA [page 33]', () {
-      test('LDA #(X): #(X) = 0', () {
+      test('LDA #(X): #(X)=0', () {
         testLDARReg1(system, 0x05, system.cpu.x);
       });
 
-      test('LDA #(X): #(X) = -3', () {
+      test('LDA #(X): #(X)=-3', () {
         testLDARReg2(system, 0x05, system.cpu.x);
       });
 
-      test('LDA #(Y): #(Y) = 0', () {
+      test('LDA #(Y): #(Y)=0', () {
         testLDARReg1(system, 0x15, system.cpu.y);
       });
-      test('LDA #(Y): #(Y) = -3', () {
+      test('LDA #(Y): #(Y)=-3', () {
         testLDARReg2(system, 0x15, system.cpu.y);
       });
 
-      test('LDA #(U): #(U) = 0', () {
+      test('LDA #(U): #(U)=0', () {
         testLDARReg1(system, 0x25, system.cpu.u);
       });
 
-      test('LDA #(U): #(U) = -3', () {
+      test('LDA #(U): #(U)=-3', () {
         testLDARReg2(system, 0x25, system.cpu.u);
       });
     });
@@ -191,81 +189,81 @@ void main() {
         }
       });
 
-      test('CPA #(X): A=84, #(X) = 80', () {
+      test('CPA #(X): A=84, #(X)=80', () {
         testCPARReg(system, 0x07, system.cpu.x);
       });
 
-      test('CPA #(Y): A=84, #(Y) = 80', () {
+      test('CPA #(Y): A=84, #(Y)=80', () {
         testCPARReg(system, 0x17, system.cpu.y);
       });
 
-      test('CPA #(U): A=84, #(U) = 80', () {
+      test('CPA #(U): A=84, #(U)=80', () {
         testCPARReg(system, 0x27, system.cpu.u);
       });
     });
 
     group('AND [page 29]', () {
-      test('AND #(X): A=0xF0, #(X) = 0x0F', () {
+      test('AND #(X): A=0xF0, #(X)=0x0F', () {
         testANDRReg1(system, 0x09, system.cpu.x);
       });
 
-      test('AND #(X): A=0xFF, #(X) = 0x0F', () {
+      test('AND #(X): A=0xFF, #(X)=0x0F', () {
         testANDRReg2(system, 0x09, system.cpu.x);
       });
 
-      test('AND #(Y): A=0xF0, #(Y) = 0x0F', () {
+      test('AND #(Y): A=0xF0, #(Y)=0x0F', () {
         testANDRReg1(system, 0x19, system.cpu.y);
       });
 
-      test('AND #(Y): A=0xFF, #(Y) = 0x0F', () {
+      test('AND #(Y): A=0xFF, #(Y)=0x0F', () {
         testANDRReg2(system, 0x19, system.cpu.y);
       });
 
-      test('AND #(U): A=0xF0, #(U) = 0x0F', () {
+      test('AND #(U): A=0xF0, #(U)=0x0F', () {
         testANDRReg1(system, 0x29, system.cpu.u);
       });
 
-      test('AND #(U): A=0xFF, #(U) = 0x0F', () {
+      test('AND #(U): A=0xFF, #(U)=0x0F', () {
         testANDRReg2(system, 0x29, system.cpu.u);
       });
     });
 
     group('POP [page 37]', () {
-      test('POP X: [S]=0xF0, #(X) = 0x0F', () {
+      test('POP X: [S]=0xF0, #(X)=0x0F', () {
         testPOPRReg(system, 0x0A, system.cpu.x);
       });
 
-      test('POP Y: [S]=0xF0, #(Y) = 0x0F', () {
+      test('POP Y: [S]=0xF0, #(Y)=0x0F', () {
         testPOPRReg(system, 0x1A, system.cpu.y);
       });
 
-      test('POP U: [S]=0xF0, #(U) = 0x0F', () {
+      test('POP U: [S]=0xF0, #(U)=0x0F', () {
         testPOPRReg(system, 0x2A, system.cpu.u);
       });
     });
 
     group('ORA [page 29]', () {
-      test('ORA #(X): A=0x00, #(X) = 0x00', () {
+      test('ORA #(X): A=0x00, #(X)=0x00', () {
         testORARReg1(system, 0x0B, system.cpu.x);
       });
 
-      test('ORA #(X): A=0x04, #(X) = 0x0F', () {
+      test('ORA #(X): A=0x04, #(X)=0x0F', () {
         testORARReg2(system, 0x0B, system.cpu.x);
       });
 
-      test('ORA #(Y): A=0x00, #(Y) = 0x00', () {
+      test('ORA #(Y): A=0x00, #(Y)=0x00', () {
         testORARReg1(system, 0x1B, system.cpu.y);
       });
 
-      test('ORA #(Y): A=0x04, #(Y) = 0x0F', () {
+      test('ORA #(Y): A=0x04, #(Y)=0x0F', () {
         testORARReg2(system, 0x1B, system.cpu.y);
       });
 
-      test('ORA #(U): A=0x00, #(U) = 0x00', () {
+      test('ORA #(U): A=0x00, #(U)=0x00', () {
         testORARReg1(system, 0x2B, system.cpu.u);
       });
 
-      test('ORA #(U): A=0x04, #(U) = 0x0F', () {
+      test('ORA #(U): A=0x04, #(U)=0x0F', () {
         testORARReg2(system, 0x2B, system.cpu.u);
       });
     });
@@ -323,77 +321,77 @@ void main() {
         }
       });
 
-      test('DCS #(X): A=0x42, #(X) = 0x31, C=1', () {
+      test('DCS #(X): A=0x42, #(X)=0x31, C=1', () {
         testDCSRReg1(system, 0x0C, system.cpu.x);
       });
 
-      test('DCS #(X): A=0x42, #(X) = 0x31, C=0', () {
+      test('DCS #(X): A=0x42, #(X)=0x31, C=0', () {
         testDCSRReg2(system, 0x0C, system.cpu.x);
       });
 
-      test('DCS #(X): A=0x23, #(X) = 0x54, C=1', () {
+      test('DCS #(X): A=0x23, #(X)=0x54, C=1', () {
         testDCSRReg3(system, 0x0C, system.cpu.x);
       });
 
-      test('DCS #(X): A=0x23, #(X) = 0x54, C=0', () {
+      test('DCS #(X): A=0x23, #(X)=0x54, C=0', () {
         testDCSRReg4(system, 0x0C, system.cpu.x);
       });
 
-      test('DCS #(Y): A=0x42, #(Y) = 0x31, C=1', () {
+      test('DCS #(Y): A=0x42, #(Y)=0x31, C=1', () {
         testDCSRReg1(system, 0x1C, system.cpu.y);
       });
 
-      test('DCS #(Y): A=0x42, #(Y) = 0x31, C=0', () {
+      test('DCS #(Y): A=0x42, #(Y)=0x31, C=0', () {
         testDCSRReg2(system, 0x1C, system.cpu.y);
       });
 
-      test('DCS #(Y): A=0x23, #(Y) = 0x54, C=1', () {
+      test('DCS #(Y): A=0x23, #(Y)=0x54, C=1', () {
         testDCSRReg3(system, 0x1C, system.cpu.y);
       });
 
-      test('DCS #(Y): A=0x23, #(Y) = 0x54, C=0', () {
+      test('DCS #(Y): A=0x23, #(Y)=0x54, C=0', () {
         testDCSRReg4(system, 0x1C, system.cpu.y);
       });
 
-      test('DCS #(U): A=0x42, #(U) = 0x31, C=1', () {
+      test('DCS #(U): A=0x42, #(U)=0x31, C=1', () {
         testDCSRReg1(system, 0x2C, system.cpu.u);
       });
 
-      test('DCS #(U): A=0x42, #(U) = 0x31, C=0', () {
+      test('DCS #(U): A=0x42, #(U)=0x31, C=0', () {
         testDCSRReg2(system, 0x2C, system.cpu.u);
       });
 
-      test('DCS #(U): A=0x23, #(U) = 0x54, C=1', () {
+      test('DCS #(U): A=0x23, #(U)=0x54, C=1', () {
         testDCSRReg3(system, 0x2C, system.cpu.u);
       });
 
-      test('DCS #(U): A=0x23, #(U) = 0x54, C=0', () {
+      test('DCS #(U): A=0x23, #(U)=0x54, C=0', () {
         testDCSRReg4(system, 0x2C, system.cpu.u);
       });
     });
 
     group('EOR [page 30]', () {
-      test('EOR #(X): A=0x36, #(X) = 0x6D', () {
+      test('EOR #(X): A=0x36, #(X)=0x6D', () {
         testEORRReg1(system, 0x0D, system.cpu.x);
       });
 
-      test('EOR #(X): A=0x00, #(X) = 0x00', () {
+      test('EOR #(X): A=0x00, #(X)=0x00', () {
         testEORRReg2(system, 0x0D, system.cpu.x);
       });
 
-      test('EOR #(Y): A=0x36, #(Y) = 0x6D', () {
+      test('EOR #(Y): A=0x36, #(Y)=0x6D', () {
         testEORRReg1(system, 0x1D, system.cpu.y);
       });
 
-      test('EOR #(Y): A=0x00, #(Y) = 0x00', () {
+      test('EOR #(Y): A=0x00, #(Y)=0x00', () {
         testEORRReg2(system, 0x1D, system.cpu.y);
       });
 
-      test('EOR #(U): A=0x36, #(U) = 0x6D', () {
+      test('EOR #(U): A=0x36, #(U)=0x6D', () {
         testEORRReg1(system, 0x2D, system.cpu.u);
       });
 
-      test('EOR #(U): A=0x00, #(U) = 0x00', () {
+      test('EOR #(U): A=0x00, #(U)=0x00', () {
         testEORRReg2(system, 0x2D, system.cpu.u);
       });
     });
@@ -497,11 +495,11 @@ void main() {
     });
 
     group('LDX [page 35]', () {
-      test('LDX S: S = 25', () {
+      test('LDX S: S=25', () {
         testLDXReg(system, 0x48, system.cpu.s);
       });
 
-      test('LDX P: P = 0x20', () {
+      test('LDX P: P=0x20', () {
         final List<int> opcodes = <int>[0xFD, 0x58];
         final int statusRegister = system.cpu.t.statusRegister;
 
@@ -511,6 +509,32 @@ void main() {
         expect(system.cpu.p.value, equals(0x0020 + opcodes.length));
 
         expect(system.cpu.t.statusRegister, statusRegister);
+      });
+    });
+
+    group('ANI [page 29]', () {
+      test('ANI #(X), i: A=0xF0, i=0x0F', () {
+        testANIRReg1(system, 0x49, system.cpu.x, me1: true);
+      });
+
+      test('ANI #(X), i: A=0xF0, i=0x2F', () {
+        testANIRReg2(system, 0x49, system.cpu.x, me1: true);
+      });
+
+      test('ANI #(Y): A=0xF0, i=0x0F', () {
+        testANIRReg1(system, 0x59, system.cpu.y, me1: true);
+      });
+
+      test('ANI #(Y): A=0xF0, i=0x2F', () {
+        testANIRReg2(system, 0x59, system.cpu.y, me1: true);
+      });
+
+      test('ANI #(U): A=0xF0, i=0x0F', () {
+        testANIRReg1(system, 0x69, system.cpu.u, me1: true);
+      });
+
+      test('ANI #(U): A=0xFF, i=0x2F', () {
+        testANIRReg2(system, 0x69, system.cpu.u, me1: true);
       });
     });
   });
