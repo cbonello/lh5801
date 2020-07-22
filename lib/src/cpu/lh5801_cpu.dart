@@ -129,6 +129,12 @@ class LH5801CPU extends LH5801State {
 
   void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
 
+  void _bii(int address, int value) {
+    final int m = _core.memRead(address);
+    final int andValue = m & value;
+    t.z = (andValue & 0xFF) == 0;
+  }
+
   void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
 
   void _cin() {
@@ -499,7 +505,7 @@ class LH5801CPU extends LH5801State {
         // _bf = false;
         break;
       case 0x4D: // BII #(X), i
-        _bit(_me1(x.value), _readOp8());
+        _bii(_me1(x.value), _readOp8());
         break;
       case 0x4E: // STX S
         s.value = x.value;
@@ -527,7 +533,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(y.value), _readOp8());
         break;
       case 0x5D: // BII #(Y), i
-        _bit(_me1(y.value), _readOp8());
+        _bii(_me1(y.value), _readOp8());
         break;
       case 0x5E: // STX P
         _jmp(_me0(x.value));
@@ -552,7 +558,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(u.value), _readOp8());
         break;
       case 0x6D: // BII #(U), i
-        _bit(_me1(u.value), _readOp8());
+        _bii(_me1(u.value), _readOp8());
         break;
       case 0x6F: // ADI #(U), i
         _addMemory(_me1(u.value), _readOp8());

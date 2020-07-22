@@ -396,7 +396,7 @@ void testSTARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testBITRReg1(System system, int opcode, Register16 register) {
+void testBITRReg(System system, int opcode, Register16 register) {
   final List<int> opcodes = <int>[0xFD, opcode];
   final LH5801Flags flags = system.cpu.t.clone();
 
@@ -419,25 +419,25 @@ void testBITRReg1(System system, int opcode, Register16 register) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testBITRReg2(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+  final List<int> opcodes = <int>[0xFD, opcode, 0x0F];
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x0F]);
-  system.cpu.a.value = 0x82;
+  system.load(0x10001, <int>[0xF0]);
   register.value = 0x0001;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
+  expect(cycles, equals(14));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  // Accumulator should not be updated.
-  expect(system.cpu.a.value, equals(0x82));
+  // Memory should not be updated.
+  final int result = system.memRead((me1 ? 0x10000 : 0) + register.value);
+  expect(result, equals(0xF0));
 
   // Z should be the only flag updated.
   expect(system.cpu.t.h, equals(flags.h));
   expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.z, isTrue);
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, equals(flags.c));
 }

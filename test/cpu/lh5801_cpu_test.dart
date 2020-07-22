@@ -387,28 +387,16 @@ void main() {
     });
 
     group('BIT [page 32]', () {
-      test('BIT #(X): A=0x80, #(X)=0x0F', () {
-        testBITRReg1(system, 0x0F, system.cpu.x);
+      test('BIT #(X)', () {
+        testBITRReg(system, 0x0F, system.cpu.x);
       });
 
-      test('BIT #(X): A=0x82, #(X)=0x0F', () {
-        testBITRReg2(system, 0x0F, system.cpu.x);
+      test('BIT #(Y)', () {
+        testBITRReg(system, 0x2F, system.cpu.u);
       });
 
-      test('BIT #(Y): A=0x80, #(Y)=0x0F', () {
-        testBITRReg1(system, 0x1F, system.cpu.y);
-      });
-
-      test('BIT #(Y): A=0x82, #(Y)=0x0F', () {
-        testBITRReg2(system, 0x1F, system.cpu.y);
-      });
-
-      test('BIT #(U): A=0x80, #(U)=0x0F', () {
-        testBITRReg1(system, 0x2F, system.cpu.u);
-      });
-
-      test('BIT #(U): A=0x82, #(U)=0x0F', () {
-        testBITRReg2(system, 0x2F, system.cpu.u);
+      test('BIT #(U)', () {
+        testBITRReg(system, 0x2F, system.cpu.u);
       });
     });
 
@@ -523,6 +511,20 @@ void main() {
 
       test('ORI #(U)', () {
         testORIRReg(system, 0x6B, system.cpu.u, me1: true);
+      });
+    });
+
+    group('BII [page 32]', () {
+      test('BII #(X)', () {
+        testBIIRReg(system, 0x4D, system.cpu.x, me1: true);
+      });
+
+      test('BII #(Y)', () {
+        testBIIRReg(system, 0x5D, system.cpu.u, me1: true);
+      });
+
+      test('BII #(U)', () {
+        testBIIRReg(system, 0x6D, system.cpu.u, me1: true);
       });
     });
   });
