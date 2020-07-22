@@ -55,15 +55,15 @@ void main() {
         }
       });
 
-      test('SBC #(X): A=56, #(X)=33, C=0', () {
+      test('SBC #(X)', () {
         testSBCRReg(system, 0x01, system.cpu.x);
       });
 
-      test('SBC #(Y): A=56, #(Y)=33, C=0', () {
+      test('SBC #(Y)', () {
         testSBCRReg(system, 0x11, system.cpu.y);
       });
 
-      test('SBC #(U): A=56, #(U)=33, C=0', () {
+      test('SBC #(U)', () {
         testSBCRReg(system, 0x21, system.cpu.u);
       });
     });
@@ -106,15 +106,15 @@ void main() {
         }
       });
 
-      test('ADC #(X): A=2, #(X)=51, C=0', () {
+      test('ADC #(X)', () {
         testADCRReg(system, 0x03, system.cpu.x);
       });
 
-      test('ADC #(Y): A=2, #(Y)=51, C=0', () {
+      test('ADC #(Y)', () {
         testADCRReg(system, 0x13, system.cpu.y);
       });
 
-      test('ADC #(U): A=2, #(U)=51, C=0', () {
+      test('ADC #(U)', () {
         testADCRReg(system, 0x23, system.cpu.u);
       });
     });
@@ -189,82 +189,58 @@ void main() {
         }
       });
 
-      test('CPA #(X): A=84, #(X)=80', () {
+      test('CPA #(X)', () {
         testCPARReg(system, 0x07, system.cpu.x);
       });
 
-      test('CPA #(Y): A=84, #(Y)=80', () {
+      test('CPA #(Y)', () {
         testCPARReg(system, 0x17, system.cpu.y);
       });
 
-      test('CPA #(U): A=84, #(U)=80', () {
+      test('CPA #(U)', () {
         testCPARReg(system, 0x27, system.cpu.u);
       });
     });
 
     group('AND [page 29]', () {
-      test('AND #(X): A=0xF0, #(X)=0x0F', () {
-        testANDRReg1(system, 0x09, system.cpu.x);
+      test('AND #(X)', () {
+        testANDRReg(system, 0x09, system.cpu.x);
       });
 
-      test('AND #(X): A=0xFF, #(X)=0x0F', () {
-        testANDRReg2(system, 0x09, system.cpu.x);
+      test('AND #(Y)', () {
+        testANDRReg(system, 0x19, system.cpu.y);
       });
 
-      test('AND #(Y): A=0xF0, #(Y)=0x0F', () {
-        testANDRReg1(system, 0x19, system.cpu.y);
-      });
-
-      test('AND #(Y): A=0xFF, #(Y)=0x0F', () {
-        testANDRReg2(system, 0x19, system.cpu.y);
-      });
-
-      test('AND #(U): A=0xF0, #(U)=0x0F', () {
-        testANDRReg1(system, 0x29, system.cpu.u);
-      });
-
-      test('AND #(U): A=0xFF, #(U)=0x0F', () {
-        testANDRReg2(system, 0x29, system.cpu.u);
+      test('AND #(U)', () {
+        testANDRReg(system, 0x29, system.cpu.u);
       });
     });
 
     group('POP [page 37]', () {
-      test('POP X: [S]=0xF0, #(X)=0x0F', () {
+      test('POP X', () {
         testPOPRReg(system, 0x0A, system.cpu.x);
       });
 
-      test('POP Y: [S]=0xF0, #(Y)=0x0F', () {
+      test('POP Y', () {
         testPOPRReg(system, 0x1A, system.cpu.y);
       });
 
-      test('POP U: [S]=0xF0, #(U)=0x0F', () {
+      test('POP U', () {
         testPOPRReg(system, 0x2A, system.cpu.u);
       });
     });
 
     group('ORA [page 29]', () {
-      test('ORA #(X): A=0x00, #(X)=0x00', () {
-        testORARReg1(system, 0x0B, system.cpu.x);
+      test('ORA #(X)', () {
+        testORARReg(system, 0x0B, system.cpu.x);
       });
 
-      test('ORA #(X): A=0x04, #(X)=0x0F', () {
-        testORARReg2(system, 0x0B, system.cpu.x);
+      test('ORA #(Y)', () {
+        testORARReg(system, 0x1B, system.cpu.y);
       });
 
-      test('ORA #(Y): A=0x00, #(Y)=0x00', () {
-        testORARReg1(system, 0x1B, system.cpu.y);
-      });
-
-      test('ORA #(Y): A=0x04, #(Y)=0x0F', () {
-        testORARReg2(system, 0x1B, system.cpu.y);
-      });
-
-      test('ORA #(U): A=0x00, #(U)=0x00', () {
-        testORARReg1(system, 0x2B, system.cpu.u);
-      });
-
-      test('ORA #(U): A=0x04, #(U)=0x0F', () {
-        testORARReg2(system, 0x2B, system.cpu.u);
+      test('ORA #(U)', () {
+        testORARReg(system, 0x2B, system.cpu.u);
       });
     });
 
@@ -397,15 +373,15 @@ void main() {
     });
 
     group('STA [page 35]', () {
-      test('STA #(X): A=0x33', () {
+      test('STA #(X)', () {
         testSTARReg(system, 0x0E, system.cpu.x);
       });
 
-      test('STA #(Y): A=0x33', () {
+      test('STA #(Y)', () {
         testSTARReg(system, 0x1E, system.cpu.y);
       });
 
-      test('STA #(U): A=0x33', () {
+      test('STA #(U)', () {
         testSTARReg(system, 0x2E, system.cpu.u);
       });
     });
@@ -437,7 +413,7 @@ void main() {
     });
 
     group('INC [page 30]', () {
-      test('INC XH: XH=-128', () {
+      test('INC XH', () {
         testIncReg8(
           system,
           0x40,
@@ -446,7 +422,7 @@ void main() {
         );
       });
 
-      test('INC YH: YH=-128', () {
+      test('INC YH', () {
         testIncReg8(
           system,
           0x50,
@@ -455,7 +431,7 @@ void main() {
         );
       });
 
-      test('INC UH: UH=-128', () {
+      test('INC UH', () {
         testIncReg8(
           system,
           0x60,
@@ -466,7 +442,7 @@ void main() {
     });
 
     group('DEC [page 30]', () {
-      test('DEC XH: XH=0x00', () {
+      test('DEC XH', () {
         testDecReg8(
           system,
           0x42,
@@ -475,7 +451,7 @@ void main() {
         );
       });
 
-      test('DEC YH: YH=0x00', () {
+      test('DEC YH', () {
         testDecReg8(
           system,
           0x52,
@@ -484,7 +460,7 @@ void main() {
         );
       });
 
-      test('DEC UH: UH=0x00', () {
+      test('DEC UH', () {
         testDecReg8(
           system,
           0x62,
@@ -495,11 +471,11 @@ void main() {
     });
 
     group('LDX [page 35]', () {
-      test('LDX S: S=25', () {
+      test('LDX S', () {
         testLDXReg(system, 0x48, system.cpu.s);
       });
 
-      test('LDX P: P=0x20', () {
+      test('LDX P', () {
         final List<int> opcodes = <int>[0xFD, 0x58];
         final int statusRegister = system.cpu.t.statusRegister;
 
@@ -513,38 +489,40 @@ void main() {
     });
 
     group('ANI [page 29]', () {
-      test('ANI #(X), i: A=0xF0, i=0x0F', () {
-        testANIRReg1(system, 0x49, system.cpu.x, me1: true);
+      test('ANI #(X), ', () {
+        testANIRReg(system, 0x49, system.cpu.x, me1: true);
       });
 
-      test('ANI #(X), i: A=0xF0, i=0x2F', () {
-        testANIRReg2(system, 0x49, system.cpu.x, me1: true);
+      test('ANI #(Y)', () {
+        testANIRReg(system, 0x59, system.cpu.y, me1: true);
       });
 
-      test('ANI #(Y): A=0xF0, i=0x0F', () {
-        testANIRReg1(system, 0x59, system.cpu.y, me1: true);
-      });
-
-      test('ANI #(Y): A=0xF0, i=0x2F', () {
-        testANIRReg2(system, 0x59, system.cpu.y, me1: true);
-      });
-
-      test('ANI #(U): A=0xF0, i=0x0F', () {
-        testANIRReg1(system, 0x69, system.cpu.u, me1: true);
-      });
-
-      test('ANI #(U): A=0xFF, i=0x2F', () {
-        testANIRReg2(system, 0x69, system.cpu.u, me1: true);
+      test('ANI #(U)', () {
+        testANIRReg(system, 0x69, system.cpu.u, me1: true);
       });
     });
 
-    group('STX [page 35]', () {
+    group('STX [page 36]', () {
       test('STX Y', () {
         testSTXReg(system, 0x5A, system.cpu.y);
       });
 
       test('STX U', () {
         testSTXReg(system, 0x6A, system.cpu.u);
+      });
+    });
+
+    group('ORI [page 29]', () {
+      test('ORI #(X), i', () {
+        testORIRReg(system, 0x4B, system.cpu.x, me1: true);
+      });
+
+      test('ORI #(Y)', () {
+        testORIRReg(system, 0x5B, system.cpu.y, me1: true);
+      });
+
+      test('ORI #(U)', () {
+        testORIRReg(system, 0x6B, system.cpu.u, me1: true);
       });
     });
   });
