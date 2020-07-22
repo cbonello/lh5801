@@ -451,3 +451,17 @@ void testDecReg8(System system, int opcode, int Function() get, void Function(in
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, isFalse);
 }
+
+void testLDXReg(System system, int opcode, Register16 register) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, <int>[0xFD, opcode]);
+  register.value = 25;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(11));
+  expect(system.cpu.p.value, equals(2));
+
+  expect(system.cpu.x.value, equals(25));
+
+  expect(system.cpu.t.statusRegister, statusRegister);
+}

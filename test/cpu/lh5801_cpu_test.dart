@@ -495,5 +495,23 @@ void main() {
         );
       });
     });
+
+    group('LDX [page 35]', () {
+      test('LDX S: S = 25', () {
+        testLDXReg(system, 0x48, system.cpu.s);
+      });
+
+      test('LDX P: P = 0x20', () {
+        final List<int> opcodes = <int>[0xFD, 0x58];
+        final int statusRegister = system.cpu.t.statusRegister;
+
+        system.load(0x0020, opcodes);
+        final int cycles = system.step(0x0020);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(0x0020 + opcodes.length));
+
+        expect(system.cpu.t.statusRegister, statusRegister);
+      });
+    });
   });
 }
