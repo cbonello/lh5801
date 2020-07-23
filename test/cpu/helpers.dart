@@ -121,48 +121,31 @@ void testADIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   expect(system.cpu.t.c, isFalse);
 }
 
-void testLDARReg1(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final LH5801Flags flags = system.cpu.t.clone();
+void testLDARReg(System system, int opcode, Register16 register) {
+  void _test(int initialValue, Matcher hFlagMatcher) {
+    final List<int> opcodes = <int>[0xFD, opcode];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0]);
-  system.cpu.a.value = 2;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(10));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    system.load(0x10001, <int>[initialValue]);
+    system.cpu.a.value = 2;
+    register.value = 0x0001;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(10));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.a.value, equals(0));
+    expect(system.cpu.a.value, equals(initialValue));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
-}
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, hFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
 
-void testLDARReg2(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final LH5801Flags flags = system.cpu.t.clone();
-
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0xFD]); // -3
-  system.cpu.a.value = 2;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(10));
-  expect(system.cpu.p.value, equals(opcodes.length));
-
-  expect(system.cpu.a.value, equals(0xFD));
-
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isFalse);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+  _test(0, isTrue);
+  _test(0xFD, isFalse);
 }
 
 void testCPARReg(System system, int opcode, Register16 register) {
@@ -285,120 +268,68 @@ void testORIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testDCSRReg1(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testDCSRReg(System system, int opcode, Register16 register) {
+  void _test(
+    int initialOp1Value,
+    int initialOp2Value,
+    bool initialCarryValue,
+    int expectedAccValue,
+    Matcher cFlagMatcher,
+    Matcher hFlagMatcher,
+  ) {
+    final List<int> opcodes = <int>[0xFD, opcode];
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x31]);
-  system.cpu.a.value = 0x42;
-  register.value = 0x0001;
-  system.cpu.t.c = true;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    system.load(0x10001, <int>[initialOp2Value]);
+    system.cpu.a.value = initialOp1Value;
+    register.value = 0x0001;
+    system.cpu.t.c = initialCarryValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(17));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.t.c, isTrue);
-  expect(system.cpu.t.h, isTrue);
-  expect(system.cpu.a.value, 0x11);
+    expect(system.cpu.a.value, expectedAccValue);
+
+    expect(system.cpu.t.c, cFlagMatcher);
+    expect(system.cpu.t.h, hFlagMatcher);
+  }
+
+  _test(0x42, 0x31, true, 0x11, isTrue, isTrue);
+  _test(0x42, 0x31, false, 0x10, isTrue, isTrue);
+  _test(0x23, 0x54, true, 0x69, isFalse, isFalse);
+  _test(0x23, 0x54, false, 0x68, isFalse, isFalse);
 }
 
-void testDCSRReg2(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testEORRReg(System system, int opcode, Register16 register) {
+  void _test(
+    int initialOp1Value,
+    int initialOp2Value,
+    int expectedAccValue,
+    Matcher zFlagMatcher,
+  ) {
+    final List<int> opcodes = <int>[0xFD, opcode];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x31]);
-  system.cpu.a.value = 0x42;
-  register.value = 0x0001;
-  system.cpu.t.c = false;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    system.load(0x10001, <int>[0x6D]);
+    system.cpu.a.value = 0x36;
+    register.value = 0x0001;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(11));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.a.value, 0x10);
+    expect(system.cpu.a.value, equals(0x5B));
 
-  expect(system.cpu.t.c, isTrue);
-  expect(system.cpu.t.h, isTrue);
-}
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, isFalse);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
 
-void testDCSRReg3(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x54]);
-  system.cpu.a.value = 0x23;
-  register.value = 0x0001;
-  system.cpu.t.c = true;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
-
-  expect(system.cpu.a.value, 0x69);
-
-  expect(system.cpu.t.c, isFalse);
-  expect(system.cpu.t.h, isFalse);
-}
-
-void testDCSRReg4(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x54]);
-  system.cpu.a.value = 0x23;
-  register.value = 0x0001;
-  system.cpu.t.c = false;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
-
-  expect(system.cpu.a.value, 0x68);
-
-  expect(system.cpu.t.c, isFalse);
-  expect(system.cpu.t.h, isFalse);
-}
-
-void testEORRReg1(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final LH5801Flags flags = system.cpu.t.clone();
-
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x6D]);
-  system.cpu.a.value = 0x36;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
-  expect(system.cpu.p.value, equals(opcodes.length));
-
-  expect(system.cpu.a.value, equals(0x5B));
-
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isFalse);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
-}
-
-void testEORRReg2(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final LH5801Flags flags = system.cpu.t.clone();
-
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x00]);
-  system.cpu.a.value = 0x00;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
-  expect(system.cpu.p.value, equals(opcodes.length));
-
-  expect(system.cpu.a.value, equals(0x00));
-
-  expect(system.cpu.t.h, equals(flags.h));
-
-  // Z should be the only flag updated.
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+  _test(0x36, 0x6D, 0x5B, isFalse);
+  _test(0x00, 0x00, 0x00, isTrue);
 }
 
 void testSTARReg(System system, int opcode, Register16 register) {

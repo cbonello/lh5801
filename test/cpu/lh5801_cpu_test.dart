@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:lh5801/lh5801.dart';
 
 import 'helpers.dart';
 
@@ -46,27 +45,16 @@ void main() {
     });
 
     group('LDA [page 33]', () {
-      test('LDA #(X): #(X)=0', () {
-        testLDARReg1(system, 0x05, system.cpu.x);
+      test('LDA #(X)', () {
+        testLDARReg(system, 0x05, system.cpu.x);
       });
 
-      test('LDA #(X): #(X)=-3', () {
-        testLDARReg2(system, 0x05, system.cpu.x);
+      test('LDA #(Y)', () {
+        testLDARReg(system, 0x15, system.cpu.y);
       });
 
-      test('LDA #(Y): #(Y)=0', () {
-        testLDARReg1(system, 0x15, system.cpu.y);
-      });
-      test('LDA #(Y): #(Y)=-3', () {
-        testLDARReg2(system, 0x15, system.cpu.y);
-      });
-
-      test('LDA #(U): #(U)=0', () {
-        testLDARReg1(system, 0x25, system.cpu.u);
-      });
-
-      test('LDA #(U): #(U)=-3', () {
-        testLDARReg2(system, 0x25, system.cpu.u);
+      test('LDA #(U)', () {
+        testLDARReg(system, 0x25, system.cpu.u);
       });
     });
 
@@ -127,78 +115,30 @@ void main() {
     });
 
     group('DCS [page 28]', () {
-      test('DCS #(X): A=0x42, #(X)=0x31, C=1', () {
-        testDCSRReg1(system, 0x0C, system.cpu.x);
+      test('DCS #(X)', () {
+        testDCSRReg(system, 0x0C, system.cpu.x);
       });
 
-      test('DCS #(X): A=0x42, #(X)=0x31, C=0', () {
-        testDCSRReg2(system, 0x0C, system.cpu.x);
+      test('DCS #(Y)', () {
+        testDCSRReg(system, 0x1C, system.cpu.y);
       });
 
-      test('DCS #(X): A=0x23, #(X)=0x54, C=1', () {
-        testDCSRReg3(system, 0x0C, system.cpu.x);
-      });
-
-      test('DCS #(X): A=0x23, #(X)=0x54, C=0', () {
-        testDCSRReg4(system, 0x0C, system.cpu.x);
-      });
-
-      test('DCS #(Y): A=0x42, #(Y)=0x31, C=1', () {
-        testDCSRReg1(system, 0x1C, system.cpu.y);
-      });
-
-      test('DCS #(Y): A=0x42, #(Y)=0x31, C=0', () {
-        testDCSRReg2(system, 0x1C, system.cpu.y);
-      });
-
-      test('DCS #(Y): A=0x23, #(Y)=0x54, C=1', () {
-        testDCSRReg3(system, 0x1C, system.cpu.y);
-      });
-
-      test('DCS #(Y): A=0x23, #(Y)=0x54, C=0', () {
-        testDCSRReg4(system, 0x1C, system.cpu.y);
-      });
-
-      test('DCS #(U): A=0x42, #(U)=0x31, C=1', () {
-        testDCSRReg1(system, 0x2C, system.cpu.u);
-      });
-
-      test('DCS #(U): A=0x42, #(U)=0x31, C=0', () {
-        testDCSRReg2(system, 0x2C, system.cpu.u);
-      });
-
-      test('DCS #(U): A=0x23, #(U)=0x54, C=1', () {
-        testDCSRReg3(system, 0x2C, system.cpu.u);
-      });
-
-      test('DCS #(U): A=0x23, #(U)=0x54, C=0', () {
-        testDCSRReg4(system, 0x2C, system.cpu.u);
+      test('DCS #(U)', () {
+        testDCSRReg(system, 0x2C, system.cpu.u);
       });
     });
 
     group('EOR [page 30]', () {
-      test('EOR #(X): A=0x36, #(X)=0x6D', () {
-        testEORRReg1(system, 0x0D, system.cpu.x);
+      test('EOR #(X)', () {
+        testEORRReg(system, 0x0D, system.cpu.x);
       });
 
-      test('EOR #(X): A=0x00, #(X)=0x00', () {
-        testEORRReg2(system, 0x0D, system.cpu.x);
+      test('EOR #(Y)', () {
+        testEORRReg(system, 0x1D, system.cpu.y);
       });
 
-      test('EOR #(Y): A=0x36, #(Y)=0x6D', () {
-        testEORRReg1(system, 0x1D, system.cpu.y);
-      });
-
-      test('EOR #(Y): A=0x00, #(Y)=0x00', () {
-        testEORRReg2(system, 0x1D, system.cpu.y);
-      });
-
-      test('EOR #(U): A=0x36, #(U)=0x6D', () {
-        testEORRReg1(system, 0x2D, system.cpu.u);
-      });
-
-      test('EOR #(U): A=0x00, #(U)=0x00', () {
-        testEORRReg2(system, 0x2D, system.cpu.u);
+      test('EOR #(U)', () {
+        testEORRReg(system, 0x2D, system.cpu.u);
       });
     });
 
