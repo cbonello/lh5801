@@ -67,12 +67,12 @@ void testSBCRReg(System system, int opcode, Register16 register) {
   system.load(0x10001, <int>[33]);
   system.cpu.a.value = 56;
   register.value = 0x0001;
-  system.cpu.t.c = false;
+  system.cpu.t.c = true;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(11));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.a.value, equals(22));
+  expect(system.cpu.a.value, equals(23));
 
   expect(system.cpu.t.c, isTrue);
   expect(system.cpu.t.z, isFalse);

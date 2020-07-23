@@ -18,43 +18,6 @@ void main() {
     });
 
     group('SBC [page 27]', () {
-      test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x01]);
-
-        for (final bool carry in <bool>[true, false]) {
-          for (int op1 = 0; op1 < 256; op1++) {
-            for (int op2 = 0; op2 < 256; op2++) {
-              system.load(0x10001, <int>[op2]);
-              system.cpu.a.value = op1;
-              system.cpu.x.value = 0x0001;
-              system.cpu.t.c = carry;
-              system.step(0x0000);
-              expect(system.cpu.p.value, equals(2));
-
-              final int left = op1;
-              final int right = op2 ^ 0xFF;
-              final int c = LH5801Flags.boolToInt(carry);
-
-              final int expected = left + right + c;
-              expect(system.cpu.a.value, equals(expected & 0xFF));
-
-              final bool expectedH = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-              expect(system.cpu.t.h, equals(expectedH));
-
-              final bool expectedV = ((left & 0x80) == (right & 0x80)) &&
-                  ((left & 0x80) != (expected & 0x80));
-              expect(system.cpu.t.v, equals(expectedV));
-
-              final bool expectedZ = (expected & 0xFF) == 0;
-              expect(system.cpu.t.z, equals(expectedZ));
-
-              final bool expectedC = (expected & 0x100) != 0;
-              expect(system.cpu.t.c, equals(expectedC));
-            }
-          }
-        }
-      });
-
       test('SBC #(X)', () {
         testSBCRReg(system, 0x01, system.cpu.x);
       });
@@ -69,43 +32,6 @@ void main() {
     });
 
     group('ADC [page 25]', () {
-      test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x03]);
-
-        for (final bool carry in <bool>[true, false]) {
-          for (int op1 = 0; op1 < 256; op1++) {
-            for (int op2 = 0; op2 < 256; op2++) {
-              system.load(0x10001, <int>[op2]);
-              system.cpu.a.value = op1;
-              system.cpu.x.value = 0x0001;
-              system.cpu.t.c = carry;
-              system.step(0x0000);
-              expect(system.cpu.p.value, equals(2));
-
-              final int left = op1;
-              final int right = op2;
-              final int c = LH5801Flags.boolToInt(carry);
-
-              final int expected = left + right + c;
-              expect(system.cpu.a.value, equals(expected & 0xFF));
-
-              final bool expectedH = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-              expect(system.cpu.t.h, equals(expectedH));
-
-              final bool expectedV = ((left & 0x80) == (right & 0x80)) &&
-                  ((left & 0x80) != (expected & 0x80));
-              expect(system.cpu.t.v, equals(expectedV));
-
-              final bool expectedZ = (expected & 0xFF) == 0;
-              expect(system.cpu.t.z, equals(expectedZ));
-
-              final bool expectedC = (expected & 0x100) != 0;
-              expect(system.cpu.t.c, equals(expectedC));
-            }
-          }
-        }
-      });
-
       test('ADC #(X)', () {
         testADCRReg(system, 0x03, system.cpu.x);
       });
@@ -145,50 +71,6 @@ void main() {
     });
 
     group('CPA [page 31]', () {
-      test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x07]);
-
-        for (int op1 = 0; op1 < 256; op1++) {
-          for (int op2 = 0; op2 < 256; op2++) {
-            system.load(0x10001, <int>[op2]);
-            system.cpu.a.value = op1;
-            system.cpu.x.value = 0x0001;
-            system.step(0x0000);
-            expect(system.cpu.p.value, equals(2));
-
-            final int left = op1;
-            final int right = (op2 ^ 0xFF) + 1;
-
-            final int expected = left + right;
-            expect(system.cpu.a.value, equals(op1));
-
-            final bool expectedH = (((left & 0x0F) + (right & 0x0F)) & 0x10) != 0;
-            expect(system.cpu.t.h, equals(expectedH));
-
-            final bool expectedV =
-                ((left & 0x80) == (right & 0x80)) && ((left & 0x80) != (expected & 0x80));
-            expect(system.cpu.t.v, equals(expectedV));
-
-            final bool expectedZ = (expected & 0xFF) == 0;
-            expect(system.cpu.t.z, equals(expectedZ));
-
-            final bool expectedC = (expected & 0x100) != 0;
-            expect(system.cpu.t.c, equals(expectedC));
-
-            if (op1 > op2) {
-              expect(system.cpu.t.c, isTrue);
-              expect(system.cpu.t.z, isFalse);
-            } else if (op1 == op2) {
-              expect(system.cpu.t.c, isTrue);
-              expect(system.cpu.t.z, isTrue);
-            } else {
-              expect(system.cpu.t.c, isFalse);
-              expect(system.cpu.t.z, isFalse);
-            }
-          }
-        }
-      });
-
       test('CPA #(X)', () {
         testCPARReg(system, 0x07, system.cpu.x);
       });
@@ -245,58 +127,6 @@ void main() {
     });
 
     group('DCS [page 28]', () {
-      test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x0C]);
-
-        for (final bool carry in <bool>[true, false]) {
-          for (int op1Digit1 = 0; op1Digit1 < 10; op1Digit1++) {
-            for (int op1Digit2 = 0; op1Digit2 < 10; op1Digit2++) {
-              final int op1 = (op1Digit1 << 4) | op1Digit2;
-              for (int op2Digit1 = 0; op2Digit1 < 10; op2Digit1++) {
-                for (int op2Digit2 = 0; op2Digit2 < 10; op2Digit2++) {
-                  final int op2 = (op2Digit1 << 4) | op2Digit2;
-                  system.load(0x10001, <int>[op2]);
-                  system.cpu.a.value = op1;
-                  system.cpu.x.value = 0x0001;
-                  system.cpu.t.c = carry;
-                  system.step(0x0000);
-                  expect(system.cpu.p.value, equals(2));
-
-                  final int left = op1;
-                  final int right = op2 ^ 0xFF;
-                  final int c = LH5801Flags.boolToInt(carry);
-                  int expected = left + right + c;
-
-                  final bool expectedH =
-                      (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-                  expect(system.cpu.t.h, equals(expectedH));
-
-                  final bool expectedV = ((left & 0x80) == (right & 0x80)) &&
-                      ((left & 0x80) != (expected & 0x80));
-                  expect(system.cpu.t.v, equals(expectedV));
-
-                  final bool expectedZ = (expected & 0xFF) == 0;
-                  expect(system.cpu.t.z, equals(expectedZ));
-
-                  final bool expectedC = (expected & 0x100) != 0;
-                  expect(system.cpu.t.c, equals(expectedC));
-
-                  expected &= 0xFF;
-                  if (system.cpu.t.c == false && system.cpu.t.h == false) {
-                    expected += 0x9A;
-                  } else if (system.cpu.t.c == false && system.cpu.t.h) {
-                    expected += 0xA0;
-                  } else if (system.cpu.t.c && system.cpu.t.h == false) {
-                    expected += 0xFA;
-                  }
-                  expect(system.cpu.a.value, equals(expected & 0xFF));
-                }
-              }
-            }
-          }
-        }
-      });
-
       test('DCS #(X): A=0x42, #(X)=0x31, C=1', () {
         testDCSRReg1(system, 0x0C, system.cpu.x);
       });

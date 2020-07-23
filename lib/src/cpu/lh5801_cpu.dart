@@ -57,7 +57,7 @@ class LH5801CPU extends LH5801State {
     final int sum = left + right + c;
 
     t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-    t.v = ((left & 0x80) == (right & 0x80)) && ((left & 0x80) != (sum & 0x80));
+    t.v = ((left & 0x80) == ((right + c) & 0x80)) && ((left & 0x80) != (sum & 0x80));
     t.z = (sum & 0xFF) == 0;
     t.c = (sum & 0x100) != 0;
 
