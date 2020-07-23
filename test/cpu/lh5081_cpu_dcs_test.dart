@@ -19,7 +19,8 @@ void main() {
 
     group('DCS [page 28]', () {
       test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x0C]);
+        final List<int> opcodes = <int>[0xFD, 0x0C];
+        system.load(0x0000, opcodes);
 
         for (final bool carry in <bool>[true, false]) {
           for (int op1Digit1 = 0; op1Digit1 < 10; op1Digit1++) {
@@ -33,7 +34,7 @@ void main() {
                   system.cpu.x.value = 0x0001;
                   system.cpu.t.c = carry;
                   system.step(0x0000);
-                  expect(system.cpu.p.value, equals(2));
+                  expect(system.cpu.p.value, equals(opcodes.length));
 
                   final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
                   expect(addTable.containsKey(key), isTrue);

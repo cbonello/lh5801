@@ -19,7 +19,8 @@ void main() {
 
     group('SBC [page 27]', () {
       test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x01]);
+        final List<int> opcodes = <int>[0xFD, 0x01];
+        system.load(0x0000, opcodes);
 
         for (final bool carry in <bool>[true, false]) {
           for (int op1 = 0; op1 < 256; op1++) {
@@ -29,7 +30,7 @@ void main() {
               system.cpu.x.value = 0x0001;
               system.cpu.t.c = carry;
               system.step(0x0000);
-              expect(system.cpu.p.value, equals(2));
+              expect(system.cpu.p.value, equals(opcodes.length));
 
               final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
               expect(addTable.containsKey(key), isTrue);

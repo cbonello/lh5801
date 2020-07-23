@@ -19,7 +19,8 @@ void main() {
 
     group('CPA [page 31]', () {
       test('should return the expected results', () {
-        system.load(0x0000, <int>[0xFD, 0x07]);
+        final List<int> opcodes = <int>[0xFD, 0x07];
+        system.load(0x0000, opcodes);
 
         for (int op1 = 0; op1 < 256; op1++) {
           for (int op2 = 0; op2 < 256; op2++) {
@@ -27,7 +28,7 @@ void main() {
             system.cpu.a.value = op1;
             system.cpu.x.value = 0x0001;
             system.step(0x0000);
-            expect(system.cpu.p.value, equals(2));
+            expect(system.cpu.p.value, equals(opcodes.length));
 
             final String key = generateTableKey(op1, op2 ^ 0xFF, true);
             expect(addTable.containsKey(key), isTrue);
