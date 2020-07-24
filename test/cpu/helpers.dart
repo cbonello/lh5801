@@ -267,6 +267,28 @@ void testANDRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
+void testANDab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x11234 : 0x1234;
+  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[0x0F]);
+  system.cpu.a.value = 0xFF;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(17));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(0x0F));
+
+  // Z should be the only flag updated.
+  expect(system.cpu.t.h, equals(flags.h));
+  expect(system.cpu.t.v, equals(flags.v));
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, equals(flags.c));
+}
+
 void testANIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
   final List<int> opcodes = <int>[0xFD, opcode, 0x0F];
   final LH5801Flags flags = system.cpu.t.clone();

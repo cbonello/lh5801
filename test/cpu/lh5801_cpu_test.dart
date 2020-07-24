@@ -100,6 +100,10 @@ void main() {
       test('AND #(U)', () {
         testANDRReg(system, 0x29, system.cpu.u);
       });
+
+      test('AND #(ab)', () {
+        testANDab(system, 0xA9, me1: true);
+      });
     });
 
     group('POP [page 37]', () {
