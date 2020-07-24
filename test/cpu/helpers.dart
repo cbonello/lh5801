@@ -188,6 +188,33 @@ void testLDARReg(System system, int opcode, Register16 register) {
   _test(0xFD, isFalse);
 }
 
+void testLDAab(System system, int opcode, {bool me1 = false}) {
+  void _test(int initialValue, Matcher hFlagMatcher) {
+    final int ab = me1 ? 0x11234 : 0x1234;
+    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[initialValue]);
+    system.cpu.a.value = 0;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(16));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, equals(initialValue));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, hFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0, isTrue);
+  _test(0xFD, isFalse);
+}
+
 void testCPARReg(System system, int opcode, Register16 register) {
   final List<int> opcodes = <int>[0xFD, opcode];
 

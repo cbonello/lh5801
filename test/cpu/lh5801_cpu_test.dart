@@ -64,6 +64,10 @@ void main() {
       test('LDA #(U)', () {
         testLDARReg(system, 0x25, system.cpu.u);
       });
+
+      test('LDA #(ab)', () {
+        testLDAab(system, 0xA5, me1: true);
+      });
     });
 
     group('CPA [page 31]', () {
