@@ -168,6 +168,10 @@ void main() {
       test('EOR #(U)', () {
         testEORRReg(system, 0x2D, system.cpu.u);
       });
+
+      test('EOR #(ab)', () {
+        testEORab(system, 0xAD, me1: true);
+      });
     });
 
     group('STA [page 35]', () {

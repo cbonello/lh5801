@@ -473,19 +473,51 @@ void testEORRReg(System system, int opcode, Register16 register) {
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, opcodes);
-    system.load(0x10001, <int>[0x6D]);
-    system.cpu.a.value = 0x36;
+    system.load(0x10001, <int>[initialOp2Value]);
+    system.cpu.a.value = initialOp1Value;
     register.value = 0x0001;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(11));
     expect(system.cpu.p.value, equals(opcodes.length));
 
-    expect(system.cpu.a.value, equals(0x5B));
+    expect(system.cpu.a.value, equals(expectedAccValue));
 
     // Z should be the only flag updated.
     expect(system.cpu.t.h, equals(flags.h));
     expect(system.cpu.t.v, equals(flags.v));
-    expect(system.cpu.t.z, isFalse);
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x36, 0x6D, 0x5B, isFalse);
+  _test(0x00, 0x00, 0x00, isTrue);
+}
+
+void testEORab(System system, int opcode, {bool me1 = false}) {
+  void _test(
+    int initialOp1Value,
+    int initialOp2Value,
+    int expectedAccValue,
+    Matcher zFlagMatcher,
+  ) {
+    final int ab = me1 ? 0x11234 : 0x1234;
+    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[initialOp2Value]);
+    system.cpu.a.value = initialOp1Value;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(17));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, equals(expectedAccValue));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
     expect(system.cpu.t.ie, equals(flags.ie));
     expect(system.cpu.t.c, equals(flags.c));
   }
