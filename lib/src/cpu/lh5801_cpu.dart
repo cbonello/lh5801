@@ -186,7 +186,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _ita() {
-    // TODO Handle IN
+    // TODO(cbonello): handle IN
     a.value = 0;
     t.z = a.value == 0;
   }
@@ -501,7 +501,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(x.value), _readOp8());
         break;
       case 0x4C: // OFF
-        // TODO: fix.
+        // TODO(cbonello): fix
         // _bf = false;
         break;
       case 0x4D: // BII #(X), i
@@ -577,6 +577,7 @@ class LH5801CPU extends LH5801State {
         _dca(_core.memRead(_me1(x.value)));
         break;
       case 0x8E: // CDV
+        // TODO(cbonello): implement CDV instruction
         print('lh5801 opcode FD 8E (CDV instruction) not implemented');
         break;
 
