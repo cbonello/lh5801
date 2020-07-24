@@ -364,5 +364,19 @@ void main() {
         expect(system.cpu.t.statusRegister, statusRegister);
       });
     });
+
+    group('DCA [page 26]', () {
+      test('DCA #(X)', () {
+        testDCARReg(system, 0x8C, system.cpu.x, me1: true);
+      });
+
+      test('DCA #(Y)', () {
+        testDCARReg(system, 0x9C, system.cpu.y, me1: true);
+      });
+
+      test('DCA #(U)', () {
+        testDCARReg(system, 0xAC, system.cpu.u, me1: true);
+      });
+    });
   });
 }

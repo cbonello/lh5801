@@ -516,3 +516,35 @@ void testPSHRReg(System system, int opcode, Register16 register) {
 
   expect(system.cpu.t.statusRegister, statusRegister);
 }
+
+void testDCARReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+  void _test(
+    int initialOp1Value,
+    int initialOp2Value,
+    bool initialCarryValue,
+    int expectedAccValue,
+    Matcher cFlagMatcher,
+    Matcher hFlagMatcher,
+  ) {
+    final List<int> opcodes = <int>[0xFD, opcode];
+
+    system.load(0x0000, opcodes);
+    system.load(0x10001, <int>[initialOp2Value]);
+    system.cpu.a.value = initialOp1Value;
+    register.value = 0x0001;
+    system.cpu.t.c = initialCarryValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(19));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, expectedAccValue);
+
+    expect(system.cpu.t.c, cFlagMatcher);
+    expect(system.cpu.t.h, hFlagMatcher);
+  }
+
+  _test(0x35, 0x27, false, 0x62, isFalse, isTrue);
+  _test(0x35, 0x27, true, 0x63, isFalse, isTrue);
+  _test(0x35, 0x67, false, 0x02, isTrue, isTrue);
+  _test(0x35, 0x67, true, 0x03, isTrue, isTrue);
+}
