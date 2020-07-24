@@ -766,3 +766,19 @@ void testTTA(System system) {
   _test(0x08, isFalse);
   _test(0x00, isTrue);
 }
+
+void testADRRReg(System system, int opcode, Register16 register) {
+  final List<int> opcodes = <int>[0xFD, opcode];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.cpu.a.value = 0xC3;
+  register.value = 0x0A88;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(11));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(register.value, equals(0x0B4B));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

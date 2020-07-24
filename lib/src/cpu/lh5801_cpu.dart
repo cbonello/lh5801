@@ -73,6 +73,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _addRegister(Register16 register) {
+    // Technical reference manual is wrong; flags are not updated.
     final int savedFlags = t.statusRegister;
     final int low = register.low;
     register.low = _binaryAdd(low, a.value);

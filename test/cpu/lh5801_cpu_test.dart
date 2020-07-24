@@ -417,5 +417,19 @@ void main() {
     test('TTA [page 38]', () {
       testTTA(system);
     });
+
+    group('ADR [page 26]', () {
+      test('ADR X', () {
+        testADRRReg(system, 0xCA, system.cpu.x);
+      });
+
+      test('ADR Y', () {
+        testADRRReg(system, 0xDA, system.cpu.y);
+      });
+
+      test('ADR U', () {
+        testADRRReg(system, 0xEA, system.cpu.u);
+      });
+    });
   });
 }
