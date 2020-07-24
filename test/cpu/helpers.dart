@@ -461,3 +461,22 @@ void testSTXReg(System system, int opcode, Register16 register) {
 
   expect(system.cpu.t.statusRegister, statusRegister);
 }
+
+void testPSHRReg(System system, int opcode, Register16 register) {
+  final List<int> opcodes = <int>[0xFD, opcode];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.cpu.s.value = 0x46FF;
+  register.value = 0x2030;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(14));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.s.value, equals(0x46FF - 2));
+  expect(system.memRead(0x46FF), equals(0x30));
+  expect(system.memRead(0x46FE), equals(0x20));
+  expect(register.value, equals(0x2030));
+
+  expect(system.cpu.t.statusRegister, statusRegister);
+}

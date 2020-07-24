@@ -328,5 +328,37 @@ void main() {
         testADIRReg(system, 0x6F, system.cpu.u, me1: true);
       });
     });
+
+    group('PSH [page 36]', () {
+      test('PSH X', () {
+        testPSHRReg(system, 0x88, system.cpu.x);
+      });
+
+      test('PSH Y', () {
+        testPSHRReg(system, 0x98, system.cpu.y);
+      });
+
+      test('PSH U', () {
+        testPSHRReg(system, 0xA8, system.cpu.u);
+      });
+
+      test('PSH A', () {
+        final List<int> opcodes = <int>[0xFD, 0xC8];
+        final int statusRegister = system.cpu.t.statusRegister;
+
+        system.load(0x0000, opcodes);
+        system.cpu.s.value = 0x46FF;
+        system.cpu.a.value = 0x3F;
+        final int cycles = system.step(0x0000);
+        expect(cycles, equals(11));
+        expect(system.cpu.p.value, equals(opcodes.length));
+
+        expect(system.cpu.s.value, equals(0x46FF - 1));
+        expect(system.memRead(0x46FF), equals(0x3F));
+        expect(system.cpu.a.value, equals(0x3F));
+
+        expect(system.cpu.t.statusRegister, statusRegister);
+      });
+    });
   });
 }
