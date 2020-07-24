@@ -204,6 +204,9 @@ void main() {
       test('BIT #(U)', () {
         testBITRReg(system, 0x2F, system.cpu.u);
       });
+      test('BIT #(ab)', () {
+        testBITab(system, 0xAF, me1: true);
+      });
     });
 
     group('INC [page 30]', () {
