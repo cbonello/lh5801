@@ -136,6 +136,10 @@ void main() {
       test('ORA #(U)', () {
         testORARReg(system, 0x2B, system.cpu.u);
       });
+
+      test('ORA #(ab)', () {
+        testORAab(system, 0xAB, me1: true);
+      });
     });
 
     group('DCS [page 28]', () {
