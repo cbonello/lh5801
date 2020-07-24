@@ -46,6 +46,10 @@ void main() {
       test('ADC #(U)', () {
         testADCRReg(system, 0x23, system.cpu.u);
       });
+
+      test('ADC #(ab)', () {
+        testADCab(system, 0xA3, me1: true);
+      });
     });
 
     group('LDA [page 33]', () {

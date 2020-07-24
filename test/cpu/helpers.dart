@@ -120,6 +120,26 @@ void testADCRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.h, isFalse);
 }
 
+void testADCab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x11234 : 0x1234;
+  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[33]);
+  system.cpu.a.value = 2;
+  system.cpu.t.c = false;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(17));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(35));
+
+  expect(system.cpu.t.c, isFalse);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.h, isFalse);
+}
+
 void testADIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
   final List<int> opcodes = <int>[0xFD, opcode, 0x20];
   final LH5801Flags flags = system.cpu.t.clone();
