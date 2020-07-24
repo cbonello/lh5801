@@ -186,6 +186,10 @@ void main() {
       test('STA #(U)', () {
         testSTARReg(system, 0x2E, system.cpu.u);
       });
+
+      test('STA #(ab)', () {
+        testSTAab(system, 0xAE, me1: true);
+      });
     });
 
     group('BIT [page 32]', () {

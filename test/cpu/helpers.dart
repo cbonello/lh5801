@@ -542,6 +542,23 @@ void testSTARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
+void testSTAab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x1CB00 : 0xCB00;
+  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[0xFF]);
+  system.cpu.a.value = 0x51;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(15));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.memRead(ab), equals(system.cpu.a.value));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
 void testBITRReg(System system, int opcode, Register16 register) {
   final List<int> opcodes = <int>[0xFD, opcode];
   final LH5801Flags flags = system.cpu.t.clone();

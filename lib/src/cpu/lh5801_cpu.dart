@@ -619,7 +619,7 @@ class LH5801CPU extends LH5801State {
         _eor(_readOp16Ind(1));
         break;
       case 0xAE: // STA #(ab)
-        _core.memWrite(_readOp16(), a.value);
+        _core.memWrite(_me1(_readOp16()), a.value);
         break;
       case 0xAF: // BIT #(ab)
         _bit(_readOp16Ind(1), a.value);
