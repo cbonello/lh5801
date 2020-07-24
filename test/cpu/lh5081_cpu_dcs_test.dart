@@ -3,13 +3,6 @@ import 'package:test/test.dart';
 import '../../tools/lh5801_add_table.dart';
 import 'helpers.dart';
 
-String toHex(int value) => value.toUnsigned(8).toRadixString(16).padLeft(2, '0');
-
-// ignore: avoid_positional_boolean_parameters
-String generateTableKey(int op1, int op2, bool carry) {
-  return '${toHex(op1)}_${toHex(op2)}_${carry ? 1 : 0}'.toUpperCase();
-}
-
 void main() {
   final System system = System();
   group('LH5801CPU', () {
