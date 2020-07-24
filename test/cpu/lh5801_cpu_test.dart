@@ -98,6 +98,10 @@ void main() {
       test('POP U', () {
         testPOPRReg(system, 0x2A, system.cpu.u);
       });
+
+      test('POP A', () {
+        testPOPA(system);
+      });
     });
 
     group('ORA [page 29]', () {

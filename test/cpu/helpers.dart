@@ -208,20 +208,56 @@ void testANIRReg(System system, int opcode, Register16 register, {bool me1 = fal
 }
 
 void testPOPRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final int statusRegister = system.cpu.t.statusRegister;
+  void _test(int intialValue) {
+    final List<int> opcodes = <int>[0xFD, opcode];
+    final int statusRegister = system.cpu.t.statusRegister;
+    const int initialStackValue = 0x46FD;
 
-  system.load(0x0000, opcodes);
-  system.load(0x46FE, <int>[0x20, 0x30]);
-  system.cpu.s.value = 0x46FD;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(15));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    system.cpu.s.value = initialStackValue;
+    system.load(initialStackValue + 1, <int>[intialValue >> 8, intialValue & 0xFF]);
+    register.value = 0;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(15));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(register.value, equals(0x2030));
-  expect(system.cpu.s.value, equals(0x46FD + 2));
+    expect(register.value, equals(intialValue));
+    expect(system.cpu.s.value, equals(initialStackValue + 2));
 
-  expect(system.cpu.t.statusRegister, equals(statusRegister));
+    expect(system.cpu.t.statusRegister, equals(statusRegister));
+  }
+
+  _test(0x2030);
+  _test(0x0000);
+}
+
+void testPOPA(System system) {
+  void _test(int intialValue, Matcher zFlagMatcher) {
+    final List<int> opcodes = <int>[0xFD, 0x8A];
+    final LH5801Flags flags = system.cpu.t.clone();
+    const int initialStackValue = 0x46FF;
+
+    system.load(0x0000, opcodes);
+    system.cpu.s.value = initialStackValue;
+    system.load(initialStackValue + 1, <int>[intialValue]);
+    system.cpu.a.value = 0;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(12));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, equals(intialValue));
+    expect(system.cpu.s.value, equals(initialStackValue + 1));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x23, isFalse);
+  _test(0x00, isTrue);
 }
 
 void testORARReg(System system, int opcode, Register16 register) {
