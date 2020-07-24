@@ -230,6 +230,21 @@ void testCPARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.z, isFalse);
 }
 
+void testCPAab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x11234 : 0x1234;
+  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[80]);
+  system.cpu.a.value = 84;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(17));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.t.c, isTrue);
+  expect(system.cpu.t.z, isFalse);
+}
+
 void testANDRReg(System system, int opcode, Register16 register) {
   final List<int> opcodes = <int>[0xFD, opcode];
   final LH5801Flags flags = system.cpu.t.clone();

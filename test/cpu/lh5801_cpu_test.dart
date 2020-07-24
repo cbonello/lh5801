@@ -82,6 +82,10 @@ void main() {
       test('CPA #(U)', () {
         testCPARReg(system, 0x27, system.cpu.u);
       });
+
+      test('CPA #(ab)', () {
+        testCPAab(system, 0xA7, me1: true);
+      });
     });
 
     group('AND [page 29]', () {
