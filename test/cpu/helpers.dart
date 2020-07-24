@@ -80,6 +80,26 @@ void testSBCRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.h, isTrue);
 }
 
+void testSBCab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x11234 : 0x1234;
+  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[33]);
+  system.cpu.a.value = 56;
+  system.cpu.t.c = true;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(17));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(23));
+
+  expect(system.cpu.t.c, isTrue);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.h, isTrue);
+}
+
 void testADCRReg(System system, int opcode, Register16 register) {
   final List<int> opcodes = <int>[0xFD, opcode];
 

@@ -28,6 +28,10 @@ void main() {
       test('SBC #(U)', () {
         testSBCRReg(system, 0x21, system.cpu.u);
       });
+
+      test('SBC #(ab)', () {
+        testSBCab(system, 0xA1, me1: true);
+      });
     });
 
     group('ADC [page 25]', () {
