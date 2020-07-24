@@ -398,5 +398,9 @@ void main() {
         testDCARReg(system, 0xAC, system.cpu.u, me1: true);
       });
     });
+
+    test('TTA [page 38]', () {
+      testTTA(system);
+    });
   });
 }

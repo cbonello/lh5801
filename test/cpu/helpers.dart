@@ -652,3 +652,23 @@ void testDCARReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x35, 0x67, false, 0x02, isTrue, isTrue);
   _test(0x35, 0x67, true, 0x03, isTrue, isTrue);
 }
+
+void testTTA(System system) {
+  void _test(int initialStatusRegisterValue, Matcher zFlagMatcher) {
+    final List<int> opcodes = <int>[0xFD, 0xAA];
+
+    system.load(0x0000, opcodes);
+    system.cpu.a.value = 83;
+    system.cpu.t.statusRegister = initialStatusRegisterValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(9));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, initialStatusRegisterValue);
+
+    expect(system.cpu.t.z, zFlagMatcher);
+  }
+
+  _test(0x08, isFalse);
+  _test(0x00, isTrue);
+}
