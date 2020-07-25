@@ -437,5 +437,11 @@ void main() {
         testDRRRReg(system, 0xD3, me1: true);
       });
     });
+
+    group('DRL [page 26]', () {
+      test('DRL #(X)', () {
+        testDRLRReg(system, 0xD7, me1: true);
+      });
+    });
   });
 }
