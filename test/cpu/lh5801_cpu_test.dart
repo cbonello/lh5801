@@ -436,13 +436,13 @@ void main() {
       });
     });
 
-    group('DRR [page 26]', () {
+    group('DRR [page 41]', () {
       test('DRR #(X)', () {
         testDRRRReg(system, 0xD3, me1: true);
       });
     });
 
-    group('DRL [page 26]', () {
+    group('DRL [page 40]', () {
       test('DRL #(X)', () {
         testDRLRReg(system, 0xD7, me1: true);
       });
