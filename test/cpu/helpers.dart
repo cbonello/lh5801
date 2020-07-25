@@ -782,3 +782,22 @@ void testADRRReg(System system, int opcode, Register16 register) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testDRRRReg(System system, int opcode, {bool me1 = false}) {
+  final List<int> opcodes = <int>[0xFD, opcode];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.cpu.x.value = 0x4700;
+  system.load((me1 ? 0x10000 : 0) | system.cpu.x.value, <int>[0x42]);
+  system.cpu.a.value = 0xC1;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(16));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(0x42));
+  final int x = system.memRead((me1 ? 0x10000 : 0) | system.cpu.x.value);
+  expect(x, equals(0x14));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

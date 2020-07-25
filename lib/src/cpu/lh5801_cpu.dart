@@ -169,16 +169,16 @@ class LH5801CPU extends LH5801State {
 
   void _drl(int address) {
     final int m = _core.memRead(address);
-    final int tmp = m << 8 | a.value;
+    final int tmp = (m << 8) | a.value;
     a.value = m;
-    _core.memWrite(address, tmp >> 4);
+    _core.memWrite(address, (tmp >> 4) & 0xFF);
   }
 
   void _drr(int address) {
     final int m = _core.memRead(address);
-    final int tmp = a.value << 8 | m;
+    final int tmp = (a.value << 8) | m;
     a.value = tmp;
-    _core.memWrite(address, tmp >> 4);
+    _core.memWrite(address, (tmp >> 4) & 0xFF);
   }
 
   void _eor(int value) {

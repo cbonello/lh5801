@@ -431,5 +431,11 @@ void main() {
         testADRRReg(system, 0xEA, system.cpu.u);
       });
     });
+
+    group('DRR [page 26]', () {
+      test('DRR #(X)', () {
+        testDRRRReg(system, 0xD3, me1: true);
+      });
+    });
   });
 }
