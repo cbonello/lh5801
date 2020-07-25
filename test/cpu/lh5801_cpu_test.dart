@@ -297,6 +297,10 @@ void main() {
       test('ANI #(U)', () {
         testANIRReg(system, 0x69, system.cpu.u, me1: true);
       });
+
+      test('ANI #(ab), i', () {
+        testANIab(system, 0xE9, me1: true);
+      });
     });
 
     group('STX [page 36]', () {

@@ -290,25 +290,58 @@ void testANDab(System system, int opcode, {bool me1 = false}) {
 }
 
 void testANIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
-  final List<int> opcodes = <int>[0xFD, opcode, 0x0F];
-  final LH5801Flags flags = system.cpu.t.clone();
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final List<int> opcodes = <int>[0xFD, opcode, i & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+    final int memAddress = me1 ? 0x10100 : 0x0100;
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0xF0]);
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    register.value = memAddress;
+    system.load(memAddress, <int>[memValue]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(17));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  final int result = system.memRead((me1 ? 0x10000 : 0) + register.value);
-  expect(result, equals(0x00));
+    final int result = system.memRead(memAddress);
+    expect(result, equals((memValue & i) & 0xFF));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0xF0, 0x0F, isTrue);
+  _test(0x12, 0x36, isFalse);
+}
+
+void testANIab(System system, int opcode, {bool me1 = false}) {
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final int ab = me1 ? 0x10001 : 0x0001;
+    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[memValue]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(23));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    final int result = system.memRead(ab);
+    expect(result, equals((memValue & i) & 0xFF));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0xF0, 0x0F, isTrue);
+  _test(0x12, 0x36, isFalse);
 }
 
 void testPOPRReg(System system, int opcode, Register16 register) {
