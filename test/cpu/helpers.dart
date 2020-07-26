@@ -79,7 +79,7 @@ void testSBCReg(System system, List<int> opcodes, Register8 register) {
 
 void testSBCRReg(
   System system,
-  int cycles,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -92,7 +92,7 @@ void testSBCRReg(
   system.cpu.a.value = 56;
   system.cpu.t.c = true;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(cycles));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
   expect(system.cpu.a.value, equals(23));
@@ -142,7 +142,7 @@ void testADCReg(System system, List<int> opcodes, Register8 register) {
 
 void testADCRReg(
   System system,
-  int cycles,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -155,7 +155,7 @@ void testADCRReg(
   system.cpu.a.value = 2;
   system.cpu.t.c = false;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(cycles));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
   expect(system.cpu.a.value, equals(53));
@@ -261,7 +261,7 @@ void testLDAReg(System system, List<int> opcodes, Register8 register) {
 
 void testLDARReg(
   System system,
-  int cycles,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -275,7 +275,7 @@ void testLDARReg(
     system.load(rregValue, <int>[initialValue]);
     system.cpu.a.value = 2;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(cycles));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     expect(system.cpu.a.value, equals(initialValue));
@@ -339,7 +339,7 @@ void testCPAReg(System system, List<int> opcodes, Register8 register) {
 
 void testCPARReg(
   System system,
-  int cycles,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -352,7 +352,7 @@ void testCPARReg(
     system.load(rregValue, <int>[op2]);
     system.cpu.a.value = op1;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(cycles));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     expect(system.cpu.t.c, cFlagMatcher);

@@ -204,7 +204,7 @@ void main() {
       });
 
       test('CPA (X)', () {
-        testCPARReg(system, 11, <int>[0x07], system.cpu.x);
+        testCPARReg(system, 7, <int>[0x07], system.cpu.x);
       });
 
       test('CPA #(X)', () {
@@ -212,7 +212,7 @@ void main() {
       });
 
       test('CPA (Y)', () {
-        testCPARReg(system, 11, <int>[0x17], system.cpu.y);
+        testCPARReg(system, 7, <int>[0x17], system.cpu.y);
       });
 
       test('CPA #(Y)', () {
@@ -220,7 +220,7 @@ void main() {
       });
 
       test('CPA (U)', () {
-        testCPARReg(system, 11, <int>[0x27], system.cpu.u);
+        testCPARReg(system, 7, <int>[0x27], system.cpu.u);
       });
 
       test('CPA #(U)', () {
