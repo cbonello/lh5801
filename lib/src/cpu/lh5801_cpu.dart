@@ -749,10 +749,9 @@ class LH5801CPU extends LH5801State {
       case 0x0E: // STA (X)
         _core.memWrite(_me0(x.value), a.value);
         break;
-// 	case 0x0F: // BIT (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.bit(a.value, o8)
-// 		}
+      case 0x0F: // BIT (X)
+        _bit(_core.memRead(_me0(x.value)), a.value);
+        break;
 
       case 0x10: // SBC YL
         _sbc(y.low);
@@ -800,10 +799,9 @@ class LH5801CPU extends LH5801State {
       case 0x1E: // STA (Y)
         _core.memWrite(_me0(y.value), a.value);
         break;
-// 	case 0x1F: // BIT (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.bit(a.value, o8)
-// 		}
+      case 0x1F: // BIT (Y)
+        _bit(_core.memRead(_me0(y.value)), a.value);
+        break;
 
       case 0x20: // SBC UL
         _sbc(u.low);
@@ -851,13 +849,12 @@ class LH5801CPU extends LH5801State {
       case 0x2E: // STA (U)
         _core.memWrite(_me0(u.value), a.value);
         break;
-// 	case 0x2F: // BIT (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.bit(a.value, o8)
-// 		}
+      case 0x2F: // BIT (U)
+        _bit(_core.memRead(_me0(u.value)), a.value);
+        break;
 
-// 	case 0x38: // NOP
-// 		break
+      case 0x38: // NOP
+        break;
 
 // 	case 0x40: // INC XL
 // 		cpu.incRegister8(cpu.x.Low())

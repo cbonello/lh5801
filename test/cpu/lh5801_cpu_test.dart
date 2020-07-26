@@ -421,16 +421,28 @@ void main() {
     });
 
     group('BIT [page 32]', () {
+      test('BIT (X)', () {
+        testBITRReg(system, 7, <int>[0x0F], system.cpu.x);
+      });
+
       test('BIT #(X)', () {
-        testBITRReg(system, <int>[0xFD, 0x0F], system.cpu.x, me1: true);
+        testBITRReg(system, 11, <int>[0xFD, 0x0F], system.cpu.x, me1: true);
+      });
+
+      test('BIT (Y)', () {
+        testBITRReg(system, 7, <int>[0x1F], system.cpu.y);
       });
 
       test('BIT #(Y)', () {
-        testBITRReg(system, <int>[0xFD, 0x1F], system.cpu.y, me1: true);
+        testBITRReg(system, 11, <int>[0xFD, 0x1F], system.cpu.y, me1: true);
+      });
+
+      test('BIT (U)', () {
+        testBITRReg(system, 7, <int>[0x2F], system.cpu.u);
       });
 
       test('BIT #(U)', () {
-        testBITRReg(system, <int>[0xFD, 0x2F], system.cpu.u, me1: true);
+        testBITRReg(system, 11, <int>[0xFD, 0x2F], system.cpu.u, me1: true);
       });
 
       test('BIT #(ab)', () {

@@ -823,6 +823,7 @@ void testSTAab(System system, List<int> opcodes, {bool me1 = false}) {
 
 void testBITRReg(
   System system,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -836,7 +837,7 @@ void testBITRReg(
     system.load(regValue, <int>[memValue]);
     system.cpu.a.value = i;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(11));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     // Accumulator should not be updated.
