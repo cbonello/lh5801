@@ -179,6 +179,30 @@ void main() {
     });
 
     group('CPA [page 31]', () {
+      test('CPA XL', () {
+        testCPAReg(system, <int>[0x06], system.cpu.x.lowRegister);
+      });
+
+      test('CPA XH', () {
+        testCPAReg(system, <int>[0x86], system.cpu.x.highRegister);
+      });
+
+      test('CPA YL', () {
+        testCPAReg(system, <int>[0x16], system.cpu.y.lowRegister);
+      });
+
+      test('CPA YH', () {
+        testCPAReg(system, <int>[0x96], system.cpu.y.highRegister);
+      });
+
+      test('CPA UL', () {
+        testCPAReg(system, <int>[0x26], system.cpu.u.lowRegister);
+      });
+
+      test('CPA UH', () {
+        testCPAReg(system, <int>[0xA6], system.cpu.u.highRegister);
+      });
+
       test('CPA #(X)', () {
         testCPARReg(system, <int>[0xFD, 0x07], system.cpu.x);
       });

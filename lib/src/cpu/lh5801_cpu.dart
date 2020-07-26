@@ -722,8 +722,9 @@ class LH5801CPU extends LH5801State {
       case 0x05: // LDA (X)
         _lda(_core.memRead(_me0(x.value)));
         break;
-// 	case 0x06: // CPA XL
-// 		cpu.cpi(a.value, *cpu.x.Low())
+      case 0x06: // CPA XL
+        _cpi(a.value, x.low);
+        break;
 // 	case 0x07: // CPA (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.cpi(a.value, o8)
@@ -774,8 +775,9 @@ class LH5801CPU extends LH5801State {
         _lda(_core.memRead(_me0(y.value)));
         break;
 
-// 	case 0x16: // CPA YL
-// 		cpu.cpi(a.value, *cpu.y.Low())
+      case 0x16: // CPA YL
+        _cpi(a.value, y.low);
+        break;
 // 	case 0x17: // CPA (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.cpi(a.value, o8)
@@ -825,8 +827,9 @@ class LH5801CPU extends LH5801State {
       case 0x25: // LDA (U)
         _lda(_core.memRead(_me0(u.value)));
         break;
-// 	case 0x26: // CPA UL
-// 		cpu.cpi(a.value, *cpu.u.Low())
+      case 0x26: // CPA UL
+        _cpi(a.value, u.low);
+        break;
 // 	case 0x27: // CPA (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.cpi(a.value, o8)
@@ -1023,8 +1026,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x86: // CPA XH
-// 		cpu.cpi(a.value, *cpu.x.High())
+      case 0x86: // CPA XH
+        _cpi(a.value, x.high);
+        break;
 // 	case 0x87: // BHS + i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
 // 			cycles += c
@@ -1083,8 +1087,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x96: // CPA YH
-// 		cpu.cpi(a.value, *cpu.y.High())
+      case 0x96: // CPA YH
+        _cpi(a.value, y.high);
+        break;
 // 	case 0x97: // BHS - i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
 // 			cycles += c
@@ -1136,8 +1141,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			a.value = o8
 // 		}
-// 	case 0xA6: // CPA UH
-// 		cpu.cpi(a.value, *cpu.u.High())
+      case 0xA6: // CPA UH
+        _cpi(a.value, u.high);
+        break;
 // 	case 0xA7: // CPA (ab)
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.cpi(a.value, o8)
