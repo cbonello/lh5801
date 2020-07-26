@@ -725,10 +725,9 @@ class LH5801CPU extends LH5801State {
       case 0x06: // CPA XL
         _cpi(a.value, x.low);
         break;
-// 	case 0x07: // CPA (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.cpi(a.value, o8)
-// 		}
+      case 0x07: // CPA (X)
+        _cpi(a.value, _core.memRead(_me0(x.value)));
+        break;
 // 	case 0x08: // STA XH
 // 		*cpu.x.High() = a.value
 // 	case 0x09: // AND (X)
@@ -778,10 +777,9 @@ class LH5801CPU extends LH5801State {
       case 0x16: // CPA YL
         _cpi(a.value, y.low);
         break;
-// 	case 0x17: // CPA (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.cpi(a.value, o8)
-// 		}
+      case 0x17: // CPA (Y)
+        _cpi(a.value, _core.memRead(_me0(y.value)));
+        break;
 // 	case 0x18: // STA YH
 // 		*cpu.y.High() = a.value
 // 	case 0x19: // AND (Y)
@@ -830,10 +828,9 @@ class LH5801CPU extends LH5801State {
       case 0x26: // CPA UL
         _cpi(a.value, u.low);
         break;
-// 	case 0x27: // CPA (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.cpi(a.value, o8)
-// 		}
+      case 0x27: // CPA (U)
+        _cpi(a.value, _core.memRead(_me0(u.value)));
+        break;
 // 	case 0x28: // STA UH
 // 		*cpu.u.High() = a.value
 // 	case 0x29: // AND (U)

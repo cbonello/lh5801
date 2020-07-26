@@ -203,16 +203,28 @@ void main() {
         testCPAReg(system, <int>[0xA6], system.cpu.u.highRegister);
       });
 
+      test('CPA (X)', () {
+        testCPARReg(system, 11, <int>[0x07], system.cpu.x);
+      });
+
       test('CPA #(X)', () {
-        testCPARReg(system, <int>[0xFD, 0x07], system.cpu.x);
+        testCPARReg(system, 11, <int>[0xFD, 0x07], system.cpu.x, me1: true);
+      });
+
+      test('CPA (Y)', () {
+        testCPARReg(system, 11, <int>[0x17], system.cpu.y);
       });
 
       test('CPA #(Y)', () {
-        testCPARReg(system, <int>[0xFD, 0x17], system.cpu.y);
+        testCPARReg(system, 11, <int>[0xFD, 0x17], system.cpu.y, me1: true);
+      });
+
+      test('CPA (U)', () {
+        testCPARReg(system, 11, <int>[0x27], system.cpu.u);
       });
 
       test('CPA #(U)', () {
-        testCPARReg(system, <int>[0xFD, 0x27], system.cpu.u);
+        testCPARReg(system, 11, <int>[0xFD, 0x27], system.cpu.u, me1: true);
       });
 
       test('CPA #(ab)', () {

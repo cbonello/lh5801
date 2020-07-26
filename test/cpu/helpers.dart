@@ -322,9 +322,8 @@ void testLDAab(System system, List<int> opcodes, {bool me1 = false}) {
 void testCPAReg(System system, List<int> opcodes, Register8 register) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     system.load(0x0000, opcodes);
-    system.load(0x10001, <int>[op2]);
     system.cpu.a.value = op1;
-    register.value = 0x0001;
+    register.value = op2;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(6));
     expect(system.cpu.p.value, equals(opcodes.length));
@@ -334,21 +333,35 @@ void testCPAReg(System system, List<int> opcodes, Register8 register) {
   }
 
   _test(84, 80, isTrue, isFalse);
-  _test(2, 2, isTrue, isFalse);
-  _test(84, 110, isTrue, isFalse);
+  _test(2, 2, isTrue, isTrue);
+  _test(84, 110, isFalse, isFalse);
 }
 
-void testCPARReg(System system, List<int> opcodes, Register16 register) {
+void testCPARReg(
+  System system,
+  int cycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
+    final int rregValue = me1 ? 0x10100 : 0x0100;
+
     system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[80]);
-  system.cpu.a.value = 84;
-    register.value = 0x0001;
+    register.value = rregValue;
+    system.load(rregValue, <int>[op2]);
+    system.cpu.a.value = op1;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(11));
+    expect(cycles, equals(cycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.t.c, isTrue);
-  expect(system.cpu.t.z, isFalse);
+    expect(system.cpu.t.c, cFlagMatcher);
+    expect(system.cpu.t.z, zFlagMatcher);
+  }
+
+  _test(84, 80, isTrue, isFalse);
+  _test(2, 2, isTrue, isTrue);
+  _test(84, 110, isFalse, isFalse);
 }
 
 void testCPAab(System system, List<int> opcodes, {bool me1 = false}) {
