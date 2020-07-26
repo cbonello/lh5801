@@ -330,7 +330,7 @@ void main() {
       });
     });
 
-    group('ORI [page 29]', () {
+    group('ORI [page 30]', () {
       test('ORI #(X), i', () {
         testORIRReg(system, 0x4B, system.cpu.x, me1: true);
       });
@@ -341,6 +341,10 @@ void main() {
 
       test('ORI #(U)', () {
         testORIRReg(system, 0x6B, system.cpu.u, me1: true);
+      });
+
+      test('ORI #(ab), i', () {
+        testORIab(system, 0xEB, me1: true);
       });
     });
 

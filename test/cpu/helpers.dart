@@ -469,6 +469,33 @@ void testORIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x10, 0x01, isFalse);
 }
 
+void testORIab(System system, int opcode, {bool me1 = false}) {
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final int ab = me1 ? 0x10101 : 0x0101;
+    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[memValue]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(23));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    final int result = system.memRead(ab);
+    expect(result, equals((memValue | i) & 0xFF));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x00, 0x00, isTrue);
+  _test(0x10, 0x01, isFalse);
+}
+
 void testDCSRReg(System system, int opcode, Register16 register) {
   void _test(
     int initialOp1Value,
