@@ -149,16 +149,28 @@ void main() {
         testLDAReg(system, <int>[0xA4], system.cpu.u.highRegister);
       });
 
+      test('LDA (X)', () {
+        testLDARReg(system, 6, <int>[0x05], system.cpu.x);
+      });
+
       test('LDA #(X)', () {
-        testLDARReg(system, <int>[0xFD, 0x05], system.cpu.x);
+        testLDARReg(system, 10, <int>[0xFD, 0x05], system.cpu.x, me1: true);
+      });
+
+      test('LDA (Y)', () {
+        testLDARReg(system, 6, <int>[0x15], system.cpu.y);
       });
 
       test('LDA #(Y)', () {
-        testLDARReg(system, <int>[0xFD, 0x15], system.cpu.y);
+        testLDARReg(system, 10, <int>[0xFD, 0x15], system.cpu.y, me1: true);
+      });
+
+      test('LDA (U)', () {
+        testLDARReg(system, 6, <int>[0x25], system.cpu.u);
       });
 
       test('LDA #(U)', () {
-        testLDARReg(system, <int>[0xFD, 0x25], system.cpu.u);
+        testLDARReg(system, 10, <int>[0xFD, 0x25], system.cpu.u, me1: true);
       });
 
       test('LDA #(ab)', () {
