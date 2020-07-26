@@ -869,12 +869,13 @@ class LH5801CPU extends LH5801State {
         _sde(x);
         break;
       case 0x44: // INC X
-        x.value = _binaryAdd(x.value, 1);
+        x.value++;
         break;
 // 	case 0x45: // LIN X
 // 		err = cpu.lin(&cpu.x)
-// 	case 0x46: // DEC X
-// 		cpu.decRegister16(&cpu.x)
+      case 0x46: // DEC X
+        x.value--;
+        break;
 // 	case 0x47: // LDE X
 // 		err = cpu.lde(&cpu.x)
 // 	case 0x48: // LDI XH, i
@@ -921,12 +922,13 @@ class LH5801CPU extends LH5801State {
         _sde(y);
         break;
       case 0x54: // INC Y
-        y.value = _binaryAdd(y.value, 1);
+        y.value++;
         break;
 // 	case 0x55: // LIN Y
 // 		err = cpu.lin(&cpu.y)
-// 	case 0x56: // DEC Y
-// 		cpu.decRegister16(&cpu.y)
+      case 0x56: // DEC Y
+        y.value--;
+        break;
 // 	case 0x57: // LDE Y
 // 		err = cpu.lde(&cpu.y)
 // 	case 0x58: // LDI YH, i
@@ -973,12 +975,13 @@ class LH5801CPU extends LH5801State {
         _sde(u);
         break;
       case 0x64: // INC U
-        u.value = _binaryAdd(u.value, 1);
+        u.value++;
         break;
 // 	case 0x65: // LIN U
 // 		err = cpu.lin(u)
-// 	case 0x66: // DEC U
-// 		cpu.decRegister16(u)
+      case 0x66: // DEC U
+        u.value--;
+        break;
 // 	case 0x67: // LDE U
 // 		err = cpu.lde(u)
 // 	case 0x68: // LDI UH, i

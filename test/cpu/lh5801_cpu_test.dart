@@ -587,6 +587,33 @@ void main() {
           system.cpu.u.highRegister,
         );
       });
+
+      test('DEC X', () {
+        testDecReg16(
+          system,
+          5,
+          <int>[0x46],
+          system.cpu.x,
+        );
+      });
+
+      test('DEC Y', () {
+        testDecReg16(
+          system,
+          5,
+          <int>[0x56],
+          system.cpu.y,
+        );
+      });
+
+      test('DEC U', () {
+        testDecReg16(
+          system,
+          5,
+          <int>[0x66],
+          system.cpu.u,
+        );
+      });
     });
 
     group('LDX [page 35]', () {

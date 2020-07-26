@@ -979,7 +979,7 @@ void testIncReg16(
   List<int> opcodes,
   Register16 register,
 ) {
-  final LH5801Flags flags = system.cpu.t.clone();
+  final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
   register.value = 0xFFFF;
@@ -989,11 +989,7 @@ void testIncReg16(
 
   expect(register.value, equals(0x0000));
 
-  expect(system.cpu.t.h, isTrue);
-  expect(system.cpu.t.v, isFalse);
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, isFalse);
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
 void testDecReg8(
@@ -1017,6 +1013,25 @@ void testDecReg8(
   expect(system.cpu.t.z, isFalse);
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, isFalse);
+}
+
+void testDecReg16(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register,
+) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  register.value = 0x0000;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(expectedCycles));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(register.value, equals(0xFFFF));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
 void testLDXReg(System system, List<int> opcodes, Register16 register) {
