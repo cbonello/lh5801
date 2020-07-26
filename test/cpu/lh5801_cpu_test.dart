@@ -281,16 +281,28 @@ void main() {
     });
 
     group('ORA [page 29]', () {
+      test('ORA (X)', () {
+        testORARReg(system, 7, <int>[0x0B], system.cpu.x);
+      });
+
       test('ORA #(X)', () {
-        testORARReg(system, <int>[0xFD, 0x0B], system.cpu.x);
+        testORARReg(system, 11, <int>[0xFD, 0x0B], system.cpu.x, me1: true);
+      });
+
+      test('ORA (Y)', () {
+        testORARReg(system, 7, <int>[0x1B], system.cpu.y);
       });
 
       test('ORA #(Y)', () {
-        testORARReg(system, <int>[0xFD, 0x1B], system.cpu.y);
+        testORARReg(system, 11, <int>[0xFD, 0x1B], system.cpu.y, me1: true);
+      });
+
+      test('ORA (U)', () {
+        testORARReg(system, 7, <int>[0x2B], system.cpu.u);
       });
 
       test('ORA #(U)', () {
-        testORARReg(system, <int>[0xFD, 0x2B], system.cpu.u);
+        testORARReg(system, 11, <int>[0xFD, 0x2B], system.cpu.u, me1: true);
       });
 
       test('ORA #(ab)', () {
