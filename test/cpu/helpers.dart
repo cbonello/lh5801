@@ -883,8 +883,12 @@ void testBITab(System system, List<int> opcodes, {bool me1 = false}) {
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIRReg(System system, List<int> opcodes, Register16 register,
-    {bool me1 = false}) {
+void testBIIRReg(
+  System system,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int regValue = me1 ? 0x10100 : 0x0100;
     final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
@@ -947,16 +951,20 @@ void testBIIab(System system, List<int> opcodes, {bool me1 = false}) {
 }
 
 void testIncReg8(
-    System system, List<int> opcodes, int Function() get, void Function(int) set) {
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register8 register,
+) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
-  set(0x80); // -128
+  register.value = 0x80; // -128
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(9));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(get(), equals(0x81)); // -127
+  expect(register.value, equals(0x81)); // -127
 
   expect(system.cpu.t.h, isFalse);
   expect(system.cpu.t.v, isFalse);
@@ -966,16 +974,20 @@ void testIncReg8(
 }
 
 void testDecReg8(
-    System system, List<int> opcodes, int Function() get, void Function(int) set) {
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register8 register,
+) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
-  set(0x00);
+  register.value = 0x00;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(9));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(get(), equals(0xFF));
+  expect(register.value, equals(0xFF));
 
   expect(system.cpu.t.h, isFalse);
   expect(system.cpu.t.v, isFalse);

@@ -451,59 +451,113 @@ void main() {
     });
 
     group('INC [page 30]', () {
+      test('INC XL', () {
+        testIncReg8(
+          system,
+          5,
+          <int>[0x40],
+          system.cpu.x.lowRegister,
+        );
+      });
+
       test('INC XH', () {
         testIncReg8(
           system,
+          9,
           <int>[0xFD, 0x40],
-          () => system.cpu.x.high,
-          (int value) => system.cpu.x.high = value,
+          system.cpu.x.highRegister,
+        );
+      });
+
+      test('INC YL', () {
+        testIncReg8(
+          system,
+          5,
+          <int>[0x50],
+          system.cpu.y.lowRegister,
         );
       });
 
       test('INC YH', () {
         testIncReg8(
           system,
+          9,
           <int>[0xFD, 0x50],
-          () => system.cpu.y.high,
-          (int value) => system.cpu.y.high = value,
+          system.cpu.y.highRegister,
+        );
+      });
+
+      test('INC UL', () {
+        testIncReg8(
+          system,
+          5,
+          <int>[0x60],
+          system.cpu.u.lowRegister,
         );
       });
 
       test('INC UH', () {
         testIncReg8(
           system,
+          9,
           <int>[0xFD, 0x60],
-          () => system.cpu.u.high,
-          (int value) => system.cpu.u.high = value,
+          system.cpu.u.highRegister,
         );
       });
     });
 
-    group('DEC [page 30]', () {
+    group('DEC [page 31]', () {
+      test('DEC XL', () {
+        testDecReg8(
+          system,
+          5,
+          <int>[0x42],
+          system.cpu.x.lowRegister,
+        );
+      });
+
       test('DEC XH', () {
         testDecReg8(
           system,
+          9,
           <int>[0xFD, 0x42],
-          () => system.cpu.x.high,
-          (int value) => system.cpu.x.high = value,
+          system.cpu.x.highRegister,
+        );
+      });
+
+      test('DEC YL', () {
+        testDecReg8(
+          system,
+          5,
+          <int>[0x52],
+          system.cpu.y.lowRegister,
         );
       });
 
       test('DEC YH', () {
         testDecReg8(
           system,
+          9,
           <int>[0xFD, 0x52],
-          () => system.cpu.y.high,
-          (int value) => system.cpu.y.high = value,
+          system.cpu.y.highRegister,
+        );
+      });
+
+      test('DEC UL', () {
+        testDecReg8(
+          system,
+          5,
+          <int>[0x62],
+          system.cpu.u.lowRegister,
         );
       });
 
       test('DEC UH', () {
         testDecReg8(
           system,
+          9,
           <int>[0xFD, 0x62],
-          () => system.cpu.u.high,
-          (int value) => system.cpu.u.high = value,
+          system.cpu.u.highRegister,
         );
       });
     });

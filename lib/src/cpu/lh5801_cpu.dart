@@ -856,12 +856,14 @@ class LH5801CPU extends LH5801State {
       case 0x38: // NOP
         break;
 
-// 	case 0x40: // INC XL
-// 		cpu.incRegister8(cpu.x.Low())
+      case 0x40: // INC XL
+        x.low = _binaryAdd(x.low, 1);
+        break;
 // 	case 0x41: // SIN X
 // 		err = cpu.sin(&cpu.x)
-// 	case 0x42: // DEC XL
-// 		cpu.decRegister8(cpu.x.Low())
+      case 0x42: // DEC XL
+        x.low = _binaryAdd(x.low, 0xFF);
+        break;
 // 	case 0x43: // SDE X
 // 		err = cpu.sde(&cpu.x)
 // 	case 0x44: // INC X
@@ -903,12 +905,14 @@ class LH5801CPU extends LH5801State {
 // 			err = cpu.addMemory(_me0(x.value), o8)
 // 		}
 
-// 	case 0x50: // INC YL
-// 		cpu.incRegister8(cpu.y.Low())
+      case 0x50: // INC YL
+        y.low = _binaryAdd(y.low, 1);
+        break;
 // 	case 0x51: // SIN Y
 // 		err = cpu.sin(&cpu.y)
-// 	case 0x52: // DEC YL
-// 		cpu.decRegister8(cpu.y.Low())
+      case 0x52: // DEC YL
+        y.low = _binaryAdd(y.low, 0xFF);
+        break;
 // 	case 0x53: // SDE Y
 // 		err = cpu.sde(&cpu.y)
 // 	case 0x54: // INC Y
@@ -950,12 +954,14 @@ class LH5801CPU extends LH5801State {
 // 			err = cpu.addMemory(_me0(cpu.y.Value()), o8)
 // 		}
 
-// 	case 0x60: // INC UL
-// 		cpu.incRegister8(cpu.u.Low())
+      case 0x60: // INC UL
+        u.low = _binaryAdd(u.low, 1);
+        break;
 // 	case 0x61: // SIN U
 // 		err = cpu.sin(u)
-// 	case 0x62: // DEC UL
-// 		cpu.decRegister8(cpu.u.Low())
+      case 0x62: // DEC UL
+        u.low = _binaryAdd(u.low, 0xFF);
+        break;
 // 	case 0x63: // SDE U
 // 		err = cpu.sde(u)
 // 	case 0x64: // INC U
