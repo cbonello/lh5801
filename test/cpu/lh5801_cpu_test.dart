@@ -18,105 +18,105 @@ void main() {
 
     group('SBC [page 27]', () {
       test('SBC #(X)', () {
-        testSBCRReg(system, 0x01, system.cpu.x);
+        testSBCRReg(system, <int>[0xFD, 0x01], system.cpu.x);
       });
 
       test('SBC #(Y)', () {
-        testSBCRReg(system, 0x11, system.cpu.y);
+        testSBCRReg(system, <int>[0xFD, 0x11], system.cpu.y);
       });
 
       test('SBC #(U)', () {
-        testSBCRReg(system, 0x21, system.cpu.u);
+        testSBCRReg(system, <int>[0xFD, 0x21], system.cpu.u);
       });
 
       test('SBC #(ab)', () {
-        testSBCab(system, 0xA1, me1: true);
+        testSBCab(system, <int>[0xFD, 0xA1], me1: true);
       });
     });
 
     group('ADC [page 25]', () {
       test('ADC #(X)', () {
-        testADCRReg(system, 0x03, system.cpu.x);
+        testADCRReg(system, <int>[0xFD, 0x03], system.cpu.x);
       });
 
       test('ADC #(Y)', () {
-        testADCRReg(system, 0x13, system.cpu.y);
+        testADCRReg(system, <int>[0xFD, 0x13], system.cpu.y);
       });
 
       test('ADC #(U)', () {
-        testADCRReg(system, 0x23, system.cpu.u);
+        testADCRReg(system, <int>[0xFD, 0x23], system.cpu.u);
       });
 
       test('ADC #(ab)', () {
-        testADCab(system, 0xA3, me1: true);
+        testADCab(system, <int>[0xFD, 0xA3], me1: true);
       });
     });
 
     group('LDA [page 33]', () {
       test('LDA #(X)', () {
-        testLDARReg(system, 0x05, system.cpu.x);
+        testLDARReg(system, <int>[0xFD, 0x05], system.cpu.x);
       });
 
       test('LDA #(Y)', () {
-        testLDARReg(system, 0x15, system.cpu.y);
+        testLDARReg(system, <int>[0xFD, 0x15], system.cpu.y);
       });
 
       test('LDA #(U)', () {
-        testLDARReg(system, 0x25, system.cpu.u);
+        testLDARReg(system, <int>[0xFD, 0x25], system.cpu.u);
       });
 
       test('LDA #(ab)', () {
-        testLDAab(system, 0xA5, me1: true);
+        testLDAab(system, <int>[0xFD, 0xA5], me1: true);
       });
     });
 
     group('CPA [page 31]', () {
       test('CPA #(X)', () {
-        testCPARReg(system, 0x07, system.cpu.x);
+        testCPARReg(system, <int>[0xFD, 0x07], system.cpu.x);
       });
 
       test('CPA #(Y)', () {
-        testCPARReg(system, 0x17, system.cpu.y);
+        testCPARReg(system, <int>[0xFD, 0x17], system.cpu.y);
       });
 
       test('CPA #(U)', () {
-        testCPARReg(system, 0x27, system.cpu.u);
+        testCPARReg(system, <int>[0xFD, 0x27], system.cpu.u);
       });
 
       test('CPA #(ab)', () {
-        testCPAab(system, 0xA7, me1: true);
+        testCPAab(system, <int>[0xFD, 0xA7], me1: true);
       });
     });
 
     group('AND [page 29]', () {
       test('AND #(X)', () {
-        testANDRReg(system, 0x09, system.cpu.x);
+        testANDRReg(system, <int>[0xFD, 0x09], system.cpu.x);
       });
 
       test('AND #(Y)', () {
-        testANDRReg(system, 0x19, system.cpu.y);
+        testANDRReg(system, <int>[0xFD, 0x19], system.cpu.y);
       });
 
       test('AND #(U)', () {
-        testANDRReg(system, 0x29, system.cpu.u);
+        testANDRReg(system, <int>[0xFD, 0x29], system.cpu.u);
       });
 
       test('AND #(ab)', () {
-        testANDab(system, 0xA9, me1: true);
+        testANDab(system, <int>[0xFD, 0xA9], me1: true);
       });
     });
 
     group('POP [page 37]', () {
       test('POP X', () {
-        testPOPRReg(system, 0x0A, system.cpu.x);
+        testPOPRReg(system, <int>[0xFD, 0x0A], system.cpu.x);
       });
 
       test('POP Y', () {
-        testPOPRReg(system, 0x1A, system.cpu.y);
+        testPOPRReg(system, <int>[0xFD, 0x1A], system.cpu.y);
       });
 
       test('POP U', () {
-        testPOPRReg(system, 0x2A, system.cpu.u);
+        testPOPRReg(system, <int>[0xFD, 0x2A], system.cpu.u);
       });
 
       test('POP A', () {
@@ -126,87 +126,87 @@ void main() {
 
     group('ORA [page 29]', () {
       test('ORA #(X)', () {
-        testORARReg(system, 0x0B, system.cpu.x);
+        testORARReg(system, <int>[0xFD, 0x0B], system.cpu.x);
       });
 
       test('ORA #(Y)', () {
-        testORARReg(system, 0x1B, system.cpu.y);
+        testORARReg(system, <int>[0xFD, 0x1B], system.cpu.y);
       });
 
       test('ORA #(U)', () {
-        testORARReg(system, 0x2B, system.cpu.u);
+        testORARReg(system, <int>[0xFD, 0x2B], system.cpu.u);
       });
 
       test('ORA #(ab)', () {
-        testORAab(system, 0xAB, me1: true);
+        testORAab(system, <int>[0xFD, 0xAB], me1: true);
       });
     });
 
     group('DCS [page 28]', () {
       test('DCS #(X)', () {
-        testDCSRReg(system, 0x0C, system.cpu.x);
+        testDCSRReg(system, <int>[0xFD, 0x0C], system.cpu.x);
       });
 
       test('DCS #(Y)', () {
-        testDCSRReg(system, 0x1C, system.cpu.y);
+        testDCSRReg(system, <int>[0xFD, 0x1C], system.cpu.y);
       });
 
       test('DCS #(U)', () {
-        testDCSRReg(system, 0x2C, system.cpu.u);
+        testDCSRReg(system, <int>[0xFD, 0x2C], system.cpu.u);
       });
     });
 
     group('EOR [page 30]', () {
       test('EOR #(X)', () {
-        testEORRReg(system, 0x0D, system.cpu.x);
+        testEORRReg(system, <int>[0xFD, 0x0D], system.cpu.x);
       });
 
       test('EOR #(Y)', () {
-        testEORRReg(system, 0x1D, system.cpu.y);
+        testEORRReg(system, <int>[0xFD, 0x1D], system.cpu.y);
       });
 
       test('EOR #(U)', () {
-        testEORRReg(system, 0x2D, system.cpu.u);
+        testEORRReg(system, <int>[0xFD, 0x2D], system.cpu.u);
       });
 
       test('EOR #(ab)', () {
-        testEORab(system, 0xAD, me1: true);
+        testEORab(system, <int>[0xFD, 0xAD], me1: true);
       });
     });
 
     group('STA [page 35]', () {
       test('STA #(X)', () {
-        testSTARReg(system, 0x0E, system.cpu.x);
+        testSTARReg(system, <int>[0xFD, 0x0E], system.cpu.x);
       });
 
       test('STA #(Y)', () {
-        testSTARReg(system, 0x1E, system.cpu.y);
+        testSTARReg(system, <int>[0xFD, 0x1E], system.cpu.y);
       });
 
       test('STA #(U)', () {
-        testSTARReg(system, 0x2E, system.cpu.u);
+        testSTARReg(system, <int>[0xFD, 0x2E], system.cpu.u);
       });
 
       test('STA #(ab)', () {
-        testSTAab(system, 0xAE, me1: true);
+        testSTAab(system, <int>[0xFD, 0xAE], me1: true);
       });
     });
 
     group('BIT [page 32]', () {
       test('BIT #(X)', () {
-        testBITRReg(system, 0x0F, system.cpu.x, me1: true);
+        testBITRReg(system, <int>[0xFD, 0x0F], system.cpu.x, me1: true);
       });
 
       test('BIT #(Y)', () {
-        testBITRReg(system, 0x2F, system.cpu.u, me1: true);
+        testBITRReg(system, <int>[0xFD, 0x1F], system.cpu.y, me1: true);
       });
 
       test('BIT #(U)', () {
-        testBITRReg(system, 0x2F, system.cpu.u, me1: true);
+        testBITRReg(system, <int>[0xFD, 0x2F], system.cpu.u, me1: true);
       });
 
       test('BIT #(ab)', () {
-        testBITab(system, 0xAF, me1: true);
+        testBITab(system, <int>[0xFD, 0xAF], me1: true);
       });
     });
 
@@ -214,7 +214,7 @@ void main() {
       test('INC XH', () {
         testIncReg8(
           system,
-          0x40,
+          <int>[0xFD, 0x40],
           () => system.cpu.x.high,
           (int value) => system.cpu.x.high = value,
         );
@@ -223,7 +223,7 @@ void main() {
       test('INC YH', () {
         testIncReg8(
           system,
-          0x50,
+          <int>[0xFD, 0x50],
           () => system.cpu.y.high,
           (int value) => system.cpu.y.high = value,
         );
@@ -232,7 +232,7 @@ void main() {
       test('INC UH', () {
         testIncReg8(
           system,
-          0x60,
+          <int>[0xFD, 0x60],
           () => system.cpu.u.high,
           (int value) => system.cpu.u.high = value,
         );
@@ -243,7 +243,7 @@ void main() {
       test('DEC XH', () {
         testDecReg8(
           system,
-          0x42,
+          <int>[0xFD, 0x42],
           () => system.cpu.x.high,
           (int value) => system.cpu.x.high = value,
         );
@@ -252,7 +252,7 @@ void main() {
       test('DEC YH', () {
         testDecReg8(
           system,
-          0x52,
+          <int>[0xFD, 0x52],
           () => system.cpu.y.high,
           (int value) => system.cpu.y.high = value,
         );
@@ -261,7 +261,7 @@ void main() {
       test('DEC UH', () {
         testDecReg8(
           system,
-          0x62,
+          <int>[0xFD, 0x62],
           () => system.cpu.u.high,
           (int value) => system.cpu.u.high = value,
         );
@@ -270,7 +270,7 @@ void main() {
 
     group('LDX [page 35]', () {
       test('LDX S', () {
-        testLDXReg(system, 0x48, system.cpu.s);
+        testLDXReg(system, <int>[0xFD, 0x48], system.cpu.s);
       });
 
       test('LDX P', () {
@@ -288,33 +288,33 @@ void main() {
 
     group('ANI [page 29]', () {
       test('ANI #(X), ', () {
-        testANIRReg(system, 0x49, system.cpu.x, me1: true);
+        testANIRReg(system, <int>[0xFD, 0x49], system.cpu.x, me1: true);
       });
 
       test('ANI #(Y)', () {
-        testANIRReg(system, 0x59, system.cpu.y, me1: true);
+        testANIRReg(system, <int>[0xFD, 0x59], system.cpu.y, me1: true);
       });
 
       test('ANI #(U)', () {
-        testANIRReg(system, 0x69, system.cpu.u, me1: true);
+        testANIRReg(system, <int>[0xFD, 0x69], system.cpu.u, me1: true);
       });
 
       test('ANI #(ab), i', () {
-        testANIab(system, 0xE9, me1: true);
+        testANIab(system, <int>[0xFD, 0xE9], me1: true);
       });
     });
 
     group('STX [page 36]', () {
       test('STX Y', () {
-        testSTXReg(system, 0x5A, system.cpu.y);
+        testSTXReg(system, <int>[0xFD, 0x5A], system.cpu.y);
       });
 
       test('STX U', () {
-        testSTXReg(system, 0x6A, system.cpu.u);
+        testSTXReg(system, <int>[0xFD, 0x6A], system.cpu.u);
       });
 
       test('STX S', () {
-        testSTXReg(system, 0x4E, system.cpu.s);
+        testSTXReg(system, <int>[0xFD, 0x4E], system.cpu.s);
       });
 
       test('STX P', () {
@@ -333,69 +333,69 @@ void main() {
 
     group('ORI [page 30]', () {
       test('ORI #(X), i', () {
-        testORIRReg(system, 0x4B, system.cpu.x, me1: true);
+        testORIRReg(system, <int>[0xFD, 0x4B], system.cpu.x, me1: true);
       });
 
       test('ORI #(Y)', () {
-        testORIRReg(system, 0x5B, system.cpu.y, me1: true);
+        testORIRReg(system, <int>[0xFD, 0x5B], system.cpu.y, me1: true);
       });
 
       test('ORI #(U)', () {
-        testORIRReg(system, 0x6B, system.cpu.u, me1: true);
+        testORIRReg(system, <int>[0xFD, 0x6B], system.cpu.u, me1: true);
       });
 
       test('ORI #(ab), i', () {
-        testORIab(system, 0xEB, me1: true);
+        testORIab(system, <int>[0xFD, 0xEB], me1: true);
       });
     });
 
     group('BII [page 32]', () {
       test('BII #(X)', () {
-        testBIIRReg(system, 0x4D, system.cpu.x, me1: true);
+        testBIIRReg(system, <int>[0xFD, 0x4D], system.cpu.x, me1: true);
       });
 
       test('BII #(Y)', () {
-        testBIIRReg(system, 0x5D, system.cpu.y, me1: true);
+        testBIIRReg(system, <int>[0xFD, 0x5D], system.cpu.y, me1: true);
       });
 
       test('BII #(U)', () {
-        testBIIRReg(system, 0x6D, system.cpu.u, me1: true);
+        testBIIRReg(system, <int>[0xFD, 0x6D], system.cpu.u, me1: true);
       });
 
       test('BII #(ab), i', () {
-        testBIIab(system, 0xED, me1: true);
+        testBIIab(system, <int>[0xFD, 0xED], me1: true);
       });
     });
 
     group('ADI [page 26]', () {
       test('ADI #(X)', () {
-        testADIRReg(system, 0x4F, system.cpu.x, me1: true);
+        testADIRReg(system, <int>[0xFD, 0x4F], system.cpu.x, me1: true);
       });
 
       test('ADI #(Y)', () {
-        testADIRReg(system, 0x5F, system.cpu.y, me1: true);
+        testADIRReg(system, <int>[0xFD, 0x5F], system.cpu.y, me1: true);
       });
 
       test('ADI #(U)', () {
-        testADIRReg(system, 0x6F, system.cpu.u, me1: true);
+        testADIRReg(system, <int>[0xFD, 0x6F], system.cpu.u, me1: true);
       });
 
       test('ADI #(ab), i', () {
-        testADIab(system, 0xEF, me1: true);
+        testADIab(system, <int>[0xFD, 0xEF], me1: true);
       });
     });
 
     group('PSH [page 36]', () {
       test('PSH X', () {
-        testPSHRReg(system, 0x88, system.cpu.x);
+        testPSHRReg(system, <int>[0xFD, 0x88], system.cpu.x);
       });
 
       test('PSH Y', () {
-        testPSHRReg(system, 0x98, system.cpu.y);
+        testPSHRReg(system, <int>[0xFD, 0x98], system.cpu.y);
       });
 
       test('PSH U', () {
-        testPSHRReg(system, 0xA8, system.cpu.u);
+        testPSHRReg(system, <int>[0xFD, 0xA8], system.cpu.u);
       });
 
       test('PSH A', () {
@@ -419,15 +419,15 @@ void main() {
 
     group('DCA [page 26]', () {
       test('DCA #(X)', () {
-        testDCARReg(system, 0x8C, system.cpu.x, me1: true);
+        testDCARReg(system, <int>[0xFD, 0x8C], system.cpu.x, me1: true);
       });
 
       test('DCA #(Y)', () {
-        testDCARReg(system, 0x9C, system.cpu.y, me1: true);
+        testDCARReg(system, <int>[0xFD, 0x9C], system.cpu.y, me1: true);
       });
 
       test('DCA #(U)', () {
-        testDCARReg(system, 0xAC, system.cpu.u, me1: true);
+        testDCARReg(system, <int>[0xFD, 0xAC], system.cpu.u, me1: true);
       });
     });
 
@@ -437,27 +437,27 @@ void main() {
 
     group('ADR [page 26]', () {
       test('ADR X', () {
-        testADRRReg(system, 0xCA, system.cpu.x);
+        testADRRReg(system, <int>[0xFD, 0xCA], system.cpu.x);
       });
 
       test('ADR Y', () {
-        testADRRReg(system, 0xDA, system.cpu.y);
+        testADRRReg(system, <int>[0xFD, 0xDA], system.cpu.y);
       });
 
       test('ADR U', () {
-        testADRRReg(system, 0xEA, system.cpu.u);
+        testADRRReg(system, <int>[0xFD, 0xEA], system.cpu.u);
       });
     });
 
     group('DRR [page 41]', () {
       test('DRR #(X)', () {
-        testDRRRReg(system, 0xD3, me1: true);
+        testDRRRReg(system, <int>[0xFD, 0xD3], me1: true);
       });
     });
 
     group('DRL [page 40]', () {
       test('DRL #(X)', () {
-        testDRLRReg(system, 0xD7, me1: true);
+        testDRLRReg(system, <int>[0xFD, 0xD7], me1: true);
       });
     });
   });

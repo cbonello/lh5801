@@ -60,9 +60,7 @@ class System implements LH5801Core {
   void disp({bool value}) {}
 }
 
-void testSBCRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-
+void testSBCRReg(System system, List<int> opcodes, Register16 register) {
   system.load(0x0000, opcodes);
   system.load(0x10001, <int>[33]);
   system.cpu.a.value = 56;
@@ -80,17 +78,17 @@ void testSBCRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.h, isTrue);
 }
 
-void testSBCab(System system, int opcode, {bool me1 = false}) {
+void testSBCab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[33]);
   system.cpu.a.value = 56;
   system.cpu.t.c = true;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(23));
 
@@ -100,9 +98,7 @@ void testSBCab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.h, isTrue);
 }
 
-void testADCRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-
+void testADCRReg(System system, List<int> opcodes, Register16 register) {
   system.load(0x0000, opcodes);
   system.load(0x10001, <int>[51]);
   system.cpu.a.value = 2;
@@ -120,17 +116,17 @@ void testADCRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.h, isFalse);
 }
 
-void testADCab(System system, int opcode, {bool me1 = false}) {
+void testADCab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[33]);
   system.cpu.a.value = 2;
   system.cpu.t.c = false;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(35));
 
@@ -140,16 +136,17 @@ void testADCab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.h, isFalse);
 }
 
-void testADIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
-  final List<int> opcodes = <int>[0xFD, opcode, 0x20];
+void testADIRReg(System system, List<int> opcodes, Register16 register,
+    {bool me1 = false}) {
+  final List<int> memOpcodes = <int>[...opcodes, 0x20];
   final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(0x10001, <int>[0x33]);
   register.value = 0x0001;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   final int result = system.memRead((me1 ? 0x10000 : 0) + register.value);
   expect(result, equals(0x53));
@@ -161,22 +158,21 @@ void testADIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   expect(system.cpu.t.c, isFalse);
 }
 
-void testADIab(System system, int opcode, {bool me1 = false}) {
+void testADIab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[
-    0xFD,
-    opcode,
+  final List<int> memOpcodes = <int>[
+    ...opcodes,
     (ab >> 8) & 0xFF,
     ab & 0xFF,
     0x20,
   ];
   final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[0x33]);
   final int cycles = system.step(0x0000);
   expect(cycles, equals(23));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   final int result = system.memRead(ab);
   expect(result, equals(0x53));
@@ -188,9 +184,8 @@ void testADIab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.c, isFalse);
 }
 
-void testLDARReg(System system, int opcode, Register16 register) {
+void testLDARReg(System system, List<int> opcodes, Register16 register) {
   void _test(int initialValue, Matcher hFlagMatcher) {
-    final List<int> opcodes = <int>[0xFD, opcode];
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, opcodes);
@@ -215,18 +210,18 @@ void testLDARReg(System system, int opcode, Register16 register) {
   _test(0xFD, isFalse);
 }
 
-void testLDAab(System system, int opcode, {bool me1 = false}) {
+void testLDAab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
-    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[initialValue]);
     system.cpu.a.value = 0;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(16));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     expect(system.cpu.a.value, equals(initialValue));
 
@@ -242,9 +237,7 @@ void testLDAab(System system, int opcode, {bool me1 = false}) {
   _test(0xFD, isFalse);
 }
 
-void testCPARReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-
+void testCPARReg(System system, List<int> opcodes, Register16 register) {
   system.load(0x0000, opcodes);
   system.load(0x10001, <int>[80]);
   system.cpu.a.value = 84;
@@ -257,23 +250,22 @@ void testCPARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.z, isFalse);
 }
 
-void testCPAab(System system, int opcode, {bool me1 = false}) {
+void testCPAab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[80]);
   system.cpu.a.value = 84;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.t.c, isTrue);
   expect(system.cpu.t.z, isFalse);
 }
 
-void testANDRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testANDRReg(System system, List<int> opcodes, Register16 register) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
@@ -294,17 +286,17 @@ void testANDRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testANDab(System system, int opcode, {bool me1 = false}) {
+void testANDab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
   final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[0x0F]);
   system.cpu.a.value = 0xFF;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(0x0F));
 
@@ -316,18 +308,19 @@ void testANDab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testANIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+void testANIRReg(System system, List<int> opcodes, Register16 register,
+    {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
-    final List<int> opcodes = <int>[0xFD, opcode, i & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
     final int memAddress = me1 ? 0x10100 : 0x0100;
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     register.value = memAddress;
     system.load(memAddress, <int>[memValue]);
     final int cycles = system.step(0x0000);
     expect(cycles, equals(17));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(memAddress);
     expect(result, equals((memValue & i) & 0xFF));
@@ -344,17 +337,17 @@ void testANIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x12, 0x36, isFalse);
 }
 
-void testANIab(System system, int opcode, {bool me1 = false}) {
+void testANIab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10001 : 0x0001;
-    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     final int cycles = system.step(0x0000);
     expect(cycles, equals(23));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(ab);
     expect(result, equals((memValue & i) & 0xFF));
@@ -371,9 +364,8 @@ void testANIab(System system, int opcode, {bool me1 = false}) {
   _test(0x12, 0x36, isFalse);
 }
 
-void testPOPRReg(System system, int opcode, Register16 register) {
+void testPOPRReg(System system, List<int> opcodes, Register16 register) {
   void _test(int intialValue) {
-    final List<int> opcodes = <int>[0xFD, opcode];
     final int statusRegister = system.cpu.t.statusRegister;
     const int initialStackValue = 0x46FD;
 
@@ -424,8 +416,7 @@ void testPOPA(System system) {
   _test(0x00, isTrue);
 }
 
-void testORARReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testORARReg(System system, List<int> opcodes, Register16 register) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
@@ -446,17 +437,17 @@ void testORARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testORAab(System system, int opcode, {bool me1 = false}) {
+void testORAab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
   final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[0x27]);
   system.cpu.a.value = 0x58;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(0x7F));
 
@@ -468,18 +459,19 @@ void testORAab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testORIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+void testORIRReg(System system, List<int> opcodes, Register16 register,
+    {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
-    final List<int> opcodes = <int>[0xFD, opcode, i & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     register.value = ab;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(17));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(ab);
     expect(result, equals((memValue | i) & 0xFF));
@@ -496,17 +488,17 @@ void testORIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x10, 0x01, isFalse);
 }
 
-void testORIab(System system, int opcode, {bool me1 = false}) {
+void testORIab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
-    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     final int cycles = system.step(0x0000);
     expect(cycles, equals(23));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(ab);
     expect(result, equals((memValue | i) & 0xFF));
@@ -523,7 +515,7 @@ void testORIab(System system, int opcode, {bool me1 = false}) {
   _test(0x10, 0x01, isFalse);
 }
 
-void testDCSRReg(System system, int opcode, Register16 register) {
+void testDCSRReg(System system, List<int> opcodes, Register16 register) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -532,8 +524,6 @@ void testDCSRReg(System system, int opcode, Register16 register) {
     Matcher cFlagMatcher,
     Matcher hFlagMatcher,
   ) {
-    final List<int> opcodes = <int>[0xFD, opcode];
-
     system.load(0x0000, opcodes);
     system.load(0x10001, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
@@ -555,14 +545,13 @@ void testDCSRReg(System system, int opcode, Register16 register) {
   _test(0x23, 0x54, false, 0x68, isFalse, isFalse);
 }
 
-void testEORRReg(System system, int opcode, Register16 register) {
+void testEORRReg(System system, List<int> opcodes, Register16 register) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
     int expectedAccValue,
     Matcher zFlagMatcher,
   ) {
-    final List<int> opcodes = <int>[0xFD, opcode];
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, opcodes);
@@ -587,7 +576,7 @@ void testEORRReg(System system, int opcode, Register16 register) {
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testEORab(System system, int opcode, {bool me1 = false}) {
+void testEORab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -595,15 +584,15 @@ void testEORab(System system, int opcode, {bool me1 = false}) {
     Matcher zFlagMatcher,
   ) {
     final int ab = me1 ? 0x11234 : 0x1234;
-    final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(17));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     expect(system.cpu.a.value, equals(expectedAccValue));
 
@@ -619,8 +608,7 @@ void testEORab(System system, int opcode, {bool me1 = false}) {
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testSTARReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testSTARReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -635,27 +623,31 @@ void testSTARReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTAab(System system, int opcode, {bool me1 = false}) {
+void testSTAab(System system, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x1CB00 : 0xCB00;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
   final int statusRegister = system.cpu.t.statusRegister;
 
-  system.load(0x0000, opcodes);
+  system.load(0x0000, memOpcodes);
   system.load(ab, <int>[0xFF]);
   system.cpu.a.value = 0x51;
   final int cycles = system.step(0x0000);
   expect(cycles, equals(15));
-  expect(system.cpu.p.value, equals(opcodes.length));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.memRead(ab), equals(system.cpu.a.value));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testBITRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+void testBITRReg(
+  System system,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int regValue = me1 ? 0x10100 : 0x0100;
-    final List<int> opcodes = <int>[0xFD, opcode];
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, opcodes);
@@ -681,18 +673,18 @@ void testBITRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x10, 0x30, isFalse);
 }
 
-void testBITab(System system, int opcode, {bool me1 = false}) {
+void testBITab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(int accValue, int abValue, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
-    final List<int> opcodes = <int>[0xFD, opcode, (abValue >> 8) & 0xFF, abValue & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, (abValue >> 8) & 0xFF, abValue & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[abValue]);
     system.cpu.a.value = accValue;
     final int cycles = system.step(0x0000);
     expect(cycles, equals(17));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Accumulator should not be updated.
     expect(system.cpu.a.value, equals(accValue));
@@ -709,18 +701,19 @@ void testBITab(System system, int opcode, {bool me1 = false}) {
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+void testBIIRReg(System system, List<int> opcodes, Register16 register,
+    {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int regValue = me1 ? 0x10100 : 0x0100;
-    final List<int> opcodes = <int>[0xFD, opcode, i & 0xFF];
+    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     register.value = regValue;
     system.load(regValue, <int>[memValue]);
     final int cycles = system.step(0x0000);
     expect(cycles, equals(14));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Memory should not be updated.
     final int newMemValue = system.memRead(regValue);
@@ -738,23 +731,22 @@ void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIab(System system, int opcode, {bool me1 = false}) {
+void testBIIab(System system, List<int> opcodes, {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
-    final List<int> opcodes = <int>[
-      0xFD,
-      opcode,
+    final List<int> memOpcodes = <int>[
+      ...opcodes,
       (ab >> 8) & 0xFF,
       ab & 0xFF,
       i & 0xFF,
     ];
     final LH5801Flags flags = system.cpu.t.clone();
 
-    system.load(0x0000, opcodes);
+    system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     final int cycles = system.step(0x0000);
     expect(cycles, equals(20));
-    expect(system.cpu.p.value, equals(opcodes.length));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Memory should not be updated.
     final int newABValue = system.memRead(ab);
@@ -772,8 +764,8 @@ void testBIIab(System system, int opcode, {bool me1 = false}) {
   _test(0x10, 0x30, isFalse);
 }
 
-void testIncReg8(System system, int opcode, int Function() get, void Function(int) set) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testIncReg8(
+    System system, List<int> opcodes, int Function() get, void Function(int) set) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
@@ -791,8 +783,8 @@ void testIncReg8(System system, int opcode, int Function() get, void Function(in
   expect(system.cpu.t.c, isFalse);
 }
 
-void testDecReg8(System system, int opcode, int Function() get, void Function(int) set) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testDecReg8(
+    System system, List<int> opcodes, int Function() get, void Function(int) set) {
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, opcodes);
@@ -810,8 +802,7 @@ void testDecReg8(System system, int opcode, int Function() get, void Function(in
   expect(system.cpu.t.c, isFalse);
 }
 
-void testLDXReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testLDXReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -825,8 +816,7 @@ void testLDXReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, statusRegister);
 }
 
-void testSTXReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testSTXReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -840,8 +830,7 @@ void testSTXReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, statusRegister);
 }
 
-void testPSHRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testPSHRReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -859,7 +848,8 @@ void testPSHRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, statusRegister);
 }
 
-void testDCARReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+void testDCARReg(System system, List<int> opcodes, Register16 register,
+    {bool me1 = false}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -868,8 +858,6 @@ void testDCARReg(System system, int opcode, Register16 register, {bool me1 = fal
     Matcher cFlagMatcher,
     Matcher hFlagMatcher,
   ) {
-    final List<int> opcodes = <int>[0xFD, opcode];
-
     system.load(0x0000, opcodes);
     system.load(0x10001, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
@@ -911,8 +899,7 @@ void testTTA(System system) {
   _test(0x00, isTrue);
 }
 
-void testADRRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testADRRReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -927,8 +914,7 @@ void testADRRReg(System system, int opcode, Register16 register) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testDRRRReg(System system, int opcode, {bool me1 = false}) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testDRRRReg(System system, List<int> opcodes, {bool me1 = false}) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -946,8 +932,7 @@ void testDRRRReg(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testDRLRReg(System system, int opcode, {bool me1 = false}) {
-  final List<int> opcodes = <int>[0xFD, opcode];
+void testDRLRReg(System system, List<int> opcodes, {bool me1 = false}) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
