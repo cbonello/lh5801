@@ -683,26 +683,32 @@ void testBITab(System system, int opcode, {bool me1 = false}) {
 }
 
 void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
-  final List<int> opcodes = <int>[0xFD, opcode, 0x0F];
-  final LH5801Flags flags = system.cpu.t.clone();
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final int regValue = me1 ? 0x10100 : 0x0100;
+    final List<int> opcodes = <int>[0xFD, opcode, i & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0xF0]);
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(14));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    register.value = regValue;
+    system.load(regValue, <int>[memValue]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(14));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  // Memory should not be updated.
-  final int result = system.memRead((me1 ? 0x10000 : 0) + register.value);
-  expect(result, equals(0xF0));
+    // Memory should not be updated.
+    final int newMemValue = system.memRead(regValue);
+    expect(newMemValue, memValue);
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x0F, 0x80, isTrue);
+  _test(0x10, 0x30, isFalse);
 }
 
 void testIncReg8(System system, int opcode, int Function() get, void Function(int) set) {
