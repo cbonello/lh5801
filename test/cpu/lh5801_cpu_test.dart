@@ -311,16 +311,28 @@ void main() {
     });
 
     group('DCS [page 28]', () {
+      test('DCS (X)', () {
+        testDCSRReg(system, 13, <int>[0x0C], system.cpu.x);
+      });
+
       test('DCS #(X)', () {
-        testDCSRReg(system, <int>[0xFD, 0x0C], system.cpu.x);
+        testDCSRReg(system, 17, <int>[0xFD, 0x0C], system.cpu.x, me1: true);
+      });
+
+      test('DCS (Y)', () {
+        testDCSRReg(system, 13, <int>[0x1C], system.cpu.y);
       });
 
       test('DCS #(Y)', () {
-        testDCSRReg(system, <int>[0xFD, 0x1C], system.cpu.y);
+        testDCSRReg(system, 17, <int>[0xFD, 0x1C], system.cpu.y, me1: true);
+      });
+
+      test('DCS (U)', () {
+        testDCSRReg(system, 13, <int>[0x2C], system.cpu.u);
       });
 
       test('DCS #(U)', () {
-        testDCSRReg(system, <int>[0xFD, 0x2C], system.cpu.u);
+        testDCSRReg(system, 17, <int>[0xFD, 0x2C], system.cpu.u, me1: true);
       });
     });
 

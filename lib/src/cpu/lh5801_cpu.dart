@@ -740,10 +740,9 @@ class LH5801CPU extends LH5801State {
       case 0x0B: // ORA (X)
         _orAccumulator(_core.memRead(_me0(x.value)));
         break;
-// 	case 0x0C: // DCS (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.dcs(o8)
-// 		}
+      case 0x0C: // DCS (X)
+        _dcs(_core.memRead(_me0(x.value)));
+        break;
 // 	case 0x0D: // EOR (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.eor(o8)
@@ -793,10 +792,9 @@ class LH5801CPU extends LH5801State {
       case 0x1B: // ORA (Y)
         _orAccumulator(_core.memRead(_me0(y.value)));
         break;
-// 	case 0x1C: // DCS (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.dcs(o8)
-// 		}
+      case 0x1C: // DCS (Y)
+        _dcs(_core.memRead(_me0(y.value)));
+        break;
 // 	case 0x1D: // EOR (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.eor(o8)
@@ -846,10 +844,9 @@ class LH5801CPU extends LH5801State {
       case 0x2B: // ORA (U)
         _orAccumulator(_core.memRead(_me0(u.value)));
         break;
-// 	case 0x2C: // DCS (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.dcs(o8)
-// 		}
+      case 0x2C: // DCS (U)
+        _dcs(_core.memRead(_me0(u.value)));
+        break;
 // 	case 0x2D: // EOR (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.eor(o8)

@@ -659,7 +659,13 @@ void testORIab(System system, List<int> opcodes, {bool me1 = false}) {
   _test(0x10, 0x01, isFalse);
 }
 
-void testDCSRReg(System system, List<int> opcodes, Register16 register) {
+void testDCSRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -668,13 +674,15 @@ void testDCSRReg(System system, List<int> opcodes, Register16 register) {
     Matcher cFlagMatcher,
     Matcher hFlagMatcher,
   ) {
+    final int rregValue = me1 ? 0x10100 : 0x0100;
+
     system.load(0x0000, opcodes);
-    system.load(0x10001, <int>[initialOp2Value]);
+    register.value = rregValue;
+    system.load(rregValue, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
-    register.value = 0x0001;
     system.cpu.t.c = initialCarryValue;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     expect(system.cpu.a.value, expectedAccValue);
