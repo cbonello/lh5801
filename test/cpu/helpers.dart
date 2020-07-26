@@ -625,50 +625,61 @@ void testSTAab(System system, int opcode, {bool me1 = false}) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testBITRReg(System system, int opcode, Register16 register) {
-  final List<int> opcodes = <int>[0xFD, opcode];
-  final LH5801Flags flags = system.cpu.t.clone();
+void testBITRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final int regValue = me1 ? 0x10100 : 0x0100;
+    final List<int> opcodes = <int>[0xFD, opcode];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x0F]);
-  system.cpu.a.value = 0x80;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    register.value = regValue;
+    system.load(regValue, <int>[memValue]);
+    system.cpu.a.value = i;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(11));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  // Accumulator should not be updated.
-  expect(system.cpu.a.value, equals(0x80));
+    // Accumulator should not be updated.
+    expect(system.cpu.a.value, equals(i));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x0F, 0x80, isTrue);
+  _test(0x10, 0x30, isFalse);
 }
 
 void testBITab(System system, int opcode, {bool me1 = false}) {
-  final int ab = me1 ? 0x1CB00 : 0xCB00;
-  final List<int> opcodes = <int>[0xFD, opcode, (ab >> 8) & 0xFF, ab & 0xFF];
-  final LH5801Flags flags = system.cpu.t.clone();
+  void _test(int accValue, int abValue, Matcher zFlagMatcher) {
+    final int ab = me1 ? 0x1CB00 : 0xCB00;
+    final List<int> opcodes = <int>[0xFD, opcode, (abValue >> 8) & 0xFF, abValue & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(ab, <int>[0x0F]);
-  system.cpu.a.value = 0x80;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[abValue]);
+    system.cpu.a.value = accValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(17));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  // Accumulator should not be updated.
-  expect(system.cpu.a.value, equals(0x80));
+    // Accumulator should not be updated.
+    expect(system.cpu.a.value, equals(accValue));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isTrue);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, isTrue);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x0F, 0x80, isTrue);
+  _test(0x10, 0x30, isFalse);
 }
 
 void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = false}) {
