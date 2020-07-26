@@ -750,8 +750,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.eor(o8)
 // 		}
-// 	case 0x0E: // STA (X)
-// 		err = cpu.Write(_me0(x.value), a.value)
+      case 0x0E: // STA (X)
+        _core.memWrite(_me0(x.value), a.value);
+        break;
 // 	case 0x0F: // BIT (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.bit(a.value, o8)
@@ -804,8 +805,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.eor(o8)
 // 		}
-// 	case 0x1E: // STA (Y)
-// 		err = cpu.Write(_me0(cpu.y.Value()), a.value)
+      case 0x1E: // STA (Y)
+        _core.memWrite(_me0(y.value), a.value);
+        break;
 // 	case 0x1F: // BIT (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.bit(a.value, o8)
@@ -857,8 +859,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.eor(o8)
 // 		}
-// 	case 0x2E: // STA (U)
-// 		err = cpu.Write(_me0(cpu.u.Value()), a.value)
+      case 0x2E: // STA (U)
+        _core.memWrite(_me0(u.value), a.value);
+        break;
 // 	case 0x2F: // BIT (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.bit(a.value, o8)

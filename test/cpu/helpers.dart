@@ -737,17 +737,24 @@ void testSTAReg(System system, List<int> opcodes, Register8 register) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTARReg(System system, List<int> opcodes, Register16 register) {
+void testSTARReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  final int rregValue = me1 ? 0x10100 : 0x0100;
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
   system.cpu.a.value = 0x33;
-  register.value = 0x0001;
+  register.value = rregValue;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(10));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.memRead(0x10000 | system.cpu.x.value), equals(system.cpu.a.value));
+  expect(system.memRead(rregValue), equals(system.cpu.a.value));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }

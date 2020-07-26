@@ -343,16 +343,28 @@ void main() {
         testSTAReg(system, <int>[0x28], system.cpu.u.highRegister);
       });
 
+      test('STA (X)', () {
+        testSTARReg(system, 6, <int>[0x0E], system.cpu.x);
+      });
+
       test('STA #(X)', () {
-        testSTARReg(system, <int>[0xFD, 0x0E], system.cpu.x);
+        testSTARReg(system, 10, <int>[0xFD, 0x0E], system.cpu.x, me1: true);
+      });
+
+      test('STA (Y)', () {
+        testSTARReg(system, 6, <int>[0x1E], system.cpu.y);
       });
 
       test('STA #(Y)', () {
-        testSTARReg(system, <int>[0xFD, 0x1E], system.cpu.y);
+        testSTARReg(system, 10, <int>[0xFD, 0x1E], system.cpu.y, me1: true);
+      });
+
+      test('STA (U)', () {
+        testSTARReg(system, 6, <int>[0x2E], system.cpu.u);
       });
 
       test('STA #(U)', () {
-        testSTARReg(system, <int>[0xFD, 0x2E], system.cpu.u);
+        testSTARReg(system, 10, <int>[0xFD, 0x2E], system.cpu.u, me1: true);
       });
 
       test('STA #(ab)', () {
