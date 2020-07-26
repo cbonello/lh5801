@@ -42,15 +42,27 @@ void main() {
       });
 
       test('SBC #(X)', () {
-        testSBCRReg(system, <int>[0xFD, 0x01], system.cpu.x);
+        testSBCRReg(system, 11, <int>[0xFD, 0x01], system.cpu.x, me1: true);
+      });
+
+      test('SBC (X)', () {
+        testSBCRReg(system, 7, <int>[0x01], system.cpu.x);
       });
 
       test('SBC #(Y)', () {
-        testSBCRReg(system, <int>[0xFD, 0x11], system.cpu.y);
+        testSBCRReg(system, 11, <int>[0xFD, 0x11], system.cpu.y, me1: true);
+      });
+
+      test('SBC (Y)', () {
+        testSBCRReg(system, 7, <int>[0x11], system.cpu.y);
       });
 
       test('SBC #(U)', () {
-        testSBCRReg(system, <int>[0xFD, 0x21], system.cpu.u);
+        testSBCRReg(system, 11, <int>[0xFD, 0x21], system.cpu.u, me1: true);
+      });
+
+      test('SBC (U)', () {
+        testSBCRReg(system, 7, <int>[0x21], system.cpu.u);
       });
 
       test('SBC #(ab)', () {

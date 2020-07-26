@@ -77,14 +77,22 @@ void testSBCReg(System system, List<int> opcodes, Register8 register) {
   expect(system.cpu.t.h, isTrue);
 }
 
-void testSBCRReg(System system, List<int> opcodes, Register16 register) {
+void testSBCRReg(
+  System system,
+  int cycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  final int rregValue = me1 ? 0x10100 : 0x0100;
+
   system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[33]);
+  register.value = rregValue;
+  system.load(rregValue, <int>[33]);
   system.cpu.a.value = 56;
-  register.value = 0x0001;
   system.cpu.t.c = true;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
+  expect(cycles, equals(cycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
   expect(system.cpu.a.value, equals(23));

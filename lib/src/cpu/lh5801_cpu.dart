@@ -708,8 +708,7 @@ class LH5801CPU extends LH5801State {
         _sbc(x.low);
         break;
       case 0x01: // SBC (X)
-        o8 = _readOp8();
-        _sbc(o8);
+        _sbc(_core.memRead(_me0(x.value)));
         break;
 // 	case 0x02: // ADC XL
 // 		cpu.addAccumulator(*cpu.x.Low())
@@ -759,10 +758,9 @@ class LH5801CPU extends LH5801State {
       case 0x10: // SBC YL
         _sbc(y.low);
         break;
-// 	case 0x11: // SBC (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			_sbc(o8)
-// 		}
+      case 0x11: // SBC (Y)
+        _sbc(_core.memRead(_me0(y.value)));
+        break;
 // 	case 0x12: // ADC YL
 // 		cpu.addAccumulator(*cpu.y.Low())
 // 	case 0x13: // ADC (Y)
@@ -811,10 +809,9 @@ class LH5801CPU extends LH5801State {
       case 0x20: // SBC UL
         _sbc(u.low);
         break;
-// 	case 0x21: // SBC (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			_sbc(o8)
-// 		}
+      case 0x21: // SBC (U)
+        _sbc(_core.memRead(_me0(u.value)));
+        break;
 // 	case 0x22: // ADC UL
 // 		cpu.addAccumulator(*cpu.u.Low())
 // 	case 0x23: // ADC (U)
