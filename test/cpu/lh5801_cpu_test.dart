@@ -71,6 +71,30 @@ void main() {
     });
 
     group('ADC [page 25]', () {
+      test('ADC XL', () {
+        testADCReg(system, <int>[0x02], system.cpu.x.lowRegister);
+      });
+
+      test('ADC XH', () {
+        testADCReg(system, <int>[0x82], system.cpu.x.highRegister);
+      });
+
+      test('ADC YL', () {
+        testADCReg(system, <int>[0x12], system.cpu.y.lowRegister);
+      });
+
+      test('ADC YH', () {
+        testADCReg(system, <int>[0x92], system.cpu.y.highRegister);
+      });
+
+      test('ADC UL', () {
+        testADCReg(system, <int>[0x22], system.cpu.u.lowRegister);
+      });
+
+      test('ADC UH', () {
+        testADCReg(system, <int>[0xA2], system.cpu.u.highRegister);
+      });
+
       test('ADC #(X)', () {
         testADCRReg(system, <int>[0xFD, 0x03], system.cpu.x);
       });
