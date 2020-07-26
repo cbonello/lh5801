@@ -337,16 +337,28 @@ void main() {
     });
 
     group('EOR [page 30]', () {
+      test('EOR (X)', () {
+        testEORRReg(system, 7, <int>[0x0D], system.cpu.x);
+      });
+
       test('EOR #(X)', () {
-        testEORRReg(system, <int>[0xFD, 0x0D], system.cpu.x);
+        testEORRReg(system, 11, <int>[0xFD, 0x0D], system.cpu.x, me1: true);
+      });
+
+      test('EOR (Y)', () {
+        testEORRReg(system, 7, <int>[0x1D], system.cpu.y);
       });
 
       test('EOR #(Y)', () {
-        testEORRReg(system, <int>[0xFD, 0x1D], system.cpu.y);
+        testEORRReg(system, 11, <int>[0xFD, 0x1D], system.cpu.y, me1: true);
+      });
+
+      test('EOR (U)', () {
+        testEORRReg(system, 7, <int>[0x2D], system.cpu.u);
       });
 
       test('EOR #(U)', () {
-        testEORRReg(system, <int>[0xFD, 0x2D], system.cpu.u);
+        testEORRReg(system, 11, <int>[0xFD, 0x2D], system.cpu.u, me1: true);
       });
 
       test('EOR #(ab)', () {

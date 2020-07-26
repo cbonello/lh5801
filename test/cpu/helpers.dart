@@ -697,21 +697,28 @@ void testDCSRReg(
   _test(0x23, 0x54, false, 0x68, isFalse, isFalse);
 }
 
-void testEORRReg(System system, List<int> opcodes, Register16 register) {
+void testEORRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
     int expectedAccValue,
     Matcher zFlagMatcher,
   ) {
+    final int rregValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, opcodes);
-    system.load(0x10001, <int>[initialOp2Value]);
+    register.value = rregValue;
+    system.load(rregValue, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
-    register.value = 0x0001;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(11));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     expect(system.cpu.a.value, equals(expectedAccValue));
