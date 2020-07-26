@@ -17,6 +17,30 @@ void main() {
     });
 
     group('SBC [page 27]', () {
+      test('SBC XL', () {
+        testSBCReg(system, <int>[0x00], system.cpu.x.lowRegister);
+      });
+
+      test('SBC XH', () {
+        testSBCReg(system, <int>[0x80], system.cpu.x.highRegister);
+      });
+
+      test('SBC YL', () {
+        testSBCReg(system, <int>[0x10], system.cpu.y.lowRegister);
+      });
+
+      test('SBC YH', () {
+        testSBCReg(system, <int>[0x90], system.cpu.y.highRegister);
+      });
+
+      test('SBC UL', () {
+        testSBCReg(system, <int>[0x00], system.cpu.u.lowRegister);
+      });
+
+      test('SBC UH', () {
+        testSBCReg(system, <int>[0xA0], system.cpu.u.highRegister);
+      });
+
       test('SBC #(X)', () {
         testSBCRReg(system, <int>[0xFD, 0x01], system.cpu.x);
       });

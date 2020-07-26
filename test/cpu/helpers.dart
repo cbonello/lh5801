@@ -60,6 +60,23 @@ class System implements LH5801Core {
   void disp({bool value}) {}
 }
 
+void testSBCReg(System system, List<int> opcodes, Register8 register) {
+  system.load(0x0000, opcodes);
+  system.cpu.a.value = 56;
+  register.value = 33;
+  system.cpu.t.c = true;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(6));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(23));
+
+  expect(system.cpu.t.c, isTrue);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.h, isTrue);
+}
+
 void testSBCRReg(System system, List<int> opcodes, Register16 register) {
   system.load(0x0000, opcodes);
   system.load(0x10001, <int>[33]);

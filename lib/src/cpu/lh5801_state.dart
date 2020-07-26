@@ -55,9 +55,11 @@ class Register16 extends Object {
     low = newValue & 0xFF;
   }
 
+  Register8 get highRegister => _bytes[1];
   int get high => _bytes[1].value;
   set high(int h) => _bytes[1].value = h & 0xFF;
 
+  Register8 get lowRegister => _bytes[0];
   int get low => _bytes[0].value;
   set low(int l) => _bytes[0].value = l & 0xFF;
 

@@ -357,11 +357,7 @@ class LH5801CPU extends LH5801State {
 
   int step() {
     final int opcode = _readOp8();
-    int cycles;
-
-    if (opcode == 0xFD) {
-      cycles = stepExtendedInstruction();
-    }
+    final int cycles = opcode == 0xFD ? stepExtendedInstruction() : stepOpcode(opcode);
 
     return cycles;
   }
@@ -702,17 +698,19 @@ class LH5801CPU extends LH5801State {
     return cycles;
   }
 
-// int stepOpcode(int opcode)  {
-// 	final int cyclesTable = instructionTable[opcode].cycles;
-// 	int cycles = cyclesTable.basic;
+  int stepOpcode(int opcode) {
+    final CyclesCount cyclesTable = instructionTable[opcode].cycles;
+    final int cycles = cyclesTable.basic;
+    int o8, p8, o16;
 
-// 	switch (opcode) {
-// 	case 0x00: // SBC XL
-// 		cpu.sbc(*cpu.x.Low())
-// 	case 0x01: // SBC (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.sbc(o8)
-// 		}
+    switch (opcode) {
+      case 0x00: // SBC XL
+        _sbc(x.low);
+        break;
+      case 0x01: // SBC (X)
+        o8 = _readOp8();
+        _sbc(o8);
+        break;
 // 	case 0x02: // ADC XL
 // 		cpu.addAccumulator(*cpu.x.Low())
 // 	case 0x03: // ADC (X)
@@ -758,11 +756,12 @@ class LH5801CPU extends LH5801State {
 // 			cpu.bit(a.value, o8)
 // 		}
 
-// 	case 0x10: // SBC YL
-// 		cpu.sbc(*cpu.y.Low())
+      case 0x10: // SBC YL
+        _sbc(y.low);
+        break;
 // 	case 0x11: // SBC (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.sbc(o8)
+// 			_sbc(o8)
 // 		}
 // 	case 0x12: // ADC YL
 // 		cpu.addAccumulator(*cpu.y.Low())
@@ -809,11 +808,12 @@ class LH5801CPU extends LH5801State {
 // 			cpu.bit(a.value, o8)
 // 		}
 
-// 	case 0x20: // SBC UL
-// 		cpu.sbc(*cpu.u.Low())
+      case 0x20: // SBC UL
+        _sbc(u.low);
+        break;
 // 	case 0x21: // SBC (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.sbc(o8)
+// 			_sbc(o8)
 // 		}
 // 	case 0x22: // ADC UL
 // 		cpu.addAccumulator(*cpu.u.Low())
@@ -1004,8 +1004,9 @@ class LH5801CPU extends LH5801State {
 // 			err = cpu.addMemory(_me0(cpu.u.Value()), o8)
 // 		}
 
-// 	case 0x80: // SBC XH
-// 		cpu.sbc(*cpu.x.High())
+      case 0x80: // SBC XH
+        _sbc(x.high);
+        break;
 // 	case 0x81: // BCR + i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagC) == false); err == nil {
 // 			cycles += c
@@ -1061,8 +1062,9 @@ class LH5801CPU extends LH5801State {
 // 			cycles += c
 // 		}
 
-// 	case 0x90: // SBC YH
-// 		cpu.sbc(*cpu.y.High())
+      case 0x90: // SBC YH
+        _sbc(y.high);
+        break;
 // 	case 0x91: // BCR - i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagC) == false); err == nil {
 // 			cycles += c
@@ -1112,11 +1114,11 @@ class LH5801CPU extends LH5801State {
 // 			cycles += c
 // 		}
 
-// 	case 0xA0: // SBC UH
-// 		cpu.sbc(*cpu.u.High())
-// 	case 0xA1: // SBC (ab)
+      case 0xA0: // SBC UH
+        _sbc(x.high);
+        break; // 	case 0xA1: // SBC (ab)
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
-// 			cpu.sbc(o8)
+// 			_sbc(o8)
 // 		}
 // 	case 0xA2: // ADC UH
 // 		cpu.addAccumulator(*cpu.u.High())
@@ -1169,7 +1171,7 @@ class LH5801CPU extends LH5801State {
 
 // 	case 0xB1: // SBI i
 // 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.sbc(o8)
+// 			_sbc(o8)
 // 		}
 // 	case 0xB3: // ADI A, i
 // 		if o8, err = cpu.readOp8(); err == nil {
@@ -1418,10 +1420,10 @@ class LH5801CPU extends LH5801State {
 // 	case 0xFB: // SEC
 // 		cpu.t.Set(FlagC)
 
-// 	default:
-// 		err = fmt.Errorf("lh5801 illegal opcode: %v", opcode)
-// 	}
+      default:
+        print('LH5801 illegal opcode: $opcode');
+    }
 
-// 	return
-// }
+    return cycles;
+  }
 }
