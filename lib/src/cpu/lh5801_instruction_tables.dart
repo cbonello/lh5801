@@ -2768,7 +2768,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.reg(), 'XH'),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(5, 0),
+    CyclesCount(6, 0),
   ),
   const InstructionDescriptor(
     // BHS +i
