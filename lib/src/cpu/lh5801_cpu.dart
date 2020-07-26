@@ -731,10 +731,9 @@ class LH5801CPU extends LH5801State {
       case 0x08: // STA XH
         x.high = a.value;
         break;
-// 	case 0x09: // AND (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.andAccumulator(o8)
-// 		}
+      case 0x09: // AND (X)
+        _andAccumulator(_core.memRead(_me0(x.value)));
+        break;
       case 0x0A: // STA XL
         x.low = a.value;
         break;
@@ -786,10 +785,9 @@ class LH5801CPU extends LH5801State {
       case 0x18: // STA YH
         y.high = a.value;
         break;
-// 	case 0x19: // AND (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.andAccumulator(o8)
-// 		}
+      case 0x19: // AND (Y)
+        _andAccumulator(_core.memRead(_me0(y.value)));
+        break;
       case 0x1A: // STA YL
         y.low = a.value;
         break;
@@ -840,10 +838,10 @@ class LH5801CPU extends LH5801State {
       case 0x28: // STA UH
         u.high = a.value;
         break;
-// 	case 0x29: // AND (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.andAccumulator(o8)
-// 		}
+      case 0x29: // AND (U)
+        _andAccumulator(_core.memRead(_me0(u.value)));
+        break;
+
       case 0x2A: // STA UL
         u.low = a.value;
         break;

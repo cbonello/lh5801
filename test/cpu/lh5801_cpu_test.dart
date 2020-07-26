@@ -233,16 +233,28 @@ void main() {
     });
 
     group('AND [page 29]', () {
+      test('AND (X)', () {
+        testANDRReg(system, 7, <int>[0x09], system.cpu.x);
+      });
+
       test('AND #(X)', () {
-        testANDRReg(system, <int>[0xFD, 0x09], system.cpu.x);
+        testANDRReg(system, 11, <int>[0xFD, 0x09], system.cpu.x, me1: true);
+      });
+
+      test('AND (Y)', () {
+        testANDRReg(system, 7, <int>[0x19], system.cpu.y);
       });
 
       test('AND #(Y)', () {
-        testANDRReg(system, <int>[0xFD, 0x19], system.cpu.y);
+        testANDRReg(system, 11, <int>[0xFD, 0x19], system.cpu.y, me1: true);
+      });
+
+      test('AND (U)', () {
+        testANDRReg(system, 7, <int>[0x29], system.cpu.u);
       });
 
       test('AND #(U)', () {
-        testANDRReg(system, <int>[0xFD, 0x29], system.cpu.u);
+        testANDRReg(system, 11, <int>[0xFD, 0x29], system.cpu.u, me1: true);
       });
 
       test('AND #(ab)', () {

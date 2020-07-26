@@ -379,25 +379,38 @@ void testCPAab(System system, List<int> opcodes, {bool me1 = false}) {
   expect(system.cpu.t.z, isFalse);
 }
 
-void testANDRReg(System system, List<int> opcodes, Register16 register) {
-  final LH5801Flags flags = system.cpu.t.clone();
+void testANDRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  void _test(int op1, int op2, Matcher zFlagMatcher) {
+    final int rregValue = me1 ? 0x10100 : 0x0100;
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[0x0F]);
-  system.cpu.a.value = 0xFF;
-  register.value = 0x0001;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.load(0x0000, opcodes);
+    register.value = rregValue;
+    system.load(rregValue, <int>[op2]);
+    system.cpu.a.value = op1;
+    register.value = rregValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(expectedCycles));
+    expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.cpu.a.value, equals(0x0F));
+    expect(system.cpu.a.value, equals((op1 & op2) & 0xFF));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isFalse);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0xF0, 0x0F, isTrue);
+  _test(0xFF, 0x0F, isFalse);
 }
 
 void testANDab(System system, List<int> opcodes, {bool me1 = false}) {
