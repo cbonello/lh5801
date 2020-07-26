@@ -125,6 +125,30 @@ void main() {
     });
 
     group('LDA [page 33]', () {
+      test('LDA XL', () {
+        testLDAReg(system, <int>[0x04], system.cpu.x.lowRegister);
+      });
+
+      test('LDA XH', () {
+        testLDAReg(system, <int>[0x84], system.cpu.x.highRegister);
+      });
+
+      test('LDA YL', () {
+        testLDAReg(system, <int>[0x14], system.cpu.y.lowRegister);
+      });
+
+      test('LDA YH', () {
+        testLDAReg(system, <int>[0x94], system.cpu.y.highRegister);
+      });
+
+      test('LDA UL', () {
+        testLDAReg(system, <int>[0x24], system.cpu.u.lowRegister);
+      });
+
+      test('LDA UH', () {
+        testLDAReg(system, <int>[0xA4], system.cpu.u.highRegister);
+      });
+
       test('LDA #(X)', () {
         testLDARReg(system, <int>[0xFD, 0x05], system.cpu.x);
       });

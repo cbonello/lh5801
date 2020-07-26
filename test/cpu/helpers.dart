@@ -234,6 +234,31 @@ void testADIab(System system, List<int> opcodes, {bool me1 = false}) {
   expect(system.cpu.t.c, isFalse);
 }
 
+void testLDAReg(System system, List<int> opcodes, Register8 register) {
+  void _test(int initialValue, Matcher hFlagMatcher) {
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.cpu.a.value = 2;
+    register.value = initialValue;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(5));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, equals(initialValue));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, hFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0, isTrue);
+  _test(0xFD, isFalse);
+}
+
 void testLDARReg(System system, List<int> opcodes, Register16 register) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final LH5801Flags flags = system.cpu.t.clone();

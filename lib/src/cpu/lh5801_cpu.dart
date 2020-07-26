@@ -716,11 +716,9 @@ class LH5801CPU extends LH5801State {
       case 0x03: // ADC (X)
         _addAccumulator(_core.memRead(_me0(x.value)));
         break;
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.addAccumulator(o8)
-// 		}
-// 	case 0x04: // LDA XL
-// 		cpu.lda(*cpu.x.Low())
+      case 0x04: // LDA XL
+        _lda(x.low);
+        break;
 // 	case 0x05: // LDA (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.lda(o8)
@@ -770,9 +768,10 @@ class LH5801CPU extends LH5801State {
       case 0x13: // ADC (Y)
         _addAccumulator(_core.memRead(_me0(y.value)));
         break;
-// 	case 0x14: // LDA YL
-// 		cpu.lda(*cpu.y.Low())
-// 	case 0x15: // LDA (Y)
+      case 0x14: // LDA YL
+        _lda(y.low);
+        break;
+      // 	case 0x15: // LDA (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.lda(o8)
 // 		}
@@ -821,8 +820,9 @@ class LH5801CPU extends LH5801State {
       case 0x23: // ADC (U)
         _addAccumulator(_core.memRead(_me0(u.value)));
         break;
-      // 	case 0x24: // LDA UL
-// 		cpu.lda(*cpu.u.Low())
+      case 0x24: // LDA UL
+        _lda(u.low);
+        break;
 // 	case 0x25: // LDA (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.lda(o8)
@@ -1018,8 +1018,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagC)); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x84: // LDA XH
-// 		a.value = *cpu.x.High()
+      case 0x84: // LDA XH
+        _lda(x.high);
+        break;
 // 	case 0x85: // BHR + i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
@@ -1077,8 +1078,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagC)); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x94: // LDA YH
-// 		a.value = *cpu.y.High()
+      case 0x94: // LDA YH
+        _lda(y.high);
+        break;
 // 	case 0x95: // BHR - i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
@@ -1129,8 +1131,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.addAccumulator(o8)
 // 		}
-// 	case 0xA4: // LDA UH
-// 		a.value = *cpu.u.High()
+      case 0xA4: // LDA UH
+        _lda(u.high);
+        break;
 // 	case 0xA5: // LDA (ab)
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			a.value = o8
