@@ -755,6 +755,20 @@ void main() {
       });
     });
 
+    group('SIN [page 36]', () {
+      test('SIN X', () {
+        testSINRReg(system, <int>[0x41], system.cpu.x);
+      });
+
+      test('SIN Y', () {
+        testSINRReg(system, <int>[0x51], system.cpu.y);
+      });
+
+      test('SIN U', () {
+        testSINRReg(system, <int>[0x61], system.cpu.u);
+      });
+    });
+
     group('SDE [page 35]', () {
       test('SDE X', () {
         testSDERReg(system, <int>[0x43], system.cpu.x);

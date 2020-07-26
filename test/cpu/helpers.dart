@@ -1144,22 +1144,52 @@ void testDRLRReg(System system, List<int> opcodes, {bool me1 = false}) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
+void testSINRReg(System system, List<int> opcodes, Register16 register) {
+  void _test(int regValue) {
+    final int statusRegister = system.cpu.t.statusRegister;
+
+    system.cpu.p.value = 0x1000;
+    system.load(0x1000, opcodes);
+    register.value = regValue;
+    system.load(regValue, <int>[0x00]);
+    system.cpu.a.value = 0x6F;
+    final int cycles = system.step(0x1000);
+    expect(cycles, equals(6));
+    expect(system.cpu.p.value, equals(0x1000 + opcodes.length));
+
+    expect(system.cpu.a.value, equals(0x6F));
+    final int x = system.memRead(regValue);
+    expect(x, equals(0x6F));
+    expect(register.value, equals((regValue + 1) & 0xFFFF));
+
+    expect(system.cpu.t.statusRegister, equals(statusRegister));
+  }
+
+  _test(0x0100);
+  _test(0xFFFF);
+}
+
 void testSDERReg(System system, List<int> opcodes, Register16 register) {
-  const int regValue = 0x0100;
-  final int statusRegister = system.cpu.t.statusRegister;
+  void _test(int regValue) {
+    final int statusRegister = system.cpu.t.statusRegister;
 
-  system.load(0x0000, opcodes);
-  register.value = regValue;
-  system.load(regValue, <int>[0x00]);
-  system.cpu.a.value = 0x6F;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(6));
-  expect(system.cpu.p.value, equals(opcodes.length));
+    system.cpu.p.value = 0x1000;
+    system.load(0x1000, opcodes);
+    register.value = regValue;
+    system.load(regValue, <int>[0x00]);
+    system.cpu.a.value = 0x6F;
+    final int cycles = system.step(0x1000);
+    expect(cycles, equals(6));
+    expect(system.cpu.p.value, equals(0x1000 + opcodes.length));
 
-  expect(system.cpu.a.value, equals(0x6F));
-  final int x = system.memRead(regValue);
-  expect(x, equals(0x6F));
-  expect(register.value, equals(regValue - 1));
+    expect(system.cpu.a.value, equals(0x6F));
+    final int x = system.memRead(regValue);
+    expect(x, equals(0x6F));
+    expect(register.value, equals((regValue - 1) & 0xFFFF));
 
-  expect(system.cpu.t.statusRegister, equals(statusRegister));
+    expect(system.cpu.t.statusRegister, equals(statusRegister));
+  }
+
+  _test(0x0100);
+  _test(0x0000);
 }

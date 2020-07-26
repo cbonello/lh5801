@@ -302,7 +302,7 @@ class LH5801CPU extends LH5801State {
 
   void _sbc(int value) => a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
 
-  void _sde(Register16 register) => _core.memWrite(register.value--, a.value);
+  void _sde(Register16 register) => _core.memWrite(_me0(register.value--), a.value);
 
   void _shl() {
     final int accumulator = a.value;
@@ -323,7 +323,7 @@ class LH5801CPU extends LH5801State {
     t.c = (accumulator & 0x01) != 0;
   }
 
-  void _sin(Register16 register) => _core.memWrite(_me0(register.value), a.value);
+  void _sin(Register16 register) => _core.memWrite(_me0(register.value++), a.value);
 
   void _sjp(int address) {
     _push16(p.value);
@@ -859,8 +859,9 @@ class LH5801CPU extends LH5801State {
       case 0x40: // INC XL
         x.low = _binaryAdd(x.low, 1);
         break;
-// 	case 0x41: // SIN X
-// 		err = cpu.sin(&cpu.x)
+      case 0x41: // SIN X
+        _sin(x);
+        break;
       case 0x42: // DEC XL
         x.low = _binaryAdd(x.low, 0xFF);
         break;
@@ -909,8 +910,9 @@ class LH5801CPU extends LH5801State {
       case 0x50: // INC YL
         y.low = _binaryAdd(y.low, 1);
         break;
-// 	case 0x51: // SIN Y
-// 		err = cpu.sin(&cpu.y)
+      case 0x51: // SIN Y
+        _sin(y);
+        break;
       case 0x52: // DEC YL
         y.low = _binaryAdd(y.low, 0xFF);
         break;
@@ -959,8 +961,9 @@ class LH5801CPU extends LH5801State {
       case 0x60: // INC UL
         u.low = _binaryAdd(u.low, 1);
         break;
-// 	case 0x61: // SIN U
-// 		err = cpu.sin(u)
+      case 0x61: // SIN U
+        _sin(u);
+        break;
       case 0x62: // DEC UL
         u.low = _binaryAdd(u.low, 0xFF);
         break;
