@@ -868,8 +868,9 @@ class LH5801CPU extends LH5801State {
       case 0x43: // SDE X
         _sde(x);
         break;
-// 	case 0x44: // INC X
-// 		cpu.incRegister16(&cpu.x)
+      case 0x44: // INC X
+        x.value = _binaryAdd(x.value, 1);
+        break;
 // 	case 0x45: // LIN X
 // 		err = cpu.lin(&cpu.x)
 // 	case 0x46: // DEC X
@@ -919,8 +920,9 @@ class LH5801CPU extends LH5801State {
       case 0x53: // SDE Y
         _sde(y);
         break;
-// 	case 0x54: // INC Y
-// 		cpu.incRegister16(&cpu.y)
+      case 0x54: // INC Y
+        y.value = _binaryAdd(y.value, 1);
+        break;
 // 	case 0x55: // LIN Y
 // 		err = cpu.lin(&cpu.y)
 // 	case 0x56: // DEC Y
@@ -970,8 +972,9 @@ class LH5801CPU extends LH5801State {
       case 0x63: // SDE U
         _sde(u);
         break;
-// 	case 0x64: // INC U
-// 		cpu.incRegister16(u)
+      case 0x64: // INC U
+        u.value = _binaryAdd(u.value, 1);
+        break;
 // 	case 0x65: // LIN U
 // 		err = cpu.lin(u)
 // 	case 0x66: // DEC U

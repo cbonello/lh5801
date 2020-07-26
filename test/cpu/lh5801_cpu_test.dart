@@ -504,6 +504,33 @@ void main() {
           system.cpu.u.highRegister,
         );
       });
+
+      test('INC X', () {
+        testIncReg16(
+          system,
+          5,
+          <int>[0x44],
+          system.cpu.x,
+        );
+      });
+
+      test('INC Y', () {
+        testIncReg16(
+          system,
+          5,
+          <int>[0x54],
+          system.cpu.y,
+        );
+      });
+
+      test('INC U', () {
+        testIncReg16(
+          system,
+          5,
+          <int>[0x64],
+          system.cpu.u,
+        );
+      });
     });
 
     group('DEC [page 31]', () {
