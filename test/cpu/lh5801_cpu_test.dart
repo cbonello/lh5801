@@ -319,6 +319,30 @@ void main() {
     });
 
     group('STA [page 35]', () {
+      test('STA XL', () {
+        testSTAReg(system, <int>[0x0A], system.cpu.x.lowRegister);
+      });
+
+      test('STA XH', () {
+        testSTAReg(system, <int>[0x08], system.cpu.x.highRegister);
+      });
+
+      test('STA YL', () {
+        testSTAReg(system, <int>[0x1A], system.cpu.y.lowRegister);
+      });
+
+      test('STA YH', () {
+        testSTAReg(system, <int>[0x18], system.cpu.y.highRegister);
+      });
+
+      test('STA UL', () {
+        testSTAReg(system, <int>[0x2A], system.cpu.u.lowRegister);
+      });
+
+      test('STA UH', () {
+        testSTAReg(system, <int>[0x28], system.cpu.u.highRegister);
+      });
+
       test('STA #(X)', () {
         testSTARReg(system, <int>[0xFD, 0x0E], system.cpu.x);
       });

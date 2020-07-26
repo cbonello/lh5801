@@ -728,14 +728,16 @@ class LH5801CPU extends LH5801State {
       case 0x07: // CPA (X)
         _cpi(a.value, _core.memRead(_me0(x.value)));
         break;
-// 	case 0x08: // STA XH
-// 		*cpu.x.High() = a.value
+      case 0x08: // STA XH
+        x.high = a.value;
+        break;
 // 	case 0x09: // AND (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.andAccumulator(o8)
 // 		}
-// 	case 0x0A: // STA XL
-// 		*cpu.x.Low() = a.value
+      case 0x0A: // STA XL
+        x.low = a.value;
+        break;
 // 	case 0x0B: // ORA (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.orAccumulator(o8)
@@ -780,14 +782,16 @@ class LH5801CPU extends LH5801State {
       case 0x17: // CPA (Y)
         _cpi(a.value, _core.memRead(_me0(y.value)));
         break;
-// 	case 0x18: // STA YH
-// 		*cpu.y.High() = a.value
+      case 0x18: // STA YH
+        y.high = a.value;
+        break;
 // 	case 0x19: // AND (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.andAccumulator(o8)
 // 		}
-// 	case 0x1A: // STA YL
-// 		*cpu.y.Low() = a.value
+      case 0x1A: // STA YL
+        y.low = a.value;
+        break;
 // 	case 0x1B: // ORA (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.orAccumulator(o8)
@@ -831,14 +835,16 @@ class LH5801CPU extends LH5801State {
       case 0x27: // CPA (U)
         _cpi(a.value, _core.memRead(_me0(u.value)));
         break;
-// 	case 0x28: // STA UH
-// 		*cpu.u.High() = a.value
+      case 0x28: // STA UH
+        u.high = a.value;
+        break;
 // 	case 0x29: // AND (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.andAccumulator(o8)
 // 		}
-// 	case 0x2A: // STA UL
-// 		*cpu.u.Low() = a.value
+      case 0x2A: // STA UL
+        u.low = a.value;
+        break;
 // 	case 0x2B: // ORA (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 			cpu.orAccumulator(o8)

@@ -722,6 +722,21 @@ void testEORab(System system, List<int> opcodes, {bool me1 = false}) {
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
+void testSTAReg(System system, List<int> opcodes, Register8 register) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  system.cpu.a.value = 0x33;
+  register.value = 0x01;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(5));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(register.value, equals(system.cpu.a.value));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
 void testSTARReg(System system, List<int> opcodes, Register16 register) {
   final int statusRegister = system.cpu.t.statusRegister;
 
