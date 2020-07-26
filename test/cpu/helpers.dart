@@ -1143,3 +1143,23 @@ void testDRLRReg(System system, List<int> opcodes, {bool me1 = false}) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testSDERReg(System system, List<int> opcodes, Register16 register) {
+  const int regValue = 0x0100;
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  register.value = regValue;
+  system.load(regValue, <int>[0x00]);
+  system.cpu.a.value = 0x6F;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(6));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.a.value, equals(0x6F));
+  final int x = system.memRead(regValue);
+  expect(x, equals(0x6F));
+  expect(register.value, equals(regValue - 1));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

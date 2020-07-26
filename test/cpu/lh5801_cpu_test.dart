@@ -754,5 +754,19 @@ void main() {
         testDRLRReg(system, <int>[0xFD, 0xD7], me1: true);
       });
     });
+
+    group('SDE [page 35]', () {
+      test('SDE X', () {
+        testSDERReg(system, <int>[0x43], system.cpu.x);
+      });
+
+      test('SDE Y', () {
+        testSDERReg(system, <int>[0x53], system.cpu.y);
+      });
+
+      test('SDE U', () {
+        testSDERReg(system, <int>[0x63], system.cpu.u);
+      });
+    });
   });
 }
