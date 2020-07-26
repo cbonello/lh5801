@@ -379,6 +379,10 @@ void main() {
       test('ADI #(U)', () {
         testADIRReg(system, 0x6F, system.cpu.u, me1: true);
       });
+
+      test('ADI #(ab), i', () {
+        testADIab(system, 0xEF, me1: true);
+      });
     });
 
     group('PSH [page 36]', () {

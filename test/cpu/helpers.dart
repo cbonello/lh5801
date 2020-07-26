@@ -161,6 +161,33 @@ void testADIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   expect(system.cpu.t.c, isFalse);
 }
 
+void testADIab(System system, int opcode, {bool me1 = false}) {
+  final int ab = me1 ? 0x11234 : 0x1234;
+  final List<int> opcodes = <int>[
+    0xFD,
+    opcode,
+    (ab >> 8) & 0xFF,
+    ab & 0xFF,
+    0x20,
+  ];
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, opcodes);
+  system.load(ab, <int>[0x33]);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(23));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  final int result = system.memRead(ab);
+  expect(result, equals(0x53));
+
+  expect(system.cpu.t.h, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isFalse);
+}
+
 void testLDARReg(System system, int opcode, Register16 register) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final List<int> opcodes = <int>[0xFD, opcode];
