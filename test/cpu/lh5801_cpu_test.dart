@@ -361,6 +361,10 @@ void main() {
       test('BII #(U)', () {
         testBIIRReg(system, 0x6D, system.cpu.u, me1: true);
       });
+
+      test('BII #(ab), i', () {
+        testBIIab(system, 0xED, me1: true);
+      });
     });
 
     group('ADI [page 26]', () {

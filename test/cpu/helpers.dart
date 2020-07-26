@@ -711,6 +711,40 @@ void testBIIRReg(System system, int opcode, Register16 register, {bool me1 = fal
   _test(0x10, 0x30, isFalse);
 }
 
+void testBIIab(System system, int opcode, {bool me1 = false}) {
+  void _test(int memValue, int i, Matcher zFlagMatcher) {
+    final int ab = me1 ? 0x1CB00 : 0xCB00;
+    final List<int> opcodes = <int>[
+      0xFD,
+      opcode,
+      (ab >> 8) & 0xFF,
+      ab & 0xFF,
+      i & 0xFF,
+    ];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, opcodes);
+    system.load(ab, <int>[memValue]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(20));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    // Memory should not be updated.
+    final int newABValue = system.memRead(ab);
+    expect(newABValue, memValue);
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x0F, 0x80, isTrue);
+  _test(0x10, 0x30, isFalse);
+}
+
 void testIncReg8(System system, int opcode, int Function() get, void Function(int) set) {
   final List<int> opcodes = <int>[0xFD, opcode];
   final LH5801Flags flags = system.cpu.t.clone();
