@@ -140,14 +140,22 @@ void testADCReg(System system, List<int> opcodes, Register8 register) {
   expect(system.cpu.t.h, isFalse);
 }
 
-void testADCRReg(System system, List<int> opcodes, Register16 register) {
+void testADCRReg(
+  System system,
+  int cycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  final int rregValue = me1 ? 0x10100 : 0x0100;
+
   system.load(0x0000, opcodes);
-  system.load(0x10001, <int>[51]);
+  register.value = rregValue;
+  system.load(rregValue, <int>[51]);
   system.cpu.a.value = 2;
-  register.value = 0x0001;
   system.cpu.t.c = false;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(11));
+  expect(cycles, equals(cycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
   expect(system.cpu.a.value, equals(53));

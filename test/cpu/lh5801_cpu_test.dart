@@ -41,28 +41,28 @@ void main() {
         testSBCReg(system, <int>[0xA0], system.cpu.u.highRegister);
       });
 
-      test('SBC #(X)', () {
-        testSBCRReg(system, 11, <int>[0xFD, 0x01], system.cpu.x, me1: true);
-      });
-
       test('SBC (X)', () {
         testSBCRReg(system, 7, <int>[0x01], system.cpu.x);
       });
 
-      test('SBC #(Y)', () {
-        testSBCRReg(system, 11, <int>[0xFD, 0x11], system.cpu.y, me1: true);
+      test('SBC #(X)', () {
+        testSBCRReg(system, 11, <int>[0xFD, 0x01], system.cpu.x, me1: true);
       });
 
       test('SBC (Y)', () {
         testSBCRReg(system, 7, <int>[0x11], system.cpu.y);
       });
 
-      test('SBC #(U)', () {
-        testSBCRReg(system, 11, <int>[0xFD, 0x21], system.cpu.u, me1: true);
+      test('SBC #(Y)', () {
+        testSBCRReg(system, 11, <int>[0xFD, 0x11], system.cpu.y, me1: true);
       });
 
       test('SBC (U)', () {
         testSBCRReg(system, 7, <int>[0x21], system.cpu.u);
+      });
+
+      test('SBC #(U)', () {
+        testSBCRReg(system, 11, <int>[0xFD, 0x21], system.cpu.u, me1: true);
       });
 
       test('SBC #(ab)', () {
@@ -95,16 +95,28 @@ void main() {
         testADCReg(system, <int>[0xA2], system.cpu.u.highRegister);
       });
 
+      test('ADC (X)', () {
+        testADCRReg(system, 7, <int>[0x03], system.cpu.x);
+      });
+
       test('ADC #(X)', () {
-        testADCRReg(system, <int>[0xFD, 0x03], system.cpu.x);
+        testADCRReg(system, 11, <int>[0xFD, 0x03], system.cpu.x, me1: true);
+      });
+
+      test('ADC (Y)', () {
+        testADCRReg(system, 7, <int>[0x13], system.cpu.y);
       });
 
       test('ADC #(Y)', () {
-        testADCRReg(system, <int>[0xFD, 0x13], system.cpu.y);
+        testADCRReg(system, 11, <int>[0xFD, 0x13], system.cpu.y, me1: true);
+      });
+
+      test('ADC (U)', () {
+        testADCRReg(system, 7, <int>[0x23], system.cpu.u);
       });
 
       test('ADC #(U)', () {
-        testADCRReg(system, <int>[0xFD, 0x23], system.cpu.u);
+        testADCRReg(system, 11, <int>[0xFD, 0x23], system.cpu.u, me1: true);
       });
 
       test('ADC #(ab)', () {

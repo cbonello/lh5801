@@ -713,7 +713,9 @@ class LH5801CPU extends LH5801State {
       case 0x02: // ADC XL
         _addAccumulator(x.low);
         break;
-// 	case 0x03: // ADC (X)
+      case 0x03: // ADC (X)
+        _addAccumulator(_core.memRead(_me0(x.value)));
+        break;
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.addAccumulator(o8)
 // 		}
@@ -765,10 +767,9 @@ class LH5801CPU extends LH5801State {
       case 0x12: // ADC YL
         _addAccumulator(y.low);
         break;
-// 	case 0x13: // ADC (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.addAccumulator(o8)
-// 		}
+      case 0x13: // ADC (Y)
+        _addAccumulator(_core.memRead(_me0(y.value)));
+        break;
 // 	case 0x14: // LDA YL
 // 		cpu.lda(*cpu.y.Low())
 // 	case 0x15: // LDA (Y)
@@ -817,11 +818,10 @@ class LH5801CPU extends LH5801State {
       case 0x22: // ADC UL
         _addAccumulator(u.low);
         break;
-// 	case 0x23: // ADC (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.addAccumulator(o8)
-// 		}
-// 	case 0x24: // LDA UL
+      case 0x23: // ADC (U)
+        _addAccumulator(_core.memRead(_me0(u.value)));
+        break;
+      // 	case 0x24: // LDA UL
 // 		cpu.lda(*cpu.u.Low())
 // 	case 0x25: // LDA (U)
 // 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
