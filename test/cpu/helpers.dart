@@ -577,25 +577,30 @@ void testORARReg(
 }
 
 void testORAab(System system, List<int> opcodes, {bool me1 = false}) {
-  final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
-  final LH5801Flags flags = system.cpu.t.clone();
+  void _test(int op1, int op2, Matcher zFlagMatcher) {
+    final int ab = me1 ? 0x11234 : 0x1234;
+    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
 
-  system.load(0x0000, memOpcodes);
-  system.load(ab, <int>[0x27]);
-  system.cpu.a.value = 0x58;
-  final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
-  expect(system.cpu.p.value, equals(memOpcodes.length));
+    system.load(0x0000, memOpcodes);
+    system.load(ab, <int>[op2]);
+    system.cpu.a.value = op1;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(17));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
 
-  expect(system.cpu.a.value, equals(0x7F));
+    expect(system.cpu.a.value, equals((op1 | op2) & 0xFF));
 
-  // Z should be the only flag updated.
-  expect(system.cpu.t.h, equals(flags.h));
-  expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, isFalse);
-  expect(system.cpu.t.ie, equals(flags.ie));
-  expect(system.cpu.t.c, equals(flags.c));
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x58, 0x27, isFalse);
+  _test(0x00, 0x00, isTrue);
 }
 
 void testORIRReg(System system, List<int> opcodes, Register16 register,
