@@ -110,7 +110,7 @@ void testSBCRReg(
   expect(system.cpu.t.h, isTrue);
 }
 
-void testSBCab(System system, List<int> opcodes, {bool me1 = false}) {
+void testSBCab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
 
@@ -119,7 +119,7 @@ void testSBCab(System system, List<int> opcodes, {bool me1 = false}) {
   system.cpu.a.value = 56;
   system.cpu.t.c = true;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(23));

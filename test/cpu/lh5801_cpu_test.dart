@@ -65,8 +65,12 @@ void main() {
         testSBCRReg(system, 11, <int>[0xFD, 0x21], system.cpu.u, me1: true);
       });
 
+      test('SBC (ab)', () {
+        testSBCab(system, 13, <int>[0xA1]);
+      });
+
       test('SBC #(ab)', () {
-        testSBCab(system, <int>[0xFD, 0xA1], me1: true);
+        testSBCab(system, 17, <int>[0xFD, 0xA1], me1: true);
       });
     });
 
