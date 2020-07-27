@@ -186,19 +186,25 @@ void testADCab(System system, List<int> opcodes, {bool me1 = false}) {
   expect(system.cpu.t.h, isFalse);
 }
 
-void testADIRReg(System system, List<int> opcodes, Register16 register,
-    {bool me1 = false}) {
+void testADIRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
+  final int regValue = me1 ? 0x10100 : 0x0100;
   final List<int> memOpcodes = <int>[...opcodes, 0x20];
   final LH5801Flags flags = system.cpu.t.clone();
 
   system.load(0x0000, memOpcodes);
-  system.load(0x10001, <int>[0x33]);
-  register.value = 0x0001;
+  register.value = regValue;
+  system.load(regValue, <int>[0x33]);
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
-  final int result = system.memRead((me1 ? 0x10000 : 0) + register.value);
+  final int result = system.memRead(regValue);
   expect(result, equals(0x53));
 
   expect(system.cpu.t.h, isFalse);

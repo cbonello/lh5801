@@ -897,10 +897,9 @@ class LH5801CPU extends LH5801State {
       case 0x4E: // CPI XL, i
         _cpi(x.low, _readOp8());
         break;
-// 	case 0x4F: // ADI (X), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.addMemory(_me0(x.value), o8)
-// 		}
+      case 0x4F: // ADI (X), i
+        _addMemory(_me0(x.value), _readOp8());
+        break;
 
       case 0x50: // INC YL
         y.low = _binaryAdd(y.low, 1);
@@ -947,10 +946,9 @@ class LH5801CPU extends LH5801State {
       case 0x5E: // CPI YL, i
         _cpi(y.low, _readOp8());
         break;
-// 	case 0x5F: // ADI (Y), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.addMemory(_me0(cpu.y.Value()), o8)
-// 		}
+      case 0x5F: // ADI (Y), i
+        _addMemory(_me0(y.value), _readOp8());
+        break;
 
       case 0x60: // INC UL
         u.low = _binaryAdd(u.low, 1);
@@ -997,10 +995,9 @@ class LH5801CPU extends LH5801State {
       case 0x6E: // CPI UL, i
         _cpi(u.low, _readOp8());
         break;
-// 	case 0x6F: // ADI (U), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.addMemory(_me0(cpu.u.Value()), o8)
-// 		}
+      case 0x6F: // ADI (U), i
+        _addMemory(_me0(u.value), _readOp8());
+        break;
 
       case 0x80: // SBC XH
         _sbc(x.high);

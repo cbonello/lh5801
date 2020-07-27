@@ -760,16 +760,28 @@ void main() {
     });
 
     group('ADI [page 26]', () {
-      test('ADI #(X)', () {
-        testADIRReg(system, <int>[0xFD, 0x4F], system.cpu.x, me1: true);
+      test('ADI (X), i', () {
+        testADIRReg(system, 13, <int>[0x4F], system.cpu.x);
       });
 
-      test('ADI #(Y)', () {
-        testADIRReg(system, <int>[0xFD, 0x5F], system.cpu.y, me1: true);
+      test('ADI #(X), i', () {
+        testADIRReg(system, 17, <int>[0xFD, 0x4F], system.cpu.x, me1: true);
       });
 
-      test('ADI #(U)', () {
-        testADIRReg(system, <int>[0xFD, 0x6F], system.cpu.u, me1: true);
+      test('ADI (Y), i', () {
+        testADIRReg(system, 13, <int>[0x5F], system.cpu.y);
+      });
+
+      test('ADI #(Y), i', () {
+        testADIRReg(system, 17, <int>[0xFD, 0x5F], system.cpu.y, me1: true);
+      });
+
+      test('ADI (U), i', () {
+        testADIRReg(system, 13, <int>[0x6F], system.cpu.u);
+      });
+
+      test('ADI #(U), i', () {
+        testADIRReg(system, 17, <int>[0xFD, 0x6F], system.cpu.u, me1: true);
       });
 
       test('ADI #(ab), i', () {
