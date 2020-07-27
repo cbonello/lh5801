@@ -1324,3 +1324,19 @@ void testLDIReg(System system, List<int> opcodes, Register8 register) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testLDISij(System system) {
+  const int ij = 0x1234;
+  final List<int> memOpcodes = <int>[0xAA, ij >> 8, ij & 0xFF];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, memOpcodes);
+  system.cpu.s.value = ij ^ 0x0FF0;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(12));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.s.value, equals(ij));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

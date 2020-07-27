@@ -1178,10 +1178,10 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.andAccumulator(o8)
 // 		}
-// 	case 0xAA: // LDI S, i, j
-// 		if o16, err = cpu.readOp16(); err == nil {
-// 			cpu.s.Update(o16)
-// 		}
+      case 0xAA: // LDI S, i, j
+        o16 = _readOp16();
+        s.value = o16;
+        break;
 // 	case 0xAB: // ORA (ab)
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.orAccumulator(o8)

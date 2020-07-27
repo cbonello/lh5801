@@ -893,6 +893,10 @@ void main() {
       test('LDI UH, i', () {
         testLDIReg(system, <int>[0x68], system.cpu.u.highRegister);
       });
+
+      test('LDI S, i, j', () {
+        testLDISij(system);
+      });
     });
   });
 }
