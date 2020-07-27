@@ -726,6 +726,10 @@ void main() {
     });
 
     group('BII [page 32]', () {
+      test('BII A, i', () {
+        testBIIAcc(system);
+      });
+
       test('BII (X), i', () {
         testBIIRReg(system, 10, <int>[0x4D], system.cpu.x);
       });

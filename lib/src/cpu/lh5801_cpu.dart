@@ -130,12 +130,6 @@ class LH5801CPU extends LH5801State {
 
   void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
 
-  void _bii(int address, int value) {
-    final int m = _core.memRead(address);
-    final int andValue = m & value;
-    t.z = (andValue & 0xFF) == 0;
-  }
-
   void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
 
   void _cin() {
@@ -504,7 +498,7 @@ class LH5801CPU extends LH5801State {
         // _bf = false;
         break;
       case 0x4D: // BII #(X), i
-        _bii(_me1(x.value), _readOp8());
+        _bit(_core.memRead(_me1(x.value)), _readOp8());
         break;
       case 0x4E: // STX S
         s.value = x.value;
@@ -532,7 +526,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(y.value), _readOp8());
         break;
       case 0x5D: // BII #(Y), i
-        _bii(_me1(y.value), _readOp8());
+        _bit(_core.memRead(_me1(y.value)), _readOp8());
         break;
       case 0x5E: // STX P
         _jmp(_me0(x.value));
@@ -557,7 +551,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(u.value), _readOp8());
         break;
       case 0x6D: // BII #(U), i
-        _bii(_me1(u.value), _readOp8());
+        _bit(_core.memRead(_me1(u.value)), _readOp8());
         break;
       case 0x6F: // ADI #(U), i
         _addMemory(_me1(u.value), _readOp8());
@@ -898,7 +892,7 @@ class LH5801CPU extends LH5801State {
         _cpi(x.high, _readOp8());
         break;
       case 0x4D: // BII (X), i
-        _bii(_me0(x.value), _readOp8());
+        _bit(_core.memRead(_me0(x.value)), _readOp8());
         break;
       case 0x4E: // CPI XL, i
         _cpi(x.low, _readOp8());
@@ -948,7 +942,7 @@ class LH5801CPU extends LH5801State {
         _cpi(y.high, _readOp8());
         break;
       case 0x5D: // BII (Y), i
-        _bii(_me0(y.value), _readOp8());
+        _bit(_core.memRead(_me0(y.value)), _readOp8());
         break;
       case 0x5E: // CPI YL, i
         _cpi(y.low, _readOp8());
@@ -998,7 +992,7 @@ class LH5801CPU extends LH5801State {
         _cpi(u.high, _readOp8());
         break;
       case 0x6D: // BII (U), i
-        _bii(_me0(u.value), _readOp8());
+        _bit(_core.memRead(_me0(u.value)), _readOp8());
         break;
       case 0x6E: // CPI UL, i
         _cpi(u.low, _readOp8());
@@ -1218,10 +1212,9 @@ class LH5801CPU extends LH5801State {
 // 		if o16, err = cpu.readOp16(); err == nil {
 // 			err = cpu.sjp(_me0(o16))
 // 		}
-// 	case 0xBF: // BII A, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.bit(a.value, o8)
-// 		}
+      case 0xBF: // BII A, i
+        _bit(a.value, _readOp8());
+        break;
 
 // 	case 0xC0: // VEJ (C0)
 // 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC0); err == nil {
