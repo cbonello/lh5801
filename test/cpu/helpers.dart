@@ -1426,6 +1426,7 @@ void testCPIReg(System system, List<int> opcodes, Register8 register) {
 
 void _testBranch(
   System system,
+  int additionalCycles,
   List<int> opcodes,
   int flagMask,
   bool Function(int) cond, {
@@ -1443,7 +1444,7 @@ void _testBranch(
 
   // Condition is true?
   if (cond(system.cpu.t.statusRegister)) {
-    expect(cycles, equals(expectedCycles + 2));
+    expect(cycles, equals(expectedCycles + additionalCycles));
     expect(
       system.cpu.p.value,
       equals(
@@ -1459,6 +1460,7 @@ void _testBranch(
 void testBCR(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) == 0,
@@ -1467,6 +1469,7 @@ void testBCR(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.C,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) == 0,
@@ -1477,6 +1480,7 @@ void testBCR(System system, List<int> opcodes, {bool forward = true}) {
 void testBCS(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.C,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) != 0,
@@ -1485,6 +1489,7 @@ void testBCS(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) != 0,
@@ -1495,6 +1500,7 @@ void testBCS(System system, List<int> opcodes, {bool forward = true}) {
 void testBHR(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) == 0,
@@ -1503,6 +1509,7 @@ void testBHR(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.H,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) == 0,
@@ -1513,6 +1520,7 @@ void testBHR(System system, List<int> opcodes, {bool forward = true}) {
 void testBHS(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.H,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) != 0,
@@ -1521,6 +1529,7 @@ void testBHS(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) != 0,
@@ -1531,6 +1540,7 @@ void testBHS(System system, List<int> opcodes, {bool forward = true}) {
 void testBZR(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) == 0,
@@ -1539,6 +1549,7 @@ void testBZR(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.Z,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) == 0,
@@ -1549,6 +1560,7 @@ void testBZR(System system, List<int> opcodes, {bool forward = true}) {
 void testBZS(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.Z,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) != 0,
@@ -1557,6 +1569,7 @@ void testBZS(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) != 0,
@@ -1567,6 +1580,7 @@ void testBZS(System system, List<int> opcodes, {bool forward = true}) {
 void testBVR(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.V) == 0,
@@ -1575,6 +1589,7 @@ void testBVR(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.V,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.V) == 0,
@@ -1585,6 +1600,7 @@ void testBVR(System system, List<int> opcodes, {bool forward = true}) {
 void testBVS(System system, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     system,
+    2,
     opcodes,
     LH5801Flags.V,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.V) != 0,
@@ -1593,9 +1609,21 @@ void testBVS(System system, List<int> opcodes, {bool forward = true}) {
 
   _testBranch(
     system,
+    2,
     opcodes,
     0,
     (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.V) != 0,
+    forward: forward,
+  );
+}
+
+void testBCH(System system, List<int> opcodes, {bool forward = true}) {
+  _testBranch(
+    system,
+    0,
+    opcodes,
+    0,
+    (int statusRegister) => true,
     forward: forward,
   );
 }

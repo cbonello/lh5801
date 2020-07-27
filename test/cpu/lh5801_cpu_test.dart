@@ -1068,5 +1068,15 @@ void main() {
         testBVS(system, <int>[0x9F], forward: false);
       });
     });
+
+    group('BCH [page 46]', () {
+      test('BCH +i', () {
+        testBCH(system, <int>[0x8E]);
+      });
+
+      test('BCH -i', () {
+        testBCH(system, <int>[0x9E], forward: false);
+      });
+    });
   });
 }
