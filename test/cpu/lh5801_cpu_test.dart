@@ -1038,5 +1038,15 @@ void main() {
         testBZR(system, <int>[0x99], forward: false);
       });
     });
+
+    group('BZS [page 47]', () {
+      test('BZS +i', () {
+        testBZS(system, <int>[0x8B]);
+      });
+
+      test('BZS -i', () {
+        testBZS(system, <int>[0x9B], forward: false);
+      });
+    });
   });
 }

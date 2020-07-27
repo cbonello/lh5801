@@ -1545,3 +1545,21 @@ void testBZR(System system, List<int> opcodes, {bool forward = true}) {
     forward: forward,
   );
 }
+
+void testBZS(System system, List<int> opcodes, {bool forward = true}) {
+  _testBranch(
+    system,
+    opcodes,
+    LH5801Flags.Z,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) != 0,
+    forward: forward,
+  );
+
+  _testBranch(
+    system,
+    opcodes,
+    0,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.Z) != 0,
+    forward: forward,
+  );
+}

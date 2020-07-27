@@ -1034,10 +1034,9 @@ class LH5801CPU extends LH5801State {
         break;
 // 	case 0x8A: // RTI
 // 		err = cpu.rti()
-// 	case 0x8B: // BZS +i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagZ)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x8B: // BZS +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.z == true);
+        break;
 // 	case 0x8C: // DCA (X)
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.dca(o8)
@@ -1084,10 +1083,9 @@ class LH5801CPU extends LH5801State {
         break;
 // 	case 0x9A: // RTN
 // 		err = cpu.rtn()
-// 	case 0x9B: // BZS -i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagZ)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x9B: // BZS -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.z == true);
+        break;
 // 	case 0x9C: // DCA (Y)
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.dca(o8)
