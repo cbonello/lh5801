@@ -1033,10 +1033,9 @@ class LH5801CPU extends LH5801State {
       case 0x8B: // BZS +i
         cycles += _branchForward(cyclesTable.additional, cond: t.z == true);
         break;
-// 	case 0x8C: // DCA (X)
-// 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 			cpu.dca(o8)
-// 		}
+      case 0x8C: // DCA (X)
+        _dca(_core.memRead(_me0(x.value)));
+        break;
       case 0x8D: // BVR +i
         cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
         break;
@@ -1079,10 +1078,9 @@ class LH5801CPU extends LH5801State {
       case 0x9B: // BZS -i
         cycles += _branchBackward(cyclesTable.additional, cond: t.z == true);
         break;
-// 	case 0x9C: // DCA (Y)
-// 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 			cpu.dca(o8)
-// 		}
+      case 0x9C: // DCA (Y)
+        _dca(_core.memRead(_me0(y.value)));
+        break;
 // 	case 0x9D: // BVR -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagV) == false); err == nil {
 // 			cycles += c
@@ -1135,10 +1133,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.orAccumulator(o8)
 // 		}
-// 	case 0xAC: // DCA (U)
-// 		if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 			cpu.dca(o8)
-// 		}
+      case 0xAC: // DCA (U)
+        _dca(_core.memRead(_me0(u.value)));
+        break;
 // 	case 0xAD: // EOR (ab)
 // 		if o8, err = cpu.readOp16Ind(0); err == nil {
 // 			cpu.eor(o8)

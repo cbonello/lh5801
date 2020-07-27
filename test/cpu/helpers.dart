@@ -1151,8 +1151,13 @@ void testPSHRReg(System system, List<int> opcodes, Register16 register) {
   expect(system.cpu.t.statusRegister, statusRegister);
 }
 
-void testDCARReg(System system, List<int> opcodes, Register16 register,
-    {bool me1 = false}) {
+void testDCARReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -1161,13 +1166,15 @@ void testDCARReg(System system, List<int> opcodes, Register16 register,
     Matcher cFlagMatcher,
     Matcher hFlagMatcher,
   ) {
+    final int regValue = me1 ? 0x10200 : 0x0200;
+
     system.load(0x0000, opcodes);
-    system.load(0x10001, <int>[initialOp2Value]);
+    register.value = regValue;
+    system.load(regValue, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
-    register.value = 0x0001;
     system.cpu.t.c = initialCarryValue;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(19));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(opcodes.length));
 
     expect(system.cpu.a.value, expectedAccValue);

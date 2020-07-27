@@ -826,16 +826,28 @@ void main() {
     });
 
     group('DCA [page 26]', () {
+      test('DCA (X)', () {
+        testDCARReg(system, 15, <int>[0x8C], system.cpu.x);
+      });
+
       test('DCA #(X)', () {
-        testDCARReg(system, <int>[0xFD, 0x8C], system.cpu.x, me1: true);
+        testDCARReg(system, 19, <int>[0xFD, 0x8C], system.cpu.x, me1: true);
+      });
+
+      test('DCA (Y)', () {
+        testDCARReg(system, 15, <int>[0x9C], system.cpu.y);
       });
 
       test('DCA #(Y)', () {
-        testDCARReg(system, <int>[0xFD, 0x9C], system.cpu.y, me1: true);
+        testDCARReg(system, 19, <int>[0xFD, 0x9C], system.cpu.y, me1: true);
+      });
+
+      test('DCA (U)', () {
+        testDCARReg(system, 15, <int>[0xAC], system.cpu.u);
       });
 
       test('DCA #(U)', () {
-        testDCARReg(system, <int>[0xFD, 0xAC], system.cpu.u, me1: true);
+        testDCARReg(system, 19, <int>[0xFD, 0xAC], system.cpu.u, me1: true);
       });
     });
 
