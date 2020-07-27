@@ -200,16 +200,14 @@ class LH5801CPU extends LH5801State {
   }
 
   void _lde(Register16 register) {
-    a.value = _core.memRead(_me0(register.value));
-    _decRegister16(register);
+    a.value = _core.memRead(_me0(register.value--));
     t.z = a.value == 0;
   }
 
   void _ldx(Register16 register) => x.value = register.value;
 
   void _lin(Register16 register) {
-    a.value = _core.memRead(_me0(register.value));
-    register.value++;
+    a.value = _core.memRead(_me0(register.value++));
     t.z = a.value == 0;
   }
 
@@ -876,8 +874,9 @@ class LH5801CPU extends LH5801State {
       case 0x46: // DEC X
         x.value--;
         break;
-// 	case 0x47: // LDE X
-// 		err = cpu.lde(&cpu.x)
+      case 0x47: // LDE X
+        _lde(x);
+        break;
 // 	case 0x48: // LDI XH, i
 // 		*cpu.x.High(), err = cpu.readOp8()
 // 	case 0x49: // ANI (X), i
@@ -930,8 +929,9 @@ class LH5801CPU extends LH5801State {
       case 0x56: // DEC Y
         y.value--;
         break;
-// 	case 0x57: // LDE Y
-// 		err = cpu.lde(&cpu.y)
+      case 0x57: // LDE Y
+        _lde(y);
+        break;
 // 	case 0x58: // LDI YH, i
 // 		*cpu.y.High(), err = cpu.readOp8()
 // 	case 0x59: // ANI (Y), i
@@ -984,8 +984,9 @@ class LH5801CPU extends LH5801State {
       case 0x66: // DEC U
         u.value--;
         break;
-// 	case 0x67: // LDE U
-// 		err = cpu.lde(u)
+      case 0x67: // LDE U
+        _lde(u);
+        break;
 // 	case 0x68: // LDI UH, i
 // 		*cpu.u.High(), err = cpu.readOp8()
 // 	case 0x69: // ANI (U), i

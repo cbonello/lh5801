@@ -1258,3 +1258,30 @@ void testLINRReg(System system, List<int> opcodes, Register16 register) {
   _test(0x0055, 0x3A, isFalse);
   _test(0xFFFF, 0x00, isTrue);
 }
+
+void testLDERReg(System system, List<int> opcodes, Register16 register) {
+  void _test(int regValue, int memValue, Matcher zFlagMatcher) {
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.cpu.p.value = 0x1000;
+    system.load(0x1000, opcodes);
+    register.value = regValue;
+    system.load(regValue, <int>[memValue]);
+    system.cpu.a.value = 0xFF;
+    final int cycles = system.step(0x1000);
+    expect(cycles, equals(6));
+    expect(system.cpu.p.value, equals(0x1000 + opcodes.length));
+
+    expect(system.cpu.a.value, equals(memValue));
+    expect(register.value, equals((regValue - 1) & 0xFFFF));
+
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x0055, 0x3A, isFalse);
+  _test(0x0000, 0x00, isTrue);
+}

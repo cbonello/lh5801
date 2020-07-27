@@ -850,5 +850,19 @@ void main() {
         testLINRReg(system, <int>[0x65], system.cpu.u);
       });
     });
+
+    group('LDE [page 33]', () {
+      test('LDE X', () {
+        testLDERReg(system, <int>[0x47], system.cpu.x);
+      });
+
+      test('LDE Y', () {
+        testLDERReg(system, <int>[0x57], system.cpu.y);
+      });
+
+      test('LDE U', () {
+        testLDERReg(system, <int>[0x67], system.cpu.u);
+      });
+    });
   });
 }
