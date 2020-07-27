@@ -1048,5 +1048,15 @@ void main() {
         testBZS(system, <int>[0x9B], forward: false);
       });
     });
+
+    group('BVR [page 48]', () {
+      test('BVR +i', () {
+        testBVR(system, <int>[0x89]);
+      });
+
+      test('BVR -i', () {
+        testBVR(system, <int>[0x99], forward: false);
+      });
+    });
   });
 }

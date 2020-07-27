@@ -1041,10 +1041,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.dca(o8)
 // 		}
-// 	case 0x8D: // BVR +i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagV) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x8D: // BVR +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
+        break;
 // 	case 0x8E: // BCH +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, true); err == nil {
 // 			cycles += c
