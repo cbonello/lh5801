@@ -1391,10 +1391,11 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xEE); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0xEF: // ADI (ab), i
-// 		if o16, o8, err = cpu.readOp16Op8(); err == nil {
-// 			err = cpu.addMemory(_me0(o16), o8)
-// 		}
+      case 0xEF: // ADI (ab), i
+        o16 = _readOp16();
+        o8 = _readOp8();
+        _addMemory(_me0(o16), o8);
+        break;
 
 // 	case 0xF0: // VEJ (F0)
 // 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xF0); err == nil {

@@ -784,8 +784,12 @@ void main() {
         testADIRReg(system, 17, <int>[0xFD, 0x6F], system.cpu.u, me1: true);
       });
 
+      test('ADI (ab), i', () {
+        testADIab(system, 19, <int>[0xEF]);
+      });
+
       test('ADI #(ab), i', () {
-        testADIab(system, <int>[0xFD, 0xEF], me1: true);
+        testADIab(system, 23, <int>[0xFD, 0xEF], me1: true);
       });
     });
 

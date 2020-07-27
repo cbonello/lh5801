@@ -214,7 +214,7 @@ void testADIRReg(
   expect(system.cpu.t.c, isFalse);
 }
 
-void testADIab(System system, List<int> opcodes, {bool me1 = false}) {
+void testADIab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[
     ...opcodes,
@@ -227,7 +227,7 @@ void testADIab(System system, List<int> opcodes, {bool me1 = false}) {
   system.load(0x0000, memOpcodes);
   system.load(ab, <int>[0x33]);
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(23));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
   final int result = system.memRead(ab);
