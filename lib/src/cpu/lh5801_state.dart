@@ -69,7 +69,7 @@ class Register16 extends Object {
 
   @override
   String toString() {
-    return 'Register8(0x${value.toRadixString(16).padLeft(4, '0')})';
+    return 'Register16(0x${value.toRadixString(16).padLeft(4, '0')})';
   }
 
   @override
