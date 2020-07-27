@@ -204,6 +204,11 @@ class LH5801CPU extends LH5801State {
     t.z = a.value == 0;
   }
 
+  void _ldi(int value) {
+    a.value = value;
+    t.z = value == 0;
+  }
+
   void _ldx(Register16 register) => x.value = register.value;
 
   void _lin(Register16 register) {
@@ -1206,7 +1211,9 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			cpu.addAccumulator(o8)
 // 		}
-// 	case 0xB5: // LDI A, i
+      case 0xB5: // LDI A, i
+        _ldi(_readOp8());
+        break;
 // 		a.value, err = cpu.readOp8()
 // 	case 0xB7: // CPI A, i
 // 		if o8, err = cpu.readOp8(); err == nil {

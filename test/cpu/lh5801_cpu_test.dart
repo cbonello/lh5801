@@ -866,6 +866,10 @@ void main() {
     });
 
     group('LDI [page 34]', () {
+      test('LDI A, i', () {
+        testLDIAcc(system);
+      });
+
       test('LDI XL, i', () {
         testLDIReg(system, <int>[0x4A], system.cpu.x.lowRegister);
       });
