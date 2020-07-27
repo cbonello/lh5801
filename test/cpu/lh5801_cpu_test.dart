@@ -181,8 +181,12 @@ void main() {
         testLDARReg(system, 10, <int>[0xFD, 0x25], system.cpu.u, me1: true);
       });
 
+      test('LDA (ab)', () {
+        testLDAab(system, 12, <int>[0xA5]);
+      });
+
       test('LDA #(ab)', () {
-        testLDAab(system, <int>[0xFD, 0xA5], me1: true);
+        testLDAab(system, 16, <int>[0xFD, 0xA5], me1: true);
       });
     });
 

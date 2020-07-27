@@ -1106,10 +1106,9 @@ class LH5801CPU extends LH5801State {
       case 0xA4: // LDA UH
         _lda(u.high);
         break;
-// 	case 0xA5: // LDA (ab)
-// 		if o8, err = cpu.readOp16Ind(0); err == nil {
-// 			a.value = o8
-// 		}
+      case 0xA5: // LDA (ab)
+        _lda(_readOp16Ind(0));
+        break;
       case 0xA6: // CPA UH
         _cpi(a.value, u.high);
         break;

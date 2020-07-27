@@ -305,7 +305,7 @@ void testLDARReg(
   _test(0xFD, isFalse);
 }
 
-void testLDAab(System system, List<int> opcodes, {bool me1 = false}) {
+void testLDAab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
     final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -315,7 +315,7 @@ void testLDAab(System system, List<int> opcodes, {bool me1 = false}) {
     system.load(ab, <int>[initialValue]);
     system.cpu.a.value = 0;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(16));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     expect(system.cpu.a.value, equals(initialValue));
