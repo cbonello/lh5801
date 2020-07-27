@@ -2708,7 +2708,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // ADC XH
@@ -2732,7 +2732,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // LDA XH
@@ -2756,7 +2756,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // CPA XH
@@ -2780,7 +2780,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // LOP UL, i
@@ -2804,7 +2804,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // RTI
@@ -2828,7 +2828,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // DCA (X)
@@ -2852,7 +2852,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   const InstructionDescriptor(
     // BCH +i
@@ -2876,7 +2876,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispPlus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(8, 2),
   ),
   // 0x90
   const InstructionDescriptor(
@@ -2901,7 +2901,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // ADC YH
@@ -2925,7 +2925,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // LDA YH
@@ -2949,7 +2949,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // CPA YH
@@ -2973,7 +2973,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   _illegalInstruction(0x0098),
   const InstructionDescriptor(
@@ -2986,7 +2986,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // RTN
@@ -3010,7 +3010,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // DCA (Y)
@@ -3034,7 +3034,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   const InstructionDescriptor(
     // BCH -i
@@ -3058,7 +3058,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.dispMinus(), 0x00),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(8, 3),
+    CyclesCount(9, 2),
   ),
   // 0xA0
   const InstructionDescriptor(
