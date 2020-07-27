@@ -1029,10 +1029,9 @@ class LH5801CPU extends LH5801State {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0x89: // BZR +i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagZ) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x89: // BZR +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
+        break;
 // 	case 0x8A: // RTI
 // 		err = cpu.rti()
 // 	case 0x8B: // BZS +i
@@ -1080,10 +1079,9 @@ class LH5801CPU extends LH5801State {
       case 0x97: // BHS -i
         cycles += _branchBackward(cyclesTable.additional, cond: t.h == true);
         break;
-// 	case 0x99: // BZR -i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagZ) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x99: // BZR -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.z == false);
+        break;
 // 	case 0x9A: // RTN
 // 		err = cpu.rtn()
 // 	case 0x9B: // BZS -i
