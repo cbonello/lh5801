@@ -951,6 +951,10 @@ void main() {
       test('CPI UH, i', () {
         testCPIReg(system, <int>[0x6C], system.cpu.u.highRegister);
       });
+
+      test('CPI A, i', () {
+        testCPIReg(system, <int>[0xB7], system.cpu.a);
+      });
     });
   });
 }
