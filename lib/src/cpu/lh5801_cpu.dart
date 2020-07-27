@@ -165,7 +165,7 @@ class LH5801CPU extends LH5801State {
   void _decRegister8(Register8 register) =>
       register.value = _binaryAdd(register.value, 0x01 ^ 0xFF + 1);
 
-  void _decRegister16(Register16 register) => register.value -= 1;
+  void _decRegister16(Register16 register) => register.value--;
 
   void _drl(int address) {
     final int m = _core.memRead(address);
@@ -210,7 +210,6 @@ class LH5801CPU extends LH5801State {
   void _lin(Register16 register) {
     a.value = _core.memRead(_me0(register.value));
     register.value++;
-    ;
     t.z = a.value == 0;
   }
 
@@ -871,8 +870,9 @@ class LH5801CPU extends LH5801State {
       case 0x44: // INC X
         x.value++;
         break;
-// 	case 0x45: // LIN X
-// 		err = cpu.lin(&cpu.x)
+      case 0x45: // LIN X
+        _lin(x);
+        break;
       case 0x46: // DEC X
         x.value--;
         break;
@@ -924,8 +924,9 @@ class LH5801CPU extends LH5801State {
       case 0x54: // INC Y
         y.value++;
         break;
-// 	case 0x55: // LIN Y
-// 		err = cpu.lin(&cpu.y)
+      case 0x55: // LIN Y
+        _lin(y);
+        break;
       case 0x56: // DEC Y
         y.value--;
         break;
@@ -977,8 +978,9 @@ class LH5801CPU extends LH5801State {
       case 0x64: // INC U
         u.value++;
         break;
-// 	case 0x65: // LIN U
-// 		err = cpu.lin(u)
+      case 0x65: // LIN U
+        _lin(u);
+        break;
       case 0x66: // DEC U
         u.value--;
         break;

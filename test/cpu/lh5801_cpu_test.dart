@@ -836,5 +836,19 @@ void main() {
         testSDERReg(system, <int>[0x63], system.cpu.u);
       });
     });
+
+    group('LIN [page 34]', () {
+      test('LIN X', () {
+        testLINRReg(system, <int>[0x45], system.cpu.x);
+      });
+
+      test('LIN Y', () {
+        testLINRReg(system, <int>[0x55], system.cpu.y);
+      });
+
+      test('LIN U', () {
+        testLINRReg(system, <int>[0x65], system.cpu.u);
+      });
+    });
   });
 }
