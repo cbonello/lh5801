@@ -692,6 +692,10 @@ void main() {
     });
 
     group('ORI [page 30]', () {
+      test('ORI A, i', () {
+        testORIAcc(system);
+      });
+
       test('ORI (X), i', () {
         testORIRReg(system, 13, <int>[0x4B], system.cpu.x);
       });
