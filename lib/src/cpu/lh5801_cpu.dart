@@ -1048,10 +1048,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, true); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x8F: // BVS +i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagV)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x8F: // BVS +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.v == true);
+        break;
 
       case 0x90: // SBC YH
         _sbc(y.high);
@@ -1097,10 +1096,9 @@ class LH5801CPU extends LH5801State {
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, true); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x9F: // BVS -i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagV)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x9F: // BVS -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.v == true);
+        break;
 
       case 0xA0: // SBC UH
         _sbc(u.high);
