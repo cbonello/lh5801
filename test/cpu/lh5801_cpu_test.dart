@@ -123,8 +123,12 @@ void main() {
         testADCRReg(system, 11, <int>[0xFD, 0x23], system.cpu.u, me1: true);
       });
 
+      test('ADC (ab)', () {
+        testADCab(system, 13, <int>[0xA3]);
+      });
+
       test('ADC #(ab)', () {
-        testADCab(system, <int>[0xFD, 0xA3], me1: true);
+        testADCab(system, 17, <int>[0xFD, 0xA3], me1: true);
       });
     });
 

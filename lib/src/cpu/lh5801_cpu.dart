@@ -1100,10 +1100,9 @@ class LH5801CPU extends LH5801State {
       case 0xA2: // ADC UH
         _addAccumulator(u.high);
         break;
-// 	case 0xA3: // ADC (ab)
-// 		if o8, err = cpu.readOp16Ind(0); err == nil {
-// 			cpu.addAccumulator(o8)
-// 		}
+      case 0xA3: // ADC (ab)
+        _addAccumulator(_readOp16Ind(0));
+        break;
       case 0xA4: // LDA UH
         _lda(u.high);
         break;
