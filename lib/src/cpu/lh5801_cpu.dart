@@ -109,23 +109,23 @@ class LH5801CPU extends LH5801State {
   void _att() => t.statusRegister = a.value;
 
   int _branchForward(int addCyclesTable, {bool cond = false}) {
-    int cpuCycles = 0;
     final int offset = _readOp8();
+
     if (cond) {
-      cpuCycles += addCyclesTable;
       p.value += offset;
+      return addCyclesTable;
     }
-    return cpuCycles;
+    return 0;
   }
 
   int _branchBackward(int addCyclesTable, {bool cond = false}) {
-    int cpuCycles = 0;
     final int offset = _readOp8();
+
     if (cond) {
-      cpuCycles += addCyclesTable;
       p.value -= offset;
+      return addCyclesTable;
     }
-    return cpuCycles;
+    return 0;
   }
 
   void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
@@ -696,7 +696,7 @@ class LH5801CPU extends LH5801State {
 
   int stepOpcode(int opcode) {
     final CyclesCount cyclesTable = instructionTable[opcode].cycles;
-    final int cycles = cyclesTable.basic;
+    int cycles = cyclesTable.basic;
     int o8, p8, o16;
 
     switch (opcode) {
@@ -1002,28 +1002,26 @@ class LH5801CPU extends LH5801State {
       case 0x80: // SBC XH
         _sbc(x.high);
         break;
-// 	case 0x81: // BCR + i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagC) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x81: // BCR +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.c == false);
+        break;
       case 0x82: // ADC XH
         _addAccumulator(x.high);
         break;
-// 	case 0x83: // BCS + i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagC)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x83: // BCS +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.c == true);
+        break;
       case 0x84: // LDA XH
         _lda(x.high);
         break;
-// 	case 0x85: // BHR + i
+// 	case 0x85: // BHR +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
 // 		}
       case 0x86: // CPA XH
         _cpi(a.value, x.high);
         break;
-// 	case 0x87: // BHS + i
+// 	case 0x87: // BHS +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
 // 			cycles += c
 // 		}
@@ -1033,13 +1031,13 @@ class LH5801CPU extends LH5801State {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0x89: // BZR + i
+// 	case 0x89: // BZR +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagZ) == false); err == nil {
 // 			cycles += c
 // 		}
 // 	case 0x8A: // RTI
 // 		err = cpu.rti()
-// 	case 0x8B: // BZS + i
+// 	case 0x8B: // BZS +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagZ)); err == nil {
 // 			cycles += c
 // 		}
@@ -1047,15 +1045,15 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 			cpu.dca(o8)
 // 		}
-// 	case 0x8D: // BVR + i
+// 	case 0x8D: // BVR +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagV) == false); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x8E: // BCH + i
+// 	case 0x8E: // BCH +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, true); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x8F: // BVS + i
+// 	case 0x8F: // BVS +i
 // 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagV)); err == nil {
 // 			cycles += c
 // 		}
@@ -1063,38 +1061,36 @@ class LH5801CPU extends LH5801State {
       case 0x90: // SBC YH
         _sbc(y.high);
         break;
-// 	case 0x91: // BCR - i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagC) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x91: // BCR -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.c == false);
+        break;
       case 0x92: // ADC YH
         _addAccumulator(y.high);
         break;
-// 	case 0x93: // BCS - i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagC)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x93: // BCS -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.c == true);
+        break;
       case 0x94: // LDA YH
         _lda(y.high);
         break;
-// 	case 0x95: // BHR - i
+// 	case 0x95: // BHR -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH) == false); err == nil {
 // 			cycles += c
 // 		}
       case 0x96: // CPA YH
         _cpi(a.value, y.high);
         break;
-// 	case 0x97: // BHS - i
+// 	case 0x97: // BHS -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x99: // BZR - i
+// 	case 0x99: // BZR -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagZ) == false); err == nil {
 // 			cycles += c
 // 		}
 // 	case 0x9A: // RTN
 // 		err = cpu.rtn()
-// 	case 0x9B: // BZS - i
+// 	case 0x9B: // BZS -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagZ)); err == nil {
 // 			cycles += c
 // 		}
@@ -1102,15 +1098,15 @@ class LH5801CPU extends LH5801State {
 // 		if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 			cpu.dca(o8)
 // 		}
-// 	case 0x9D: // BVR - i
+// 	case 0x9D: // BVR -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagV) == false); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x9E: // BCH - i
+// 	case 0x9E: // BCH -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, true); err == nil {
 // 			cycles += c
 // 		}
-// 	case 0x9F: // BVS - i
+// 	case 0x9F: // BVS -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagV)); err == nil {
 // 			cycles += c
 // 		}

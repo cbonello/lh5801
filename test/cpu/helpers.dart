@@ -1423,3 +1423,71 @@ void testCPIReg(System system, List<int> opcodes, Register8 register) {
   _test(2, 2, isTrue, isTrue);
   _test(84, 110, isFalse, isFalse);
 }
+
+void _testBranch(
+  System system,
+  List<int> opcodes,
+  int flagMask,
+  bool Function(int) cond, {
+  bool forward = true,
+}) {
+  const int initialP = 0x4002;
+  const int offset = 0x05;
+  final List<int> memOpcodes = <int>[...opcodes, 0x05];
+  final int expectedCycles = 8 + (forward ? 0 : 1);
+
+  system.cpu.p.value = initialP;
+  system.load(initialP, memOpcodes);
+  system.cpu.t.statusRegister = flagMask;
+  final int cycles = system.step(system.cpu.p.value);
+
+  // Condition is true?
+  if (cond(system.cpu.t.statusRegister)) {
+    expect(cycles, equals(expectedCycles + 2));
+    expect(
+      system.cpu.p.value,
+      equals(
+        initialP + memOpcodes.length + (forward ? offset : -offset),
+      ),
+    );
+  } else {
+    expect(cycles, equals(expectedCycles));
+    expect(system.cpu.p.value, equals(initialP + memOpcodes.length));
+  }
+}
+
+void testBCR(System system, List<int> opcodes, {bool forward = true}) {
+  _testBranch(
+    system,
+    opcodes,
+    0,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) == 0,
+    forward: forward,
+  );
+
+  _testBranch(
+    system,
+    opcodes,
+    LH5801Flags.C,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) == 0,
+    forward: forward,
+  );
+}
+
+void testBCS(System system, List<int> opcodes, {bool forward = true}) {
+  _testBranch(
+    system,
+    opcodes,
+    LH5801Flags.C,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) != 0,
+    forward: forward,
+  );
+
+  _testBranch(
+    system,
+    opcodes,
+    0,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.C) != 0,
+    forward: forward,
+  );
+}

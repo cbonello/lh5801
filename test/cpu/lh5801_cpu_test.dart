@@ -988,5 +988,25 @@ void main() {
         testCPIReg(system, <int>[0xB7], system.cpu.a);
       });
     });
+
+    group('BCR [page 47]', () {
+      test('BCR +i', () {
+        testBCR(system, <int>[0x81]);
+      });
+
+      test('BCR -i', () {
+        testBCR(system, <int>[0x91], forward: false);
+      });
+    });
+
+    group('BCS [page 47]', () {
+      test('BCS +i', () {
+        testBCS(system, <int>[0x83]);
+      });
+
+      test('BCS -i', () {
+        testBCS(system, <int>[0x93], forward: false);
+      });
+    });
   });
 }

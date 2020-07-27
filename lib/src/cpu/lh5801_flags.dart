@@ -21,6 +21,11 @@ class LH5801Flags {
 
   bool h, v, z, ie, c;
 
+  static const int H = 1 << 4;
+  static const int V = 1 << 3;
+  static const int Z = 1 << 2;
+  static const int C = 1 << 0;
+
   int get statusRegister =>
       (boolToInt(h) << 4) |
       (boolToInt(v) << 3) |
