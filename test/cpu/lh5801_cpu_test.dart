@@ -273,8 +273,12 @@ void main() {
         testANDRReg(system, 11, <int>[0xFD, 0x29], system.cpu.u, me1: true);
       });
 
+      test('AND (ab)', () {
+        testANDab(system, 13, <int>[0xA9]);
+      });
+
       test('AND #(ab)', () {
-        testANDab(system, <int>[0xFD, 0xA9], me1: true);
+        testANDab(system, 17, <int>[0xFD, 0xA9], me1: true);
       });
     });
 

@@ -426,7 +426,7 @@ void testANDRReg(
   _test(0xFF, 0x0F, isFalse);
 }
 
-void testANDab(System system, List<int> opcodes, {bool me1 = false}) {
+void testANDab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
   final LH5801Flags flags = system.cpu.t.clone();
@@ -435,7 +435,7 @@ void testANDab(System system, List<int> opcodes, {bool me1 = false}) {
   system.load(ab, <int>[0x0F]);
   system.cpu.a.value = 0xFF;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(17));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(0x0F));
