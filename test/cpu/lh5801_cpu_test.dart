@@ -999,13 +999,23 @@ void main() {
       });
     });
 
-    group('BCS [page 47]', () {
+    group('BCS [page 46]', () {
       test('BCS +i', () {
         testBCS(system, <int>[0x83]);
       });
 
       test('BCS -i', () {
         testBCS(system, <int>[0x93], forward: false);
+      });
+    });
+
+    group('BHR [page 47]', () {
+      test('BHR +i', () {
+        testBHR(system, <int>[0x85]);
+      });
+
+      test('BHR -i', () {
+        testBHR(system, <int>[0x95], forward: false);
       });
     });
   });
