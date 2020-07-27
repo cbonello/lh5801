@@ -1112,10 +1112,9 @@ class LH5801CPU extends LH5801State {
       case 0xA6: // CPA UH
         _cpi(a.value, u.high);
         break;
-// 	case 0xA7: // CPA (ab)
-// 		if o8, err = cpu.readOp16Ind(0); err == nil {
-// 			cpu.cpi(a.value, o8)
-// 		}
+      case 0xA7: // CPA (ab)
+        _cpi(a.value, _readOp16Ind(0));
+        break;
 // 	case 0xA8: // SPV
 // 		cpu.PV(true)
 // 	case 0xA9: // AND (ab)

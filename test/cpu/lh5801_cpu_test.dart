@@ -239,8 +239,12 @@ void main() {
         testCPARReg(system, 11, <int>[0xFD, 0x27], system.cpu.u, me1: true);
       });
 
+      test('CPA (ab)', () {
+        testCPAab(system, 13, <int>[0xA7]);
+      });
+
       test('CPA #(ab)', () {
-        testCPAab(system, <int>[0xFD, 0xA7], me1: true);
+        testCPAab(system, 17, <int>[0xFD, 0xA7], me1: true);
       });
     });
 
