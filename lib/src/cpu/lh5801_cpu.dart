@@ -1037,7 +1037,7 @@ class LH5801CPU extends LH5801State {
         _dca(_core.memRead(_me0(x.value)));
         break;
       case 0x8D: // BVR +i
-        cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
+        cycles += _branchForward(cyclesTable.additional, cond: t.v == false);
         break;
       case 0x8E: // BCH +i
         cycles += _branchForward(cyclesTable.additional, cond: true);
@@ -1081,10 +1081,9 @@ class LH5801CPU extends LH5801State {
       case 0x9C: // DCA (Y)
         _dca(_core.memRead(_me0(y.value)));
         break;
-// 	case 0x9D: // BVR -i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagV) == false); err == nil {
-// 			cycles += c
-// 		}
+      case 0x9D: // BVR -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.v == false);
+        break;
       case 0x9E: // BCH -i
         cycles += _branchBackward(cyclesTable.additional, cond: true);
         break;

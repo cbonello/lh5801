@@ -1063,11 +1063,11 @@ void main() {
 
     group('BVR [page 48]', () {
       test('BVR +i', () {
-        testBVR(system, <int>[0x89]);
+        testBVR(system, <int>[0x8D]);
       });
 
       test('BVR -i', () {
-        testBVR(system, <int>[0x99], forward: false);
+        testBVR(system, <int>[0x9D], forward: false);
       });
     });
 
