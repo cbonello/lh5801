@@ -604,8 +604,13 @@ void testORAab(System system, List<int> opcodes, {bool me1 = false}) {
   _test(0x00, 0x00, isTrue);
 }
 
-void testORIRReg(System system, List<int> opcodes, Register16 register,
-    {bool me1 = false}) {
+void testORIRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes,
+  Register16 register, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
     final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
@@ -615,7 +620,7 @@ void testORIRReg(System system, List<int> opcodes, Register16 register,
     system.load(ab, <int>[memValue]);
     register.value = ab;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(ab);

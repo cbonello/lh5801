@@ -891,10 +891,9 @@ class LH5801CPU extends LH5801State {
       case 0x4A: // LDI XL, i
         x.low = _readOp8();
         break;
-// 	case 0x4B: // OR (X), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.orMemory(_me0(x.value), o8)
-// 		}
+      case 0x4B: // ORI (X), i
+        _orMemory(_me0(x.value), _readOp8());
+        break;
 // 	case 0x4C: // CPI XH, i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			cpu.cpi(*cpu.x.High(), o8)
@@ -947,10 +946,9 @@ class LH5801CPU extends LH5801State {
       case 0x5A: // LDI YL, i
         y.low = _readOp8();
         break;
-// 	case 0x5B: // OR (Y), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.orMemory(_me0(cpu.y.Value()), o8)
-// 		}
+      case 0x5B: // ORI (Y), i
+        _orMemory(_me0(y.value), _readOp8());
+        break;
 // 	case 0x5C: // CPI YH, i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			cpu.cpi(*cpu.y.High(), o8)
@@ -1003,10 +1001,9 @@ class LH5801CPU extends LH5801State {
       case 0x6A: // LDI UL, i
         u.low = _readOp8();
         break;
-// 	case 0x6B: // OR (U), i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			err = cpu.orMemory(_me0(cpu.u.Value()), o8)
-// 		}
+      case 0x6B: // ORI (U), i
+        _orMemory(_me0(u.value), _readOp8());
+        break;
 // 	case 0x6C: // CPI UH, i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			cpu.cpi(*cpu.u.High(), o8)

@@ -692,16 +692,28 @@ void main() {
     });
 
     group('ORI [page 30]', () {
+      test('ORI (X), i', () {
+        testORIRReg(system, 13, <int>[0x4B], system.cpu.x);
+      });
+
       test('ORI #(X), i', () {
-        testORIRReg(system, <int>[0xFD, 0x4B], system.cpu.x, me1: true);
+        testORIRReg(system, 17, <int>[0xFD, 0x4B], system.cpu.x, me1: true);
       });
 
-      test('ORI #(Y)', () {
-        testORIRReg(system, <int>[0xFD, 0x5B], system.cpu.y, me1: true);
+      test('ORI (Y), i', () {
+        testORIRReg(system, 13, <int>[0x5B], system.cpu.y);
       });
 
-      test('ORI #(U)', () {
-        testORIRReg(system, <int>[0xFD, 0x6B], system.cpu.u, me1: true);
+      test('ORI #(Y), i', () {
+        testORIRReg(system, 17, <int>[0xFD, 0x5B], system.cpu.y, me1: true);
+      });
+
+      test('ORI (U), i', () {
+        testORIRReg(system, 13, <int>[0x6B], system.cpu.u);
+      });
+
+      test('ORI #(U), i', () {
+        testORIRReg(system, 17, <int>[0xFD, 0x6B], system.cpu.u, me1: true);
       });
 
       test('ORI #(ab), i', () {
