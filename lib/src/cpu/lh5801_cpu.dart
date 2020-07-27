@@ -894,20 +894,18 @@ class LH5801CPU extends LH5801State {
       case 0x4B: // ORI (X), i
         _orMemory(_me0(x.value), _readOp8());
         break;
-// 	case 0x4C: // CPI XH, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.x.High(), o8)
-// 		}
+      case 0x4C: // CPI XH, i
+        _cpi(x.high, _readOp8());
+        break;
 // 	case 0x4D: // BII (X), i
 // 		if p8, err = cpu.readOp8(); err == nil {
 // 			if o8, err = cpu.Read(_me0(x.value)); err == nil {
 // 				cpu.bit(o8, p8)
 // 			}
 // 		}
-// 	case 0x4E: // CPI XL, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.x.Low(), o8)
-// 		}
+      case 0x4E: // CPI XL, i
+        _cpi(x.low, _readOp8());
+        break;
 // 	case 0x4F: // ADI (X), i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			err = cpu.addMemory(_me0(x.value), o8)
@@ -949,20 +947,18 @@ class LH5801CPU extends LH5801State {
       case 0x5B: // ORI (Y), i
         _orMemory(_me0(y.value), _readOp8());
         break;
-// 	case 0x5C: // CPI YH, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.y.High(), o8)
-// 		}
+      case 0x5C: // CPI YH, i
+        _cpi(y.high, _readOp8());
+        break;
 // 	case 0x5D: // BII (Y), i
 // 		if p8, err = cpu.readOp8(); err == nil {
 // 			if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
 // 				cpu.bit(o8, p8)
 // 			}
 // 		}
-// 	case 0x5E: // CPI YL, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.y.Low(), o8)
-// 		}
+      case 0x5E: // CPI YL, i
+        _cpi(y.low, _readOp8());
+        break;
 // 	case 0x5F: // ADI (Y), i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			err = cpu.addMemory(_me0(cpu.y.Value()), o8)
@@ -1004,20 +1000,18 @@ class LH5801CPU extends LH5801State {
       case 0x6B: // ORI (U), i
         _orMemory(_me0(u.value), _readOp8());
         break;
-// 	case 0x6C: // CPI UH, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.u.High(), o8)
-// 		}
+      case 0x6C: // CPI UH, i
+        _cpi(u.high, _readOp8());
+        break;
 // 	case 0x6D: // BII (U), i
 // 		if p8, err = cpu.readOp8(); err == nil {
 // 			if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
 // 				cpu.bit(o8, p8)
 // 			}
 // 		}
-// 	case 0x6E: // CPI UL, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.cpi(*cpu.u.Low(), o8)
-// 		}
+      case 0x6E: // CPI UL, i
+        _cpi(u.low, _readOp8());
+        break;
 // 	case 0x6F: // ADI (U), i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			err = cpu.addMemory(_me0(cpu.u.Value()), o8)

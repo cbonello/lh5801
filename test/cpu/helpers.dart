@@ -1371,3 +1371,22 @@ void testLDISij(System system) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testCPIReg(System system, List<int> opcodes, Register8 register) {
+  void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
+    final List<int> memOpcodes = <int>[...opcodes, op2 & 0xFF];
+
+    system.load(0x0000, memOpcodes);
+    register.value = op1;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(7));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
+
+    expect(system.cpu.t.c, cFlagMatcher);
+    expect(system.cpu.t.z, zFlagMatcher);
+  }
+
+  _test(84, 80, isTrue, isFalse);
+  _test(2, 2, isTrue, isTrue);
+  _test(84, 110, isFalse, isFalse);
+}

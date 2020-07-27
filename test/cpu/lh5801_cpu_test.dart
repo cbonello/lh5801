@@ -926,5 +926,31 @@ void main() {
         testLDISij(system);
       });
     });
+
+    group('CPI [page 32]', () {
+      test('CPI XL, i', () {
+        testCPIReg(system, <int>[0x4E], system.cpu.x.lowRegister);
+      });
+
+      test('CPI XH, i', () {
+        testCPIReg(system, <int>[0x4C], system.cpu.x.highRegister);
+      });
+
+      test('CPI YL, i', () {
+        testCPIReg(system, <int>[0x5E], system.cpu.y.lowRegister);
+      });
+
+      test('CPI YH, i', () {
+        testCPIReg(system, <int>[0x5C], system.cpu.y.highRegister);
+      });
+
+      test('CPI UL, i', () {
+        testCPIReg(system, <int>[0x6E], system.cpu.u.lowRegister);
+      });
+
+      test('CPI UH, i', () {
+        testCPIReg(system, <int>[0x6C], system.cpu.u.highRegister);
+      });
+    });
   });
 }
