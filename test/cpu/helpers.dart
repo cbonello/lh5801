@@ -435,7 +435,8 @@ void testANDab(System system, List<int> opcodes, {bool me1 = false}) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testANIRReg(System system, List<int> opcodes, Register16 register,
+void testANIRReg(
+    System system, int expectedCycles, List<int> opcodes, Register16 register,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
@@ -446,7 +447,7 @@ void testANIRReg(System system, List<int> opcodes, Register16 register,
     register.value = memAddress;
     system.load(memAddress, <int>[memValue]);
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(memAddress);

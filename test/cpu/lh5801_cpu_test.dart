@@ -635,16 +635,28 @@ void main() {
     });
 
     group('ANI [page 29]', () {
-      test('ANI #(X), ', () {
-        testANIRReg(system, <int>[0xFD, 0x49], system.cpu.x, me1: true);
+      test('ANI (X), i', () {
+        testANIRReg(system, 13, <int>[0x49], system.cpu.x);
       });
 
-      test('ANI #(Y)', () {
-        testANIRReg(system, <int>[0xFD, 0x59], system.cpu.y, me1: true);
+      test('ANI #(X), i', () {
+        testANIRReg(system, 17, <int>[0xFD, 0x49], system.cpu.x, me1: true);
       });
 
-      test('ANI #(U)', () {
-        testANIRReg(system, <int>[0xFD, 0x69], system.cpu.u, me1: true);
+      test('ANI (Y), i', () {
+        testANIRReg(system, 13, <int>[0x59], system.cpu.y);
+      });
+
+      test('ANI #(Y), i', () {
+        testANIRReg(system, 17, <int>[0xFD, 0x59], system.cpu.y, me1: true);
+      });
+
+      test('ANI (U), i', () {
+        testANIRReg(system, 13, <int>[0x69], system.cpu.u);
+      });
+
+      test('ANI #(U), i', () {
+        testANIRReg(system, 17, <int>[0xFD, 0x69], system.cpu.u, me1: true);
       });
 
       test('ANI #(ab), i', () {
