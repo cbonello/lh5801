@@ -1020,10 +1020,9 @@ class LH5801CPU extends LH5801State {
       case 0x86: // CPA XH
         _cpi(a.value, x.high);
         break;
-// 	case 0x87: // BHS +i
-// 		if c, err = cpu.branchForward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x87: // BHS +i
+        cycles += _branchForward(cyclesTable.additional, cond: t.h == true);
+        break;
 // 	case 0x88: // LOP UL, i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.lop(cyclesTable.Additional, o8); err == nil {
@@ -1078,10 +1077,9 @@ class LH5801CPU extends LH5801State {
       case 0x96: // CPA YH
         _cpi(a.value, y.high);
         break;
-// 	case 0x97: // BHS -i
-// 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagH)); err == nil {
-// 			cycles += c
-// 		}
+      case 0x97: // BHS -i
+        cycles += _branchBackward(cyclesTable.additional, cond: t.h == true);
+        break;
 // 	case 0x99: // BZR -i
 // 		if c, err = cpu.branchBackward(cyclesTable.Additional, cpu.t.Value(FlagZ) == false); err == nil {
 // 			cycles += c

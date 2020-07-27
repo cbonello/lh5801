@@ -1509,3 +1509,21 @@ void testBHR(System system, List<int> opcodes, {bool forward = true}) {
     forward: forward,
   );
 }
+
+void testBHS(System system, List<int> opcodes, {bool forward = true}) {
+  _testBranch(
+    system,
+    opcodes,
+    LH5801Flags.H,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) != 0,
+    forward: forward,
+  );
+
+  _testBranch(
+    system,
+    opcodes,
+    0,
+    (int statusRegister) => (system.cpu.t.statusRegister & LH5801Flags.H) != 0,
+    forward: forward,
+  );
+}

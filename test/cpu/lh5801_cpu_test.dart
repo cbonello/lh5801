@@ -1018,5 +1018,15 @@ void main() {
         testBHR(system, <int>[0x95], forward: false);
       });
     });
+
+    group('BHS [page 47]', () {
+      test('BHS +i', () {
+        testBHS(system, <int>[0x87]);
+      });
+
+      test('BHS -i', () {
+        testBHS(system, <int>[0x97], forward: false);
+      });
+    });
   });
 }
