@@ -3,6 +3,13 @@ import 'dart:typed_data';
 import 'package:lh5801/lh5801.dart';
 import 'package:test/test.dart';
 
+int unsignedByteToInt(int value) {
+  if (value & 0x80 != 0) {
+    return -((0xff & ~value) + 1);
+  }
+  return value;
+}
+
 class System implements LH5801Core {
   System() {
     cpu = LH5801CPU(core: this, clockFrequency: 1300000);
@@ -1626,4 +1633,42 @@ void testBCH(System system, List<int> opcodes, {bool forward = true}) {
     (int statusRegister) => true,
     forward: forward,
   );
+}
+
+void testLOP(System system, List<int> opcodes) {
+  void _test(int uValue) {
+    const int initialP = 0x4003;
+    const int offset = 0x05;
+    final List<int> memOpcodes = <int>[...opcodes, 0x05];
+    const int expectedCycles = 8;
+    final int statusRegister = system.cpu.t.statusRegister;
+
+    system.cpu.p.value = initialP;
+    system.load(initialP, memOpcodes);
+    system.cpu.u.low = uValue;
+    final int cycles = system.step(system.cpu.p.value);
+
+    final int uLow = unsignedByteToInt(system.cpu.u.low);
+    expect(uLow, equals(uValue - 1));
+
+    // End of loop?
+    if (uLow >= 0) {
+      expect(cycles, equals(expectedCycles + 3));
+      expect(
+        system.cpu.p.value,
+        equals(
+          initialP + memOpcodes.length + -offset,
+        ),
+      );
+    } else {
+      expect(cycles, equals(expectedCycles));
+      expect(system.cpu.p.value, equals(initialP + memOpcodes.length));
+    }
+
+    expect(system.cpu.t.statusRegister, equals(statusRegister));
+  }
+
+  _test(4);
+  _test(1);
+  _test(0);
 }

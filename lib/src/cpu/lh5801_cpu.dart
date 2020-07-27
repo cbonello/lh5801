@@ -51,6 +51,13 @@ class LH5801CPU extends LH5801State {
     return _core.memRead((b << 16) | ab);
   }
 
+  int unsignedByteToInt(int value) {
+    if (value & 0x80 != 0) {
+      return -((0xff & ~value) + 1);
+    }
+    return value;
+  }
+
   // See http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt
   int _binaryAdd(int left, int right, {bool carry = false}) {
     final int c = LH5801Flags.boolToInt(carry);
@@ -157,7 +164,7 @@ class LH5801CPU extends LH5801State {
   void _dcs(int value) => a.value = _bcdAdd(a.value, value ^ 0xFF, carry: t.c);
 
   void _decRegister8(Register8 register) =>
-      register.value = _binaryAdd(register.value, 0x01 ^ 0xFF + 1);
+      register.value = _binaryAdd(register.value, (0x01 ^ 0xFF) + 1);
 
   void _decRegister16(Register16 register) => register.value--;
 
@@ -211,13 +218,12 @@ class LH5801CPU extends LH5801State {
   }
 
   int _lop(int addCyclesTable, int d) {
-    int cycles = 0;
     u.low--;
-    if (u.low >= 0) {
-      cycles += addCyclesTable;
+    if (unsignedByteToInt(u.low) >= 0) {
       p.value -= d;
+      return addCyclesTable;
     }
-    return cycles;
+    return 0;
   }
 
   void _orAccumulator(int value) {
@@ -285,13 +291,6 @@ class LH5801CPU extends LH5801State {
   void _rti() {
     _popRegister(p);
     t.statusRegister = _pop8();
-  }
-
-  int unsignedByteToInt(int value) {
-    if (value & 0x80 != 0) {
-      return -((0xff & ~value) + 1);
-    }
-    return value;
   }
 
   void _rtn() => _popRegister(p);
@@ -1023,12 +1022,9 @@ class LH5801CPU extends LH5801State {
       case 0x87: // BHS +i
         cycles += _branchForward(cyclesTable.additional, cond: t.h == true);
         break;
-// 	case 0x88: // LOP UL, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			if c, err = cpu.lop(cyclesTable.Additional, o8); err == nil {
-// 				cycles += c
-// 			}
-// 		}
+      case 0x88: // LOP i
+        cycles += _lop(cyclesTable.additional, _readOp8());
+        break;
       case 0x89: // BZR +i
         cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
         break;

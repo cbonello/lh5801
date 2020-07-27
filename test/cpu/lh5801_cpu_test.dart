@@ -1078,5 +1078,11 @@ void main() {
         testBCH(system, <int>[0x9E], forward: false);
       });
     });
+
+    group('LOP [page 46]', () {
+      test('LOP i', () {
+        testLOP(system, <int>[0x88]);
+      });
+    });
   });
 }
