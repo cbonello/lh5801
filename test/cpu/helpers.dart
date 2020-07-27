@@ -1285,3 +1285,18 @@ void testLDERReg(System system, List<int> opcodes, Register16 register) {
   _test(0x0055, 0x3A, isFalse);
   _test(0x0000, 0x00, isTrue);
 }
+
+void testLDIReg(System system, List<int> opcodes, Register8 register) {
+  final List<int> memOpcodes = <int>[...opcodes, 0x5A];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, memOpcodes);
+  register.value = 0xFF;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(6));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(register.value, equals(0x5A));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

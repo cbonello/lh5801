@@ -864,5 +864,31 @@ void main() {
         testLDERReg(system, <int>[0x67], system.cpu.u);
       });
     });
+
+    group('LDI [page 34]', () {
+      test('LDI XL, i', () {
+        testLDIReg(system, <int>[0x4A], system.cpu.x.lowRegister);
+      });
+
+      test('LDI XH, i', () {
+        testLDIReg(system, <int>[0x48], system.cpu.x.highRegister);
+      });
+
+      test('LDI YL, i', () {
+        testLDIReg(system, <int>[0x5A], system.cpu.y.lowRegister);
+      });
+
+      test('LDI YH, i', () {
+        testLDIReg(system, <int>[0x58], system.cpu.y.highRegister);
+      });
+
+      test('LDI UL, i', () {
+        testLDIReg(system, <int>[0x6A], system.cpu.u.lowRegister);
+      });
+
+      test('LDI UH, i', () {
+        testLDIReg(system, <int>[0x68], system.cpu.u.highRegister);
+      });
+    });
   });
 }
