@@ -897,12 +897,9 @@ class LH5801CPU extends LH5801State {
       case 0x4C: // CPI XH, i
         _cpi(x.high, _readOp8());
         break;
-// 	case 0x4D: // BII (X), i
-// 		if p8, err = cpu.readOp8(); err == nil {
-// 			if o8, err = cpu.Read(_me0(x.value)); err == nil {
-// 				cpu.bit(o8, p8)
-// 			}
-// 		}
+      case 0x4D: // BII (X), i
+        _bii(_me0(x.value), _readOp8());
+        break;
       case 0x4E: // CPI XL, i
         _cpi(x.low, _readOp8());
         break;
@@ -950,12 +947,9 @@ class LH5801CPU extends LH5801State {
       case 0x5C: // CPI YH, i
         _cpi(y.high, _readOp8());
         break;
-// 	case 0x5D: // BII (Y), i
-// 		if p8, err = cpu.readOp8(); err == nil {
-// 			if o8, err = cpu.Read(_me0(cpu.y.Value())); err == nil {
-// 				cpu.bit(o8, p8)
-// 			}
-// 		}
+      case 0x5D: // BII (Y), i
+        _bii(_me0(y.value), _readOp8());
+        break;
       case 0x5E: // CPI YL, i
         _cpi(y.low, _readOp8());
         break;
@@ -1003,12 +997,9 @@ class LH5801CPU extends LH5801State {
       case 0x6C: // CPI UH, i
         _cpi(u.high, _readOp8());
         break;
-// 	case 0x6D: // BII (U), i
-// 		if p8, err = cpu.readOp8(); err == nil {
-// 			if o8, err = cpu.Read(_me0(cpu.u.Value())); err == nil {
-// 				cpu.bit(o8, p8)
-// 			}
-// 		}
+      case 0x6D: // BII (U), i
+        _bii(_me0(u.value), _readOp8());
+        break;
       case 0x6E: // CPI UL, i
         _cpi(u.low, _readOp8());
         break;

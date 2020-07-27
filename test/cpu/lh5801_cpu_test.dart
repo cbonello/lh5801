@@ -726,16 +726,28 @@ void main() {
     });
 
     group('BII [page 32]', () {
-      test('BII #(X)', () {
-        testBIIRReg(system, <int>[0xFD, 0x4D], system.cpu.x, me1: true);
+      test('BII (X), i', () {
+        testBIIRReg(system, 10, <int>[0x4D], system.cpu.x);
       });
 
-      test('BII #(Y)', () {
-        testBIIRReg(system, <int>[0xFD, 0x5D], system.cpu.y, me1: true);
+      test('BII #(X), i', () {
+        testBIIRReg(system, 14, <int>[0xFD, 0x4D], system.cpu.x, me1: true);
       });
 
-      test('BII #(U)', () {
-        testBIIRReg(system, <int>[0xFD, 0x6D], system.cpu.u, me1: true);
+      test('BII (Y), i', () {
+        testBIIRReg(system, 10, <int>[0x5D], system.cpu.y);
+      });
+
+      test('BII #(Y), i', () {
+        testBIIRReg(system, 14, <int>[0xFD, 0x5D], system.cpu.y, me1: true);
+      });
+
+      test('BII (U), i', () {
+        testBIIRReg(system, 10, <int>[0x6D], system.cpu.u);
+      });
+
+      test('BII #(U), i', () {
+        testBIIRReg(system, 14, <int>[0xFD, 0x6D], system.cpu.u, me1: true);
       });
 
       test('BII #(ab), i', () {

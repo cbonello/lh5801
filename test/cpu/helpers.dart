@@ -916,6 +916,7 @@ void testBITab(System system, List<int> opcodes, {bool me1 = false}) {
 
 void testBIIRReg(
   System system,
+  int expectedCycles,
   List<int> opcodes,
   Register16 register, {
   bool me1 = false,
@@ -929,7 +930,7 @@ void testBIIRReg(
     register.value = regValue;
     system.load(regValue, <int>[memValue]);
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(14));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Memory should not be updated.
