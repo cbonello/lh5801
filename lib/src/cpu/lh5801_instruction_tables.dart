@@ -3265,7 +3265,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.reg(), 'A'),
       Operand(OperandType.imm8(), 0x00),
     ],
-    CyclesCount(9, 0),
+    CyclesCount(7, 0),
   ),
   _illegalInstruction(0x00B2),
   const InstructionDescriptor(

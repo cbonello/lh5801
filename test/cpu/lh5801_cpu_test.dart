@@ -1133,4 +1133,10 @@ void main() {
       });
     });
   });
+
+  group('SBI [page 28]', () {
+    test('SBI A, i', () {
+      testSBIAcc(system);
+    });
+  });
 }

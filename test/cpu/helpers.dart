@@ -1679,3 +1679,21 @@ void testLOP(System system, List<int> opcodes) {
   _test(1);
   _test(0);
 }
+
+void testSBIAcc(System system) {
+  final List<int> memOpcodes = <int>[0xB1, 7];
+
+  system.load(0x0000, memOpcodes);
+  system.cpu.a.value = 36;
+  system.cpu.t.c = false;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(7));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.a.value, equals(28));
+
+  expect(system.cpu.t.c, isTrue);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.h, isFalse);
+}
