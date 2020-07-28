@@ -325,8 +325,12 @@ void main() {
         testORARReg(system, 11, <int>[0xFD, 0x2B], system.cpu.u, me1: true);
       });
 
+      test('ORA (ab)', () {
+        testORAab(system, 13, <int>[0xAB]);
+      });
+
       test('ORA #(ab)', () {
-        testORAab(system, <int>[0xFD, 0xAB], me1: true);
+        testORAab(system, 17, <int>[0xFD, 0xAB], me1: true);
       });
     });
 

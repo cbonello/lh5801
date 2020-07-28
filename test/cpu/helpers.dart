@@ -590,7 +590,7 @@ void testORARReg(
   _test(0x00, 0x00, isTrue);
 }
 
-void testORAab(System system, List<int> opcodes, {bool me1 = false}) {
+void testORAab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(int op1, int op2, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
     final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -600,7 +600,7 @@ void testORAab(System system, List<int> opcodes, {bool me1 = false}) {
     system.load(ab, <int>[op2]);
     system.cpu.a.value = op1;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     expect(system.cpu.a.value, equals((op1 | op2) & 0xFF));
