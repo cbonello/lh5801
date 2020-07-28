@@ -1,3 +1,5 @@
+Work in progress...
+
 Sharp [LH5801](docs/PC1500.TechnicalReferenceManual.pdf?raw=true) 8-bit Microprocessor emulator.
 
 ## Usage
