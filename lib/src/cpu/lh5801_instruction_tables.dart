@@ -3397,7 +3397,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00C0,
     1,
-    'VEJ',
+    'VEJ (C0)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xC0),
       Operand(OperandType.none(), null),
@@ -3421,7 +3421,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00C2,
     1,
-    'VEJ',
+    'VEJ (C2)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xC2),
       Operand(OperandType.none(), null),
@@ -3445,7 +3445,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00C4,
     1,
-    'VEJ',
+    'VEJ (C4)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xC4),
       Operand(OperandType.none(), null),
@@ -3469,7 +3469,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00C6,
     1,
-    'VEJ',
+    'VEJ (C6)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xC6),
       Operand(OperandType.none(), null),
@@ -3493,7 +3493,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00C8,
     1,
-    'VEJ',
+    'VEJ (C8)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xC8),
       Operand(OperandType.none(), null),
@@ -3517,7 +3517,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00CA,
     1,
-    'VEJ',
+    'VEJ (CA)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xCA),
       Operand(OperandType.none(), null),
@@ -3541,7 +3541,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00CC,
     1,
-    'VEJ',
+    'VEJ (CC)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xCC),
       Operand(OperandType.none(), null),
@@ -3565,7 +3565,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00CE,
     1,
-    'VEJ',
+    'VEJ (CE)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xCE),
       Operand(OperandType.none(), null),
@@ -3590,7 +3590,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00D0,
     1,
-    'VEJ',
+    'VEJ (D0)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xD0),
       Operand(OperandType.none(), null),
@@ -3614,7 +3614,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00D2,
     1,
-    'VEJ',
+    'VEJ (D2)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xD2),
       Operand(OperandType.none(), null),
@@ -3638,7 +3638,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00D4,
     1,
-    'VEJ',
+    'VEJ (D4)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xD4),
       Operand(OperandType.none(), null),
@@ -3662,7 +3662,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00D6,
     1,
-    'VEJ',
+    'VEJ (D6)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xD6),
       Operand(OperandType.none(), null),
@@ -3686,7 +3686,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00D8,
     1,
-    'VEJ',
+    'VEJ (D8)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xD8),
       Operand(OperandType.none(), null),
@@ -3710,7 +3710,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00DA,
     1,
-    'VEJ',
+    'VEJ (DA)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xDA),
       Operand(OperandType.none(), null),
@@ -3734,7 +3734,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00DC,
     1,
-    'VEJ',
+    'VEJ (DC)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xDC),
       Operand(OperandType.none(), null),
@@ -3758,7 +3758,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00DE,
     1,
-    'VEJ',
+    'VEJ (DE)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xDE),
       Operand(OperandType.none(), null),
@@ -3783,7 +3783,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00E0,
     1,
-    'VEJ',
+    'VEJ (E0)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xE0),
       Operand(OperandType.none(), null),
@@ -3807,7 +3807,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00E2,
     1,
-    'VEJ',
+    'VEJ (E2)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xE2),
       Operand(OperandType.none(), null),
@@ -3831,7 +3831,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00E4,
     1,
-    'VEJ',
+    'VEJ (E4)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xE4),
       Operand(OperandType.none(), null),
@@ -3844,7 +3844,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00E6,
     1,
-    'VEJ',
+    'VEJ (E6)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xE6),
       Operand(OperandType.none(), null),
@@ -3857,7 +3857,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00E8,
     1,
-    'VEJ',
+    'VEJ (E8)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xE8),
       Operand(OperandType.none(), null),
@@ -3881,7 +3881,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00EA,
     1,
-    'VEJ',
+    'VEJ (EA)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xEA),
       Operand(OperandType.none(), null),
@@ -3905,7 +3905,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00EC,
     1,
-    'VEJ',
+    'VEJ (EC)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xEC),
       Operand(OperandType.none(), null),
@@ -3929,7 +3929,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00EE,
     1,
-    'VEJ',
+    'VEJ (EE)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xEE),
       Operand(OperandType.none(), null),
@@ -3954,7 +3954,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00F0,
     1,
-    'VEJ',
+    'VEJ (F0)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xF0),
       Operand(OperandType.none(), null),
@@ -3978,7 +3978,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00F2,
     1,
-    'VEJ',
+    'VEJ (F2)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xF2),
       Operand(OperandType.none(), null),
@@ -3991,7 +3991,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00F4,
     1,
-    'VEJ',
+    'VEJ (F4)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xF4),
       Operand(OperandType.none(), null),
@@ -4015,7 +4015,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     InstructionCategory.call(),
     0x00F6,
     1,
-    'VEJ',
+    'VEJ (F6)',
     <Operand>[
       Operand(OperandType.mem0Imm8(), 0xF6),
       Operand(OperandType.none(), null),
