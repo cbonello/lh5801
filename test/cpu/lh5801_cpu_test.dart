@@ -443,8 +443,12 @@ void main() {
         testSTARReg(system, 10, <int>[0xFD, 0x2E], system.cpu.u, me1: true);
       });
 
+      test('STA (ab)', () {
+        testSTAab(system, 12, <int>[0xAE]);
+      });
+
       test('STA #(ab)', () {
-        testSTAab(system, <int>[0xFD, 0xAE], me1: true);
+        testSTAab(system, 15, <int>[0xFD, 0xAE], me1: true);
       });
     });
 

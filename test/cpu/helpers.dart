@@ -848,7 +848,7 @@ void testSTARReg(
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTAab(System system, List<int> opcodes, {bool me1 = false}) {
+void testSTAab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   final int ab = me1 ? 0x1CB00 : 0xCB00;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
   final int statusRegister = system.cpu.t.statusRegister;
@@ -857,10 +857,10 @@ void testSTAab(System system, List<int> opcodes, {bool me1 = false}) {
   system.load(ab, <int>[0xFF]);
   system.cpu.a.value = 0x51;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(15));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
-  expect(system.memRead(ab), equals(system.cpu.a.value));
+  expect(system.cpu.a.value, equals(system.memRead(ab)));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
