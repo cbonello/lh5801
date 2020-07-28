@@ -385,8 +385,12 @@ void main() {
         testEORRReg(system, 11, <int>[0xFD, 0x2D], system.cpu.u, me1: true);
       });
 
+      test('EOR (ab)', () {
+        testEORab(system, 13, <int>[0xAD]);
+      });
+
       test('EOR #(ab)', () {
-        testEORab(system, <int>[0xFD, 0xAD], me1: true);
+        testEORab(system, 17, <int>[0xFD, 0xAD], me1: true);
       });
     });
 

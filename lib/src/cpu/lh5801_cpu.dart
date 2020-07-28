@@ -1130,10 +1130,9 @@ class LH5801CPU extends LH5801State {
       case 0xAC: // DCA (U)
         _dca(_core.memRead(_me0(u.value)));
         break;
-// 	case 0xAD: // EOR (ab)
-// 		if o8, err = cpu.readOp16Ind(0); err == nil {
-// 			cpu.eor(o8)
-// 		}
+      case 0xAD: // EOR (ab)
+        _eor(_readOp16Ind(0));
+        break;
 // 	case 0xAE: // STA (ab)
 // 		if o16, err = cpu.readOp16(); err == nil {
 // 			err = cpu.Write(_me0(o16), a.value)

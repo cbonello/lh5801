@@ -779,7 +779,7 @@ void testEORRReg(
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testEORab(System system, List<int> opcodes, {bool me1 = false}) {
+void testEORab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -794,7 +794,7 @@ void testEORab(System system, List<int> opcodes, {bool me1 = false}) {
     system.load(ab, <int>[initialOp2Value]);
     system.cpu.a.value = initialOp1Value;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     expect(system.cpu.a.value, equals(expectedAccValue));
