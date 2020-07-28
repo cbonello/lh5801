@@ -1911,12 +1911,18 @@ void testVSJConditional(
   }
 
   final int cycles = system.step(system.cpu.p.value);
-  expect(cycles, equals(jump ? 21 : 8));
 
-  expect(system.cpu.p.value, equals(subroutineAddress));
-  expect(system.cpu.s.value, equals(initialSValue - 2));
-  expect((initialPValue + memOpcodes.length) & 0xFF, equals(system.memRead(0x6000)));
-  expect((initialPValue + memOpcodes.length) >> 8, equals(system.memRead(0x6000 - 1)));
+  if (jump) {
+    expect(cycles, equals(21));
+    expect(system.cpu.p.value, equals(subroutineAddress));
+    expect(system.cpu.s.value, equals(initialSValue - 2));
+    expect((initialPValue + memOpcodes.length) & 0xFF, equals(system.memRead(0x6000)));
+    expect((initialPValue + memOpcodes.length) >> 8, equals(system.memRead(0x6000 - 1)));
+  } else {
+    expect(cycles, equals(8));
+    expect(system.cpu.p.value, equals(initialPValue + memOpcodes.length));
+    expect(system.cpu.s.value, equals(initialSValue));
+  }
 
   // Z is reset.
   expect(system.cpu.t.h, equals(flags.h));

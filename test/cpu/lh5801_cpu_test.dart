@@ -1193,5 +1193,11 @@ void main() {
         testVSJConditional(system, <int>[0xC3, 0xC0], LH5801Flags.C, jump: true);
       });
     });
+
+    group('VCR [page 52]', () {
+      test('VCR i', () {
+        testVSJConditional(system, <int>[0xC1, 0xC0], LH5801Flags.C, jump: false);
+      });
+    });
   });
 }
