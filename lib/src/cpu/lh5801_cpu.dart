@@ -1166,10 +1166,9 @@ class LH5801CPU extends LH5801State {
       case 0xBD: // EAI i
         _eorAccumulator(_readOp8());
         break;
-// 	case 0xBE: // SJP
-// 		if o16, err = cpu.readOp16(); err == nil {
-// 			err = cpu.sjp(_me0(o16))
-// 		}
+      case 0xBE: // SJP
+        _sjp(_me0(_readOp16()));
+        break;
       case 0xBF: // BII A, i
         _bit(a.value, _readOp8());
         break;

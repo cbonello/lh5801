@@ -1158,5 +1158,11 @@ void main() {
         testEAI(system);
       });
     });
+
+    group('SJP [page 49]', () {
+      test('SJP i, j', () {
+        testSJP(system);
+      });
+    });
   });
 }

@@ -1756,6 +1756,7 @@ void testJMP(System system) {
   system.load(system.cpu.p.value, memOpcodes);
   final int cycles = system.step(system.cpu.p.value);
   expect(cycles, equals(12));
+
   expect(system.cpu.p.value, equals(ij));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
@@ -1789,4 +1790,25 @@ void testEAI(System system) {
 
   _test(0x36, 0x6D, 0x5B, isFalse);
   _test(0x00, 0x00, 0x00, isTrue);
+}
+
+void testSJP(System system) {
+  const int initialPValue = 0x4000;
+  const int initialSValue = 0x6000;
+  const int ij = 0xE000;
+  final List<int> memOpcodes = <int>[0xBE, ij >> 8, ij & 0xFF];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.cpu.p.value = initialPValue;
+  system.cpu.s.value = initialSValue;
+  system.load(system.cpu.p.value, memOpcodes);
+  final int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(19));
+
+  expect(system.cpu.p.value, equals(ij));
+  expect(system.cpu.s.value, equals(initialSValue - 2));
+  expect((initialPValue + memOpcodes.length) & 0xFF, equals(system.memRead(0x6000)));
+  expect((initialPValue + memOpcodes.length) >> 8, equals(system.memRead(0x6000 - 1)));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
