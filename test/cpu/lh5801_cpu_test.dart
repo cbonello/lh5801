@@ -1199,5 +1199,11 @@ void main() {
         testVSJConditional(system, <int>[0xC1, 0xC0], LH5801Flags.C, jump: false);
       });
     });
+
+    group('VHS [page 52]', () {
+      test('VHS i', () {
+        testVSJConditional(system, <int>[0xC7, 0xC2], LH5801Flags.H, jump: true);
+      });
+    });
   });
 }
