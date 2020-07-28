@@ -671,6 +671,10 @@ void main() {
     });
 
     group('ANI [page 29]', () {
+      test('ANI A, i', () {
+        testANIAcc(system);
+      });
+
       test('ANI (X), i', () {
         testANIRReg(system, 13, <int>[0x49], system.cpu.x);
       });
