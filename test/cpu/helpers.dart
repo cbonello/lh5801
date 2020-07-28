@@ -1690,11 +1690,11 @@ void testBCH(System system, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testLOP(System system, List<int> opcodes) {
+void testLOP(System system) {
   void _test(int uValue) {
     const int initialP = 0x4003;
     const int offset = 0x05;
-    final List<int> memOpcodes = <int>[...opcodes, 0x05];
+    final List<int> memOpcodes = <int>[0x88, 0x05];
     const int expectedCycles = 8;
     final int statusRegister = system.cpu.t.statusRegister;
 
@@ -1744,4 +1744,19 @@ void testSBIAcc(System system) {
   expect(system.cpu.t.z, isFalse);
   expect(system.cpu.t.v, isFalse);
   expect(system.cpu.t.h, isFalse);
+}
+
+void testJMP(System system) {
+  const int initialPValue = 0x4000;
+  const int ij = 0x4100;
+  final List<int> memOpcodes = <int>[0xBA, ij >> 8, ij & 0xFF];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.cpu.p.value = initialPValue;
+  system.load(system.cpu.p.value, memOpcodes);
+  final int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(12));
+  expect(system.cpu.p.value, equals(ij));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
 }

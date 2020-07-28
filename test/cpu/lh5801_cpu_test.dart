@@ -1137,14 +1137,20 @@ void main() {
 
     group('LOP [page 46]', () {
       test('LOP i', () {
-        testLOP(system, <int>[0x88]);
+        testLOP(system);
       });
     });
-  });
 
-  group('SBI [page 28]', () {
-    test('SBI A, i', () {
-      testSBIAcc(system);
+    group('SBI [page 28]', () {
+      test('SBI A, i', () {
+        testSBIAcc(system);
+      });
+    });
+
+    group('JMP [page 45]', () {
+      test('JMP i, j', () {
+        testJMP(system);
+      });
     });
   });
 }
