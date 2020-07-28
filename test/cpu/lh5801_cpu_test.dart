@@ -1205,5 +1205,11 @@ void main() {
         testVSJConditional(system, <int>[0xC7, 0xC2], LH5801Flags.H, jump: true);
       });
     });
+
+    group('VHR [page 52]', () {
+      test('VHR i', () {
+        testVSJConditional(system, <int>[0xC5, 0xC0], LH5801Flags.H, jump: false);
+      });
+    });
   });
 }
