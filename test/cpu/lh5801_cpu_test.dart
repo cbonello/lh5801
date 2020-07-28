@@ -1211,5 +1211,11 @@ void main() {
         testVSJConditional(system, <int>[0xC5, 0xC0], LH5801Flags.H, jump: false);
       });
     });
+
+    group('VZS [page 52]', () {
+      test('VZS i', () {
+        testVSJConditional(system, <int>[0xCB, 0xC4], LH5801Flags.Z, jump: true);
+      });
+    });
   });
 }
