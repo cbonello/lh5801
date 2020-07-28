@@ -1174,80 +1174,72 @@ class LH5801CPU extends LH5801State {
         _bit(a.value, _readOp8());
         break;
 
-// 	case 0xC0: // VEJ (C0)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC0); err == nil {
-// 			cycles += c
-// 		}
+      case 0xC0: // VEJ (C0)
+        cycles += _vector(cyclesTable.additional, true, 0xC0);
+        break;
 // 	case 0xC1: // VCR i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagC) == false, o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xC2: // VEJ (C2)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC2); err == nil {
-// 			cycles += c
-// 		}
+      case 0xC2: // VEJ (C2)
+        cycles += _vector(cyclesTable.additional, true, 0xC2);
+        break;
 // 	case 0xC3: // VCS i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagC), o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xC4: // VEJ (C4)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC4); err == nil {
-// 			cycles += c
-// 		}
+      case 0xC4: // VEJ (C4)
+        cycles += _vector(cyclesTable.additional, true, 0xC4);
+        break;
 // 	case 0xC5: // VHR i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagH) == false, o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xC6: // VEJ (C6)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC6); err == nil {
-// 			cycles += c
-// 		}
+      case 0xC6: // VEJ (C6)
+        cycles += _vector(cyclesTable.additional, true, 0xC6);
+        break;
 // 	case 0xC7: // VHS i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagH), o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xC8: // VEJ (C8)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xC8); err == nil {
-// 			cycles += c
-// 		}
+      case 0xC8: // VEJ (C8)
+        cycles += _vector(cyclesTable.additional, true, 0xC8);
+        break;
 // 	case 0xC9: // VZR i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagZ) == false, o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xCA: // VEJ (CA)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xCA); err == nil {
-// 			cycles += c
-// 		}
+      case 0xCA: // VEJ (CA)
+        cycles += _vector(cyclesTable.additional, true, 0xCA);
+        break;
 // 	case 0xCB: // VZS i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagZ), o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xCC: // VEJ (CC)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xCC); err == nil {
-// 			cycles += c
-// 		}
+      case 0xCC: // VEJ (CC)
+        cycles += _vector(cyclesTable.additional, true, 0xCC);
+        break;
 // 	case 0xCD: // VMJ i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, true, o8); err == nil {
 // 				cycles += c
 // 			}
 // 		}
-// 	case 0xCE: // VEJ (CE)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xCE); err == nil {
-// 			cycles += c
-// 		}
+      case 0xCE: // VEJ (CE)
+        cycles += _vector(cyclesTable.additional, true, 0xCE);
+        break;
 // 	case 0xCF: // VVS i
 // 		if o8, err = cpu.readOp8(); err == nil {
 // 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagV), o8); err == nil {
@@ -1255,129 +1247,109 @@ class LH5801CPU extends LH5801State {
 // 			}
 // 		}
 
-// 	case 0xD0: // VEJ (D0)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xD0); err == nil {
-// 			cycles += c
-// 		}
+      case 0xD0: // VEJ (D0)
+        cycles += _vector(cyclesTable.additional, true, 0xD0);
+        break;
 // 	case 0xD1: // ROR
 // 		cpu.ror()
-// 	case 0xD2: // VEJ (D2)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xD2); err == nil {
-// 			cycles += c
-// 		}
+      case 0xD2: // VEJ (D2)
+        cycles += _vector(cyclesTable.additional, true, 0xD2);
+        break;
 // 	case 0xD3: // DRR (X)
 // 		err = cpu.drr(_me0(x.value))
-// 	case 0xD4: // VEJ (D4)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xD4); err == nil {
-// 			cycles += c
-// 		}
+      case 0xD4: // VEJ (D4)
+        cycles += _vector(cyclesTable.additional, true, 0xD4);
+        break;
 // 	case 0xD5: // SHR
 // 		cpu.shr()
-// 	case 0xD6: // VEJ (D6)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xD6); err == nil {
-// 			cycles += c
-// 		}
+      case 0xD6: // VEJ (D6)
+        cycles += _vector(cyclesTable.additional, true, 0xD6);
+        break;
 // 	case 0xD7: // DRL (X)
 // 		err = cpu.drl(_me0(x.value))
-// 	case 0xD8: // VEJ (D8)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xD8); err == nil {
-// 			cycles += c
-// 		}
+      case 0xD8: // VEJ (D8)
+        cycles += _vector(cyclesTable.additional, true, 0xD8);
+        break;
 // 	case 0xD9: // SHL
 // 		cpu.shl()
-// 	case 0xDA: // VEJ (DA)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xDA); err == nil {
-// 			cycles += c
-// 		}
+      case 0xDA: // VEJ (DA)
+        cycles += _vector(cyclesTable.additional, true, 0xDA);
+        break;
 // 	case 0xDB: // ROL
 // 		cpu.rol()
-// 	case 0xDC: // VEJ (DC)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xDC); err == nil {
-// 			cycles += c
-// 		}
+      case 0xDC: // VEJ (DC)
+        cycles += _vector(cyclesTable.additional, true, 0xDC);
+        break;
 // 	case 0xDD: // INC A
 // 		cpu.incRegister8(&a.value)
-// 	case 0xDE: // VEJ (DE)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xDE); err == nil {
-// 			cycles += c
-// 		}
+      case 0xDE: // VEJ (DE)
+        cycles += _vector(cyclesTable.additional, true, 0xDE);
+        break;
 // 	case 0xDF: // DEC A
 // 		cpu.decRegister8(&a.value)
 
-// 	case 0xE0: // VEJ (E0)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xE0); err == nil {
-// 			cycles += c
-// 		}
+      case 0xE0: // VEJ (E0)
+        cycles += _vector(cyclesTable.additional, true, 0xE0);
+        break;
 // 	case 0xE1: // SPU
 // 		cpu.PU(true)
-// 	case 0xE2: // VEJ (E2)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xE2); err == nil {
-// 			cycles += c
-// 		}
+      case 0xE2: // VEJ (E2)
+        cycles += _vector(cyclesTable.additional, true, 0xE2);
+        break;
 // 	case 0xE3: // RPU
 // 		cpu.PU(false)
-// 	case 0xE4: // VEJ (E4)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xE4); err == nil {
-// 			cycles += c
-// 		}
-// 	case 0xE6: // VEJ (E6)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xE6); err == nil {
-// 			cycles += c
-// 		}
-// 	case 0xE8: // VEJ (E8)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xE8); err == nil {
-// 			cycles += c
-// 		}
+      case 0xE4: // VEJ (E4)
+        cycles += _vector(cyclesTable.additional, true, 0xE4);
+        break;
+      case 0xE6: // VEJ (E6)
+        cycles += _vector(cyclesTable.additional, true, 0xE6);
+        break;
+      case 0xE8: // VEJ (E8)
+        cycles += _vector(cyclesTable.additional, true, 0xE8);
+        break;
 // 	case 0xE9: // ANI (ab), i
 // 		if o16, o8, err = cpu.readOp16Op8(); err == nil {
 // 			err = cpu.andMemory(_me0(o16), o8)
 // 		}
-// 	case 0xEA: // VEJ (EA)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xEA); err == nil {
-// 			cycles += c
-// 		}
+      case 0xEA: // VEJ (EA)
+        cycles += _vector(cyclesTable.additional, true, 0xEA);
+        break;
 // 	case 0xEB: // ORI (ab), i
 // 		if o16, o8, err = cpu.readOp16Op8(); err == nil {
 // 			err = cpu.orMemory(_me0(o16), o8)
 // 		}
-// 	case 0xEC: // VEJ (EC)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xEC); err == nil {
-// 			cycles += c
-// 		}
+      case 0xEC: // VEJ (EC)
+        cycles += _vector(cyclesTable.additional, true, 0xEC);
+        break;
 // 	case 0xED: // BII (ab), i
 // 		if o8, p8, err = cpu.readOp16IndOp8(0); err == nil {
 // 			cpu.bit(o8, p8)
 // 		}
-// 	case 0xEE: // VEJ (EE)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xEE); err == nil {
-// 			cycles += c
-// 		}
+      case 0xEE: // VEJ (EE)
+        cycles += _vector(cyclesTable.additional, true, 0xEE);
+        break;
       case 0xEF: // ADI (ab), i
         o16 = _readOp16();
         o8 = _readOp8();
         _addMemory(_me0(o16), o8);
         break;
 
-// 	case 0xF0: // VEJ (F0)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xF0); err == nil {
-// 			cycles += c
-// 		}
+      case 0xF0: // VEJ (F0)
+        cycles += _vector(cyclesTable.additional, true, 0xF0);
+        break;
 // 	case 0xF1: // AEX
 // 		cpu.aex()
-// 	case 0xF2: // VEJ (F2)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xF2); err == nil {
-// 			cycles += c
-// 		}
-// 	case 0xF4: // VEJ (F4)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xF4); err == nil {
-// 			cycles += c
-// 		}
+      case 0xF2: // VEJ (F2)
+        cycles += _vector(cyclesTable.additional, true, 0xF2);
+        break;
+      case 0xF4: // VEJ (F4)
+        cycles += _vector(cyclesTable.additional, true, 0xF4);
+        break;
 // 	case 0xF5: // TIN
 // 		err = cpu.tin()
-// 	case 0xF6: // VEJ (F6)
-// 		if c, err = cpu.vector(cyclesTable.Additional, true, 0xF6); err == nil {
-// 			cycles += c
-// 		}
+      case 0xF6: // VEJ (F6)
+        cycles += _vector(cyclesTable.additional, true, 0xF6);
+        break;
 // 	case 0xF7: // CIN
 // 		err = cpu.cin()
 // 	case 0xF9: // REC

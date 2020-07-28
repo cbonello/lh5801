@@ -1846,3 +1846,29 @@ void testRTN(System system) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testVEJ(System system, int opcode) {
+  const int initialSValue = 0x6000;
+  const int initialPValue = 0x4000;
+  const int subroutineAddress = 0x4500;
+
+  final List<int> memOpcodes = <int>[opcode];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.cpu.s.value = initialSValue;
+
+  system.cpu.p.value = initialPValue;
+  system.load(system.cpu.p.value, memOpcodes);
+
+  system.load(0xFF00 | opcode, <int>[subroutineAddress >> 8, subroutineAddress & 0xFF]);
+
+  final int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(17));
+
+  expect(system.cpu.p.value, equals(subroutineAddress));
+  expect(system.cpu.s.value, equals(initialSValue - 2));
+  expect((initialPValue + memOpcodes.length) & 0xFF, equals(system.memRead(0x6000)));
+  expect((initialPValue + memOpcodes.length) >> 8, equals(system.memRead(0x6000 - 1)));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
