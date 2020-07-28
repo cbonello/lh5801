@@ -1812,3 +1812,37 @@ void testSJP(System system) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testRTN(System system) {
+  const int initialPValue = 0x4000;
+  const int initialSValue = 0x6000;
+  const int ij = 0xE000;
+
+  final List<int> memOpcodes1 = <int>[
+    // SJP 0xE0, 0x00
+    0xBE,
+    ij >> 8,
+    ij & 0xFF,
+  ];
+  final List<int> memOpcodes2 = <int>[
+    // RTN
+    0x9A,
+  ];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.cpu.p.value = initialPValue;
+  system.cpu.s.value = initialSValue;
+
+  system.load(system.cpu.p.value, memOpcodes1);
+  int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(19));
+
+  system.load(system.cpu.p.value, memOpcodes2);
+  cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(11));
+
+  expect(system.cpu.p.value, equals(initialPValue + memOpcodes1.length));
+  expect(system.cpu.s.value, equals(initialSValue));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

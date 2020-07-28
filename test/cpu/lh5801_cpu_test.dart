@@ -1164,5 +1164,11 @@ void main() {
         testSJP(system);
       });
     });
+
+    group('RTN [page 53]', () {
+      test('RTN', () {
+        testRTN(system);
+      });
+    });
   });
 }
