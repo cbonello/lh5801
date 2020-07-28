@@ -1152,5 +1152,11 @@ void main() {
         testJMP(system);
       });
     });
+
+    group('EAI [page 30]', () {
+      test('EAI i', () {
+        testEAI(system);
+      });
+    });
   });
 }

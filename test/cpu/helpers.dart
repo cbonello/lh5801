@@ -1760,3 +1760,33 @@ void testJMP(System system) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testEAI(System system) {
+  void _test(
+    int initialOp1Value,
+    int initialOp2Value,
+    int expectedAccValue,
+    Matcher zFlagMatcher,
+  ) {
+    final List<int> memOpcodes = <int>[0xBD, initialOp2Value & 0xFF];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.load(0x0000, memOpcodes);
+    system.cpu.a.value = initialOp1Value;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(7));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
+
+    expect(system.cpu.a.value, equals(expectedAccValue));
+
+    // Z should be the only flag updated.
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x36, 0x6D, 0x5B, isFalse);
+  _test(0x00, 0x00, 0x00, isTrue);
+}

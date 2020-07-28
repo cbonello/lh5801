@@ -182,7 +182,7 @@ class LH5801CPU extends LH5801State {
     _core.memWrite(address, (tmp >> 4) & 0xFF);
   }
 
-  void _eor(int value) {
+  void _eorAccumulator(int value) {
     a.value ^= value;
     t.z = a.value == 0;
   }
@@ -392,7 +392,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me1(x.value)));
         break;
       case 0x0D: // EOR #(X)
-        _eor(_core.memRead(_me1(x.value)));
+        _eorAccumulator(_core.memRead(_me1(x.value)));
         break;
       case 0x0E: // STA #(X)
         _core.memWrite(_me1(x.value), a.value);
@@ -429,7 +429,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me1(y.value)));
         break;
       case 0x1D: // EOR #(Y)
-        _eor(_core.memRead(_me1(y.value)));
+        _eorAccumulator(_core.memRead(_me1(y.value)));
         break;
       case 0x1E: // STA #(Y)
         _core.memWrite(_me1(y.value), a.value);
@@ -466,7 +466,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me1(u.value)));
         break;
       case 0x2D: // EOR #(U)
-        _eor(_core.memRead(_me1(u.value)));
+        _eorAccumulator(_core.memRead(_me1(u.value)));
         break;
       case 0x2E: // STA #(U)
         _core.memWrite(_me1(u.value), a.value);
@@ -608,7 +608,7 @@ class LH5801CPU extends LH5801State {
         _dca(_core.memRead(_me1(u.value)));
         break;
       case 0xAD: // EOR #(ab)
-        _eor(_readOp16Ind(1));
+        _eorAccumulator(_readOp16Ind(1));
         break;
       case 0xAE: // STA #(ab)
         _core.memWrite(_me1(_readOp16()), a.value);
@@ -739,7 +739,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me0(x.value)));
         break;
       case 0x0D: // EOR (X)
-        _eor(_core.memRead(_me0(x.value)));
+        _eorAccumulator(_core.memRead(_me0(x.value)));
         break;
       case 0x0E: // STA (X)
         _core.memWrite(_me0(x.value), a.value);
@@ -789,7 +789,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me0(y.value)));
         break;
       case 0x1D: // EOR (Y)
-        _eor(_core.memRead(_me0(y.value)));
+        _eorAccumulator(_core.memRead(_me0(y.value)));
         break;
       case 0x1E: // STA (Y)
         _core.memWrite(_me0(y.value), a.value);
@@ -839,7 +839,7 @@ class LH5801CPU extends LH5801State {
         _dcs(_core.memRead(_me0(u.value)));
         break;
       case 0x2D: // EOR (U)
-        _eor(_core.memRead(_me0(u.value)));
+        _eorAccumulator(_core.memRead(_me0(u.value)));
         break;
       case 0x2E: // STA (U)
         _core.memWrite(_me0(u.value), a.value);
@@ -1131,7 +1131,7 @@ class LH5801CPU extends LH5801State {
         _dca(_core.memRead(_me0(u.value)));
         break;
       case 0xAD: // EOR (ab)
-        _eor(_readOp16Ind(0));
+        _eorAccumulator(_readOp16Ind(0));
         break;
       case 0xAE: // STA (ab)
         _core.memWrite(_me0(_readOp16()), a.value);
@@ -1163,10 +1163,9 @@ class LH5801CPU extends LH5801State {
       case 0xBB: // ORI A, i
         _orAccumulator(_readOp8());
         break;
-// 	case 0xBD: // EAI i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.eor(o8)
-// 		}
+      case 0xBD: // EAI i
+        _eorAccumulator(_readOp8());
+        break;
 // 	case 0xBE: // SJP
 // 		if o16, err = cpu.readOp16(); err == nil {
 // 			err = cpu.sjp(_me0(o16))
