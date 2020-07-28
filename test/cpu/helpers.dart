@@ -193,6 +193,25 @@ void testADCab(System system, int expectedCycles, List<int> opcodes, {bool me1 =
   expect(system.cpu.t.h, isFalse);
 }
 
+void testADIAcc(System system) {
+  final List<int> memOpcodes = <int>[0xB3, 0x20];
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, memOpcodes);
+  system.cpu.a.value = 0x33;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(7));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.a.value, equals(0x53));
+
+  expect(system.cpu.t.h, isFalse);
+  expect(system.cpu.t.v, isFalse);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isFalse);
+}
+
 void testADIRReg(
   System system,
   int expectedCycles,

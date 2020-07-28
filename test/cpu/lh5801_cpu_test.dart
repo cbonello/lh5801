@@ -796,6 +796,10 @@ void main() {
     });
 
     group('ADI [page 26]', () {
+      test('ADI A, i', () {
+        testADIAcc(system);
+      });
+
       test('ADI (X), i', () {
         testADIRReg(system, 13, <int>[0x4F], system.cpu.x);
       });

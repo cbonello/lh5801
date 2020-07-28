@@ -1143,10 +1143,9 @@ class LH5801CPU extends LH5801State {
       case 0xB1: // SBI A, i
         _sbc(_readOp8());
         break;
-// 	case 0xB3: // ADI A, i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			cpu.addAccumulator(o8)
-// 		}
+      case 0xB3: // ADI A, i
+        _addAccumulator(_readOp8());
+        break;
       case 0xB5: // LDI A, i
         _ldi(_readOp8());
         break;
