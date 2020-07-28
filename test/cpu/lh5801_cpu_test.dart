@@ -477,8 +477,12 @@ void main() {
         testBITRReg(system, 11, <int>[0xFD, 0x2F], system.cpu.u, me1: true);
       });
 
+      test('BIT (ab)', () {
+        testBITab(system, 13, <int>[0xAF]);
+      });
+
       test('BIT #(ab)', () {
-        testBITab(system, <int>[0xFD, 0xAF], me1: true);
+        testBITab(system, 17, <int>[0xFD, 0xAF], me1: true);
       });
     });
 

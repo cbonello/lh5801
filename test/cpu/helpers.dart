@@ -899,7 +899,7 @@ void testBITRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBITab(System system, List<int> opcodes, {bool me1 = false}) {
+void testBITab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(int accValue, int abValue, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
     final List<int> memOpcodes = <int>[...opcodes, (abValue >> 8) & 0xFF, abValue & 0xFF];
@@ -909,7 +909,7 @@ void testBITab(System system, List<int> opcodes, {bool me1 = false}) {
     system.load(ab, <int>[abValue]);
     system.cpu.a.value = accValue;
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(17));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Accumulator should not be updated.
