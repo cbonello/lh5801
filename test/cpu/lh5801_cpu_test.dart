@@ -1,3 +1,4 @@
+import 'package:lh5801/lh5801.dart';
 import 'package:test/test.dart';
 
 import 'helpers.dart';
@@ -1174,7 +1175,7 @@ void main() {
     group('VEJ [page 50]', () {
       for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
         test('VEJ (${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()})', () {
-          testVectorSubroutineJump(system, 17, <int>[vectorId]);
+          testVSJ(system, 17, <int>[vectorId]);
         });
       }
     });
@@ -1182,9 +1183,15 @@ void main() {
     group('VMJ [page 51]', () {
       for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
         test('VMJ ${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()}', () {
-          testVectorSubroutineJump(system, 20, <int>[0xCD, vectorId]);
+          testVSJ(system, 20, <int>[0xCD, vectorId]);
         });
       }
+    });
+
+    group('VCS [page 52]', () {
+      test('VCS i', () {
+        testVSJConditional(system, <int>[0xC3, 0xC0], LH5801Flags.C, jump: true);
+      });
     });
   });
 }

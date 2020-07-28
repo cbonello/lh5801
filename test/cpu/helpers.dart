@@ -1847,7 +1847,7 @@ void testRTN(System system) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testVectorSubroutineJump(System system, int expectedCycles, List<int> opcodes) {
+void testVSJ(System system, int expectedCycles, List<int> opcodes) {
   const int initialSValue = 0x6000;
   const int initialPValue = 0x4000;
   const int subroutineAddress = 0x4500;
@@ -1869,6 +1869,49 @@ void testVectorSubroutineJump(System system, int expectedCycles, List<int> opcod
 
   final int cycles = system.step(system.cpu.p.value);
   expect(cycles, equals(expectedCycles));
+
+  expect(system.cpu.p.value, equals(subroutineAddress));
+  expect(system.cpu.s.value, equals(initialSValue - 2));
+  expect((initialPValue + memOpcodes.length) & 0xFF, equals(system.memRead(0x6000)));
+  expect((initialPValue + memOpcodes.length) >> 8, equals(system.memRead(0x6000 - 1)));
+
+  // Z is reset.
+  expect(system.cpu.t.h, equals(flags.h));
+  expect(system.cpu.t.v, equals(flags.v));
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, equals(flags.c));
+}
+
+void testVSJConditional(
+  System system,
+  List<int> opcodes,
+  int statusRegister, {
+  bool jump = false,
+}) {
+  const int initialSValue = 0x6000;
+  const int initialPValue = 0x4000;
+  const int subroutineAddress = 0x4500;
+
+  final List<int> memOpcodes = <int>[...opcodes];
+
+  system.cpu.t.statusRegister = statusRegister;
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.cpu.s.value = initialSValue;
+
+  system.cpu.p.value = initialPValue;
+  system.load(system.cpu.p.value, memOpcodes);
+
+  for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
+    system.load(
+      0xFF00 | vectorId,
+      <int>[subroutineAddress >> 8, subroutineAddress & 0xFF],
+    );
+  }
+
+  final int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(jump ? 21 : 8));
 
   expect(system.cpu.p.value, equals(subroutineAddress));
   expect(system.cpu.s.value, equals(initialSValue - 2));

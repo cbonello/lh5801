@@ -1177,21 +1177,15 @@ class LH5801CPU extends LH5801State {
       case 0xC0: // VEJ (C0)
         cycles += _vector(cyclesTable.additional, true, 0xC0);
         break;
-// 	case 0xC1: // VCR i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagC) == false, o8); err == nil {
-// 				cycles += c
-// 			}
-// 		}
+      case 0xC1: // VCR i
+        cycles += _vector(cyclesTable.additional, t.c == false, _readOp8());
+        break;
       case 0xC2: // VEJ (C2)
         cycles += _vector(cyclesTable.additional, true, 0xC2);
         break;
-// 	case 0xC3: // VCS i
-// 		if o8, err = cpu.readOp8(); err == nil {
-// 			if c, err = cpu.vector(cyclesTable.Additional, cpu.t.Value(FlagC), o8); err == nil {
-// 				cycles += c
-// 			}
-// 		}
+      case 0xC3: // VCS i
+        cycles += _vector(cyclesTable.additional, t.c, _readOp8());
+        break;
       case 0xC4: // VEJ (C4)
         cycles += _vector(cyclesTable.additional, true, 0xC4);
         break;
