@@ -1217,5 +1217,17 @@ void main() {
         testVSJConditional(system, <int>[0xCB, 0xC4], LH5801Flags.Z, jump: true);
       });
     });
+
+    group('VZR [page 53]', () {
+      test('VZR i', () {
+        testVSJConditional(system, <int>[0xC9, 0xC0], LH5801Flags.Z, jump: false);
+      });
+    });
+
+    group('VVS [page 53]', () {
+      test('VVS i', () {
+        testVSJConditional(system, <int>[0xCB, 0xC4], LH5801Flags.Z, jump: true);
+      });
+    });
   });
 }
