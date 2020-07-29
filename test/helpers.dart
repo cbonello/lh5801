@@ -526,16 +526,16 @@ void testANIRReg(
   _test(0x12, 0x36, isFalse);
 }
 
-void testANIab(System system, List<int> opcodes, {bool me1 = false}) {
+void testANIab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
-    final int ab = me1 ? 0x10001 : 0x0001;
+    final int ab = me1 ? 0x16001 : 0x6001;
     final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
     final LH5801Flags flags = system.cpu.t.clone();
 
     system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(23));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     final int result = system.memRead(ab);

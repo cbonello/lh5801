@@ -717,8 +717,12 @@ void main() {
         testANIRReg(system, 17, <int>[0xFD, 0x69], system.cpu.u, me1: true);
       });
 
+      test('ANI (ab), i', () {
+        testANIab(system, 19, <int>[0xE9]);
+      });
+
       test('ANI #(ab), i', () {
-        testANIab(system, <int>[0xFD, 0xE9], me1: true);
+        testANIab(system, 23, <int>[0xFD, 0xE9], me1: true);
       });
     });
 
