@@ -1,6 +1,6 @@
 # Sharp LH5801 
 
-[![build](https://github.com/cbonello/lh5801/workflows/Dart%20CI/badge.svg)](https://github.com/cbonello/lh5801/actions)
+[![build](https://github.com/cbonello/lh5801/workflows/CI/badge.svg)](https://github.com/cbonello/lh5801/actions)
 [![codecov](https://codecov.io/gh/cbonello/lh5801/branch/master/graph/badge.svg)](https://codecov.io/gh/cbonello/lh5801)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
