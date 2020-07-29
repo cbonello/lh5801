@@ -579,6 +579,15 @@ void main() {
     });
 
     group('DEC [page 31]', () {
+      test('DEC A', () {
+        testDecReg8(
+          system,
+          5,
+          <int>[0xDF],
+          system.cpu.a,
+        );
+      });
+
       test('DEC XL', () {
         testDecReg8(
           system,
