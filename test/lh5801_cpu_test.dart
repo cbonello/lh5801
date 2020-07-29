@@ -487,6 +487,15 @@ void main() {
     });
 
     group('INC [page 30]', () {
+      test('INC A', () {
+        testIncReg8(
+          system,
+          5,
+          <int>[0xDD],
+          system.cpu.a,
+        );
+      });
+
       test('INC XL', () {
         testIncReg8(
           system,
