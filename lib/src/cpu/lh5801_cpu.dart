@@ -1028,8 +1028,9 @@ class LH5801CPU extends LH5801State {
       case 0x89: // BZR +i
         cycles += _branchForward(cyclesTable.additional, cond: t.z == false);
         break;
-// 	case 0x8A: // RTI
-// 		err = cpu.rti()
+      case 0x8A: // RTI
+        _rti();
+        break;
       case 0x8B: // BZS +i
         cycles += _branchForward(cyclesTable.additional, cond: t.z == true);
         break;

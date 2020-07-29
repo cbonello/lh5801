@@ -1847,6 +1847,37 @@ void testRTN(System system) {
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
+void testRTI(System system) {
+  const int initialPValue = 0x4000;
+  const int initialSValue = 0x6000;
+  const int statusRegister =
+      LH5801Flags.H | LH5801Flags.V | LH5801Flags.Z | LH5801Flags.C;
+  const int ij = 0xE000;
+
+  final List<int> memOpcodes = <int>[
+    // RTI
+    0x8A,
+  ];
+  final List<int> stackOpcodes = <int>[
+    ij >> 8,
+    ij & 0xFF,
+    statusRegister,
+  ];
+
+  system.cpu.p.value = initialPValue;
+  system.load(system.cpu.p.value, memOpcodes);
+
+  system.cpu.s.value = initialSValue;
+  system.load(initialSValue + 1, stackOpcodes);
+
+  final int cycles = system.step(system.cpu.p.value);
+  expect(cycles, equals(14));
+
+  expect(system.cpu.p.value, equals(ij));
+  expect(system.cpu.s.value, equals(initialSValue + 3));
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
 void testVSJ(System system, int expectedCycles, List<int> opcodes) {
   const int initialSValue = 0x6000;
   const int initialPValue = 0x4000;
