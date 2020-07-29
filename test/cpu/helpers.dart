@@ -2008,3 +2008,29 @@ void testVVS(System system, List<int> opcodes) {
 
   _testVSJConditional(system, opcodes, 0);
 }
+
+void testROR(System system) {
+  void _test(int initialAccValue, int expectedAccValue, int expectedStatusRegister,
+      {bool carry = false}) {
+    final List<int> opcodes = <int>[0xD1];
+
+    system.load(0x0000, opcodes);
+    system.cpu.a.value = initialAccValue;
+    system.cpu.t.c = carry;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(9));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, expectedAccValue);
+
+    expect(system.cpu.t.statusRegister, expectedStatusRegister);
+  }
+
+  _test(0xC8, 0x64, 0);
+  _test(0xC8, 0xE4, 0, carry: true);
+
+  _test(0xF0, 0x78, LH5801Flags.H);
+  _test(0x02, 0x01, LH5801Flags.V);
+  _test(0x0F, 0x07, LH5801Flags.V | LH5801Flags.C);
+  _test(0x01, 0x00, LH5801Flags.Z | LH5801Flags.C);
+}

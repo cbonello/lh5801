@@ -1228,5 +1228,11 @@ void main() {
         testVVS(system, <int>[0xCF, 0xC4]);
       });
     });
+
+    group('ROR [page 41]', () {
+      test('ROR', () {
+        testROR(system);
+      });
+    });
   });
 }
