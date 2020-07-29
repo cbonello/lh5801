@@ -1,4 +1,3 @@
-import 'package:lh5801/lh5801.dart';
 import 'package:test/test.dart';
 
 import 'helpers.dart';
@@ -1190,43 +1189,43 @@ void main() {
 
     group('VCS [page 52]', () {
       test('VCS i', () {
-        testVSJConditional(system, <int>[0xC3, 0xC0], LH5801Flags.C, jump: true);
+        testVCS(system, <int>[0xC3, 0xC0]);
       });
     });
 
     group('VCR [page 52]', () {
       test('VCR i', () {
-        testVSJConditional(system, <int>[0xC1, 0xC0], LH5801Flags.C, jump: false);
+        testVCR(system, <int>[0xC1, 0xC0]);
       });
     });
 
     group('VHS [page 52]', () {
       test('VHS i', () {
-        testVSJConditional(system, <int>[0xC7, 0xC2], LH5801Flags.H, jump: true);
+        testVHS(system, <int>[0xC7, 0xC2]);
       });
     });
 
     group('VHR [page 52]', () {
       test('VHR i', () {
-        testVSJConditional(system, <int>[0xC5, 0xC0], LH5801Flags.H, jump: false);
+        testVHR(system, <int>[0xC5, 0xC0]);
       });
     });
 
     group('VZS [page 52]', () {
       test('VZS i', () {
-        testVSJConditional(system, <int>[0xCB, 0xC4], LH5801Flags.Z, jump: true);
+        testVZS(system, <int>[0xCB, 0xC4]);
       });
     });
 
     group('VZR [page 53]', () {
       test('VZR i', () {
-        testVSJConditional(system, <int>[0xC9, 0xC0], LH5801Flags.Z, jump: false);
+        testVZR(system, <int>[0xC9, 0xC0]);
       });
     });
 
     group('VVS [page 53]', () {
       test('VVS i', () {
-        testVSJConditional(system, <int>[0xCB, 0xC4], LH5801Flags.Z, jump: true);
+        testVVS(system, <int>[0xCF, 0xC4]);
       });
     });
   });

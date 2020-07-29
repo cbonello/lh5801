@@ -1883,7 +1883,7 @@ void testVSJ(System system, int expectedCycles, List<int> opcodes) {
   expect(system.cpu.t.c, equals(flags.c));
 }
 
-void testVSJConditional(
+void _testVSJConditional(
   System system,
   List<int> opcodes,
   int statusRegister, {
@@ -1930,4 +1930,81 @@ void testVSJConditional(
   expect(system.cpu.t.z, isFalse);
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, equals(flags.c));
+}
+
+void testVCS(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    LH5801Flags.C,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, 0);
+}
+
+void testVCR(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    0,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, LH5801Flags.C);
+}
+
+void testVHS(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    LH5801Flags.H,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, 0);
+}
+
+void testVHR(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    0,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, LH5801Flags.H);
+}
+
+void testVZS(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    LH5801Flags.Z,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, 0);
+}
+
+void testVZR(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    0,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, LH5801Flags.Z);
+}
+
+void testVVS(System system, List<int> opcodes) {
+  _testVSJConditional(
+    system,
+    opcodes,
+    LH5801Flags.V,
+    jump: true,
+  );
+
+  _testVSJConditional(system, opcodes, 0);
 }
