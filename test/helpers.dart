@@ -2116,3 +2116,18 @@ void testCIN(System system) {
   _test(2, 2, isTrue, isTrue);
   _test(84, 110, isFalse, isFalse);
 }
+
+void testRECSEC(System system, List<int> opcodes, {bool expectedCarry = false}) {
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, opcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(4));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.t.h, equals(flags.h));
+  expect(system.cpu.t.v, equals(flags.v));
+  expect(system.cpu.t.z, equals(flags.h));
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, equals(expectedCarry));
+}

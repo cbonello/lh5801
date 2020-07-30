@@ -1335,10 +1335,12 @@ class LH5801CPU extends LH5801State {
       case 0xF7: // CIN
         _cin();
         break;
-// 	case 0xF9: // REC
-// 		cpu.t.Reset(FlagC)
-// 	case 0xFB: // SEC
-// 		cpu.t.Set(FlagC)
+      case 0xF9: // REC
+        t.c = false;
+        break;
+      case 0xFB: // SEC
+        t.c = true;
+        break;
 
       default:
         print('LH5801 illegal opcode: $opcode');

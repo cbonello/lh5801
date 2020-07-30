@@ -1282,5 +1282,17 @@ void main() {
         testCIN(system);
       });
     });
+
+    group('SEC [page 42]', () {
+      test('SEC', () {
+        testRECSEC(system, <int>[0xFB], expectedCarry: true);
+      });
+    });
+
+    group('REC [page 42]', () {
+      test('REC', () {
+        testRECSEC(system, <int>[0xF9]);
+      });
+    });
   });
 }
