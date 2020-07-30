@@ -1294,5 +1294,11 @@ void main() {
         testRECSEC(system, <int>[0xF9]);
       });
     });
+
+    group('AEX [page 41]', () {
+      test('AEX', () {
+        testAEX(system);
+      });
+    });
   });
 }

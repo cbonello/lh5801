@@ -2131,3 +2131,18 @@ void testRECSEC(System system, List<int> opcodes, {bool expectedCarry = false}) 
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, equals(expectedCarry));
 }
+
+void testAEX(System system) {
+  final List<int> memOpcodes = <int>[0xF1];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, memOpcodes);
+  system.cpu.a.value = 0xCA;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(6));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.a.value, equals(0xAC));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}

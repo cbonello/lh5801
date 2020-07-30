@@ -90,12 +90,12 @@ class LH5801CPU extends LH5801State {
     t.statusRegister = savedFlags;
   }
 
-  void _aex() => a._value = (a._value << 4) | (a._value >> 4);
+  void _aex() => a.value = (a.value << 4) | (a.value >> 4);
 
-  void _am0() => tm = a._value;
+  void _am0() => tm = a.value;
 
   void _am1() {
-    tm = 0x100 | a._value;
+    tm = 0x100 | a.value;
     // _ir2 = tm.isInterruptRaised()
   }
 
@@ -1318,8 +1318,9 @@ class LH5801CPU extends LH5801State {
       case 0xF0: // VEJ (F0)
         cycles += _vector(cyclesTable.additional, true, 0xF0);
         break;
-// 	case 0xF1: // AEX
-// 		cpu.aex()
+      case 0xF1: // AEX
+        _aex();
+        break;
       case 0xF2: // VEJ (F2)
         cycles += _vector(cyclesTable.additional, true, 0xF2);
         break;
