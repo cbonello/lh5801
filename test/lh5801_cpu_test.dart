@@ -954,8 +954,12 @@ void main() {
     });
 
     group('DRL [page 40]', () {
+      test('DRL (X)', () {
+        testDRLRReg(system, 12, <int>[0xD7]);
+      });
+
       test('DRL #(X)', () {
-        testDRLRReg(system, <int>[0xFD, 0xD7], me1: true);
+        testDRLRReg(system, 16, <int>[0xFD, 0xD7], me1: true);
       });
     });
 

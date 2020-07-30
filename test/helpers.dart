@@ -1296,7 +1296,12 @@ void testDRRRReg(
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testDRLRReg(System system, List<int> opcodes, {bool me1 = false}) {
+void testDRLRReg(
+  System system,
+  int expectedCycles,
+  List<int> opcodes, {
+  bool me1 = false,
+}) {
   final int statusRegister = system.cpu.t.statusRegister;
 
   system.load(0x0000, opcodes);
@@ -1304,7 +1309,7 @@ void testDRLRReg(System system, List<int> opcodes, {bool me1 = false}) {
   system.load((me1 ? 0x10000 : 0) | system.cpu.x.value, <int>[0xB3]);
   system.cpu.a.value = 0x6F;
   final int cycles = system.step(0x0000);
-  expect(cycles, equals(16));
+  expect(cycles, equals(expectedCycles));
   expect(system.cpu.p.value, equals(opcodes.length));
 
   expect(system.cpu.a.value, equals(0xB3));
