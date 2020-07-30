@@ -2092,3 +2092,27 @@ void testTIN(System system) {
 
   expect(system.cpu.t.statusRegister, statusRegister);
 }
+
+void testCIN(System system) {
+  void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
+    const int initialXValue = 0x4700;
+    final List<int> memOpcodes = <int>[0xF7];
+
+    system.load(0x0000, memOpcodes);
+    system.cpu.a.value = op1;
+    system.cpu.x.value = initialXValue;
+    system.load(initialXValue, <int>[op2]);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(7));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
+
+    expect(system.cpu.x.value, equals(initialXValue + 1));
+
+    expect(system.cpu.t.c, cFlagMatcher);
+    expect(system.cpu.t.z, zFlagMatcher);
+  }
+
+  _test(84, 80, isTrue, isFalse);
+  _test(2, 2, isTrue, isTrue);
+  _test(84, 110, isFalse, isFalse);
+}

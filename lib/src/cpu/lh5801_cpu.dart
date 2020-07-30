@@ -1332,8 +1332,9 @@ class LH5801CPU extends LH5801State {
       case 0xF6: // VEJ (F6)
         cycles += _vector(cyclesTable.additional, true, 0xF6);
         break;
-// 	case 0xF7: // CIN
-// 		err = cpu.cin()
+      case 0xF7: // CIN
+        _cin();
+        break;
 // 	case 0xF9: // REC
 // 		cpu.t.Reset(FlagC)
 // 	case 0xFB: // SEC

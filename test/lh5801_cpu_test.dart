@@ -1276,5 +1276,11 @@ void main() {
         testTIN(system);
       });
     });
+
+    group('CIN [page 38]', () {
+      test('CIN', () {
+        testCIN(system);
+      });
+    });
   });
 }
