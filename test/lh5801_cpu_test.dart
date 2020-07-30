@@ -782,8 +782,12 @@ void main() {
         testORIRReg(system, 17, <int>[0xFD, 0x6B], system.cpu.u, me1: true);
       });
 
+      test('ORI (ab), i', () {
+        testORIab(system, 19, <int>[0xEB]);
+      });
+
       test('ORI #(ab), i', () {
-        testORIab(system, <int>[0xFD, 0xEB], me1: true);
+        testORIab(system, 23, <int>[0xFD, 0xEB], me1: true);
       });
     });
 
