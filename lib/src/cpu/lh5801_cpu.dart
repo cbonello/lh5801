@@ -1115,8 +1115,9 @@ class LH5801CPU extends LH5801State {
       case 0xA7: // CPA (ab)
         _cpi(a.value, _readOp16Ind(0));
         break;
-// 	case 0xA8: // SPV
-// 		cpu.PV(true)
+      case 0xA8: // SPV
+        _core.pvFlipFlop(value: true);
+        break;
       case 0xA9: // AND (ab)
         _andAccumulator(_readOp16Ind(0));
         break;
@@ -1152,8 +1153,9 @@ class LH5801CPU extends LH5801State {
       case 0xB7: // CPI A, i
         _cpi(a.value, _readOp8());
         break;
-// 	case 0xB8: // RPV
-// 		cpu.PV(false)
+      case 0xB8: // RPV
+        _core.pvFlipFlop(value: false);
+        break;
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
         break;
@@ -1269,13 +1271,15 @@ class LH5801CPU extends LH5801State {
       case 0xE0: // VEJ (E0)
         cycles += _vector(cyclesTable.additional, true, 0xE0);
         break;
-// 	case 0xE1: // SPU
-// 		cpu.PU(true)
+      case 0xE1: // SPU
+        _core.puFlipFlop(value: true);
+        break;
       case 0xE2: // VEJ (E2)
         cycles += _vector(cyclesTable.additional, true, 0xE2);
         break;
-// 	case 0xE3: // RPU
-// 		cpu.PU(false)
+      case 0xE3: // RPU
+        _core.puFlipFlop(value: false);
+        break;
       case 0xE4: // VEJ (E4)
         cycles += _vector(cyclesTable.additional, true, 0xE4);
         break;

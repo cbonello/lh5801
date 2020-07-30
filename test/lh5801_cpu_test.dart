@@ -1300,5 +1300,29 @@ void main() {
         testAEX(system);
       });
     });
+
+    group('SPU [page 43]', () {
+      test('SPU', () {
+        testRPUSPU(system, <int>[0xE1], expectedPU: true);
+      });
+    });
+
+    group('RPU [page 43]', () {
+      test('RPU', () {
+        testRPUSPU(system, <int>[0xE3]);
+      });
+    });
+
+    group('SPV [page 43]', () {
+      test('SPV', () {
+        testRPVSPV(system, <int>[0xA8], expectedPV: true);
+      });
+    });
+
+    group('RPV [page 43]', () {
+      test('RPV', () {
+        testRPVSPV(system, <int>[0xB8]);
+      });
+    });
   });
 }

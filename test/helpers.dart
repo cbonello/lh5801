@@ -19,6 +19,7 @@ class System implements LH5801Core {
 
   LH5801CPU cpu;
   Uint8ClampedList _me0, _me1;
+  bool pu, pv;
 
   void resetMemories() {
     _me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
@@ -58,10 +59,10 @@ class System implements LH5801Core {
   void dataBus(int value) {}
 
   @override
-  void puFlipFlop({bool value}) {}
+  void puFlipFlop({bool value}) => pu = value;
 
   @override
-  void pvFlipFlop({bool value}) {}
+  void pvFlipFlop({bool value}) => pv = value;
 
   @override
   void disp({bool value}) {}
@@ -2143,6 +2144,32 @@ void testAEX(System system) {
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
   expect(system.cpu.a.value, equals(0xAC));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testRPUSPU(System system, List<int> opcodes, {bool expectedPU = false}) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(4));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.pu, equals(expectedPU));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testRPVSPV(System system, List<int> opcodes, {bool expectedPV = false}) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(4));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.pv, equals(expectedPV));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
