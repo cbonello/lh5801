@@ -11,8 +11,6 @@ void main() {
     });
 
     group('DCA [page 26]', () {
-      String _toHex(int value) => value.toUnsigned(8).toRadixString(16).padLeft(2, '0');
-
       test('should return the expected results', () {
         final List<int> opcodes = <int>[0xFD, 0x8C];
         system.load(0x0000, opcodes);
