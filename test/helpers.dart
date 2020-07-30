@@ -2041,8 +2041,12 @@ void testVVS(System system, List<int> opcodes) {
 }
 
 void testROR(System system) {
-  void _test(int initialAccValue, int expectedAccValue, int expectedStatusRegister,
-      {bool carry = false}) {
+  void _test(
+    int initialAccValue,
+    int expectedAccValue,
+    int expectedStatusRegister, {
+    bool carry = false,
+  }) {
     final List<int> opcodes = <int>[0xD1];
 
     system.load(0x0000, opcodes);
@@ -2064,4 +2068,27 @@ void testROR(System system) {
   _test(0x02, 0x01, LH5801Flags.V);
   _test(0x0F, 0x07, LH5801Flags.V | LH5801Flags.C);
   _test(0x01, 0x00, LH5801Flags.Z | LH5801Flags.C);
+}
+
+void testTIN(System system) {
+  const int initialXValue = 0x4700;
+  const int memXValue = 0x33;
+  const int initialYValue = 0x4800;
+  final List<int> memOpcodes = <int>[0xF5];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, memOpcodes);
+  system.cpu.x.value = initialXValue;
+  system.load(initialXValue, <int>[memXValue]);
+  system.cpu.y.value = initialYValue;
+  system.load(initialYValue, <int>[0xFF]);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(7));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.x.value, equals(initialXValue + 1));
+  expect(system.cpu.y.value, equals(initialYValue + 1));
+  expect(system.memRead(initialYValue), equals(memXValue));
+
+  expect(system.cpu.t.statusRegister, statusRegister);
 }

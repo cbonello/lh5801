@@ -1270,5 +1270,11 @@ void main() {
         testROR(system);
       });
     });
+
+    group('TIN [page 38]', () {
+      test('TIN', () {
+        testTIN(system);
+      });
+    });
   });
 }

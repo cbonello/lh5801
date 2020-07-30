@@ -326,10 +326,8 @@ class LH5801CPU extends LH5801State {
   }
 
   void _tin() {
-    final int m = _core.memRead(_me0(x.value));
-    _core.memWrite(_me0(y.value), m);
-    y.value++;
-    x.value++;
+    final int m = _core.memRead(_me0(x.value++));
+    _core.memWrite(_me0(y.value++), m);
   }
 
   void _tta() {
@@ -1328,8 +1326,9 @@ class LH5801CPU extends LH5801State {
       case 0xF4: // VEJ (F4)
         cycles += _vector(cyclesTable.additional, true, 0xF4);
         break;
-// 	case 0xF5: // TIN
-// 		err = cpu.tin()
+      case 0xF5: // TIN
+        _tin();
+        break;
       case 0xF6: // VEJ (F6)
         cycles += _vector(cyclesTable.additional, true, 0xF6);
         break;
