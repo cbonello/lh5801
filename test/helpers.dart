@@ -1036,7 +1036,7 @@ void testBIIRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIab(System system, List<int> opcodes, {bool me1 = false}) {
+void testBIIab(System system, int expectedCycles, List<int> opcodes, {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
     final List<int> memOpcodes = <int>[
@@ -1050,7 +1050,7 @@ void testBIIab(System system, List<int> opcodes, {bool me1 = false}) {
     system.load(0x0000, memOpcodes);
     system.load(ab, <int>[memValue]);
     final int cycles = system.step(0x0000);
-    expect(cycles, equals(20));
+    expect(cycles, equals(expectedCycles));
     expect(system.cpu.p.value, equals(memOpcodes.length));
 
     // Memory should not be updated.

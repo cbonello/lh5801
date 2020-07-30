@@ -820,8 +820,12 @@ void main() {
         testBIIRReg(system, 14, <int>[0xFD, 0x6D], system.cpu.u, me1: true);
       });
 
+      test('BII (ab), i', () {
+        testBIIab(system, 16, <int>[0xED]);
+      });
+
       test('BII #(ab), i', () {
-        testBIIab(system, <int>[0xFD, 0xED], me1: true);
+        testBIIab(system, 20, <int>[0xFD, 0xED], me1: true);
       });
     });
 
