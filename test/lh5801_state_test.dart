@@ -79,5 +79,35 @@ void main() {
         expect(reg1, equals(reg2));
       });
     });
+
+    group('LH5801State', () {
+      test('should be initialized properly', () {
+        final LH5801State state = LH5801State();
+        expect(state.p.value, equals(Register16().value));
+        expect(state.s.value, equals(Register16().value));
+        expect(state.a.value, equals(Register8().value));
+        expect(state.x.value, equals(Register16().value));
+        expect(state.y.value, equals(Register16().value));
+        expect(state.u.value, equals(Register16().value));
+        expect(state.tm, equals(0x000));
+        expect(state.pu, equals(false));
+        expect(state.pv, equals(false));
+        expect(state.disp, equals(true));
+        expect(state.t, equals(LH5801Flags()));
+        expect(state.ie, equals(false));
+        expect(state.ir0, equals(false));
+        expect(state.ir1, equals(false));
+        expect(state.ir2, equals(false));
+        expect(state.hlt, equals(false));
+        expect(state.cycleCounter, equals(0));
+      });
+
+      test('reset() should create an initial state', () {
+        final LH5801State state1 = LH5801State();
+        final LH5801State state2 = LH5801State()..reset();
+
+        expect(state1, equals(state2));
+      });
+    });
   });
 }
