@@ -1273,9 +1273,15 @@ void main() {
       });
     });
 
-    group('ROR [page 41]', () {
+    group('ROR [page 39]', () {
       test('ROR', () {
         testROR(system);
+      });
+    });
+
+    group('ROL [page 39]', () {
+      test('ROL', () {
+        testROL(system);
       });
     });
 

@@ -2081,6 +2081,35 @@ void testROR(System system) {
   _test(0x01, 0x00, LH5801Flags.Z | LH5801Flags.C);
 }
 
+void testROL(System system) {
+  void _test(
+    int initialAccValue,
+    int expectedAccValue,
+    int expectedStatusRegister, {
+    bool carry = false,
+  }) {
+    final List<int> opcodes = <int>[0xDB];
+
+    system.load(0x0000, opcodes);
+    system.cpu.a.value = initialAccValue;
+    system.cpu.t.c = carry;
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(8));
+    expect(system.cpu.p.value, equals(opcodes.length));
+
+    expect(system.cpu.a.value, expectedAccValue);
+
+    expect(system.cpu.t.statusRegister, expectedStatusRegister);
+  }
+
+  _test(0x5D, 0xBB, LH5801Flags.H | LH5801Flags.V, carry: true);
+  _test(0x5D, 0xBA, LH5801Flags.H | LH5801Flags.V);
+
+  _test(0x08, 0x10, LH5801Flags.H);
+  _test(0x40, 0x80, LH5801Flags.V);
+  _test(0x80, 0x00, LH5801Flags.V | LH5801Flags.Z | LH5801Flags.C);
+}
+
 void testTIN(System system) {
   const int initialXValue = 0x4700;
   const int memXValue = 0x33;
