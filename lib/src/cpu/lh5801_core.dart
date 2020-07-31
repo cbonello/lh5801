@@ -11,6 +11,9 @@ abstract class LH5801Core {
   /// CPU internal PV flipflop output.
   void pvFlipFlop({bool value});
 
+  /// CPU internal BF flipflop output.
+  void bfFlipFlop({bool value});
+
   /// LCD on/off control signal output.
   void disp({bool value});
 

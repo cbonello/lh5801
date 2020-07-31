@@ -491,8 +491,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(x.value), _readOp8());
         break;
       case 0x4C: // OFF
-        // TODO(cbonello): fix
-        // _bf = false;
+        _core.bfFlipFlop(value: false);
         break;
       case 0x4D: // BII #(X), i
         _bit(_core.memRead(_me1(x.value)), _readOp8());

@@ -13,7 +13,7 @@ void main() {
   final System system = System();
   group('LH5801CPU', () {
     setUp(() {
-      system.resetMemories();
+      system.reset();
     });
 
     group('SBC [page 27]', () {
@@ -1348,6 +1348,12 @@ void main() {
     group('SHL [page 39]', () {
       test('SHL', () {
         testSHL(system);
+      });
+    });
+
+    group('OFF [page 45]', () {
+      test('OFF', () {
+        testOFF(system);
       });
     });
   });

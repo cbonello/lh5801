@@ -19,11 +19,12 @@ class System implements LH5801Core {
 
   LH5801CPU cpu;
   Uint8ClampedList _me0, _me1;
-  bool pu, pv;
+  bool pu, pv, bf;
 
-  void resetMemories() {
+  void reset() {
     _me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
     _me1.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
+    pu = pv = bf = false;
   }
 
   void load(int address, List<int> data) {
@@ -63,6 +64,9 @@ class System implements LH5801Core {
 
   @override
   void pvFlipFlop({bool value}) => pv = value;
+
+  @override
+  void bfFlipFlop({bool value}) => bf = value;
 
   @override
   void disp({bool value}) {}
@@ -2249,4 +2253,19 @@ void testSHL(System system) {
   expect(system.cpu.t.z, isFalse);
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, isTrue);
+}
+
+void testOFF(System system) {
+  final List<int> memOpcodes = <int>[0xFD, 0x4C];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.bf = true;
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(8));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.bf, isFalse);
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
 }

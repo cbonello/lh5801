@@ -7,7 +7,7 @@ void main() {
   final System system = System();
   group('LH5801CPU', () {
     setUp(() {
-      system.resetMemories();
+      system.reset();
     });
 
     group('CPA [page 31]', () {
