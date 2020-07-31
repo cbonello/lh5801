@@ -3655,7 +3655,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
       Operand(OperandType.none(), null),
       Operand(OperandType.none(), null),
     ],
-    CyclesCount(6, 0),
+    CyclesCount(9, 0),
   ),
   const InstructionDescriptor(
     // VEJ (D6)
