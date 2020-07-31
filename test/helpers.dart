@@ -19,12 +19,15 @@ class System implements LH5801Core {
 
   LH5801CPU cpu;
   Uint8ClampedList _me0, _me1;
-  bool pu, pv, bf;
+  int pinsD0D7;
+  bool pinDisp, pinPU, pinPV, pinBF;
 
   void reset() {
     _me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
     _me1.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
-    pu = pv = bf = false;
+    pinsD0D7 = 0x00;
+    pinDisp = true;
+    pinPU = pinPV = pinBF = false;
   }
 
   void load(int address, List<int> data) {
@@ -57,19 +60,22 @@ class System implements LH5801Core {
   }
 
   @override
-  void dataBus(int value) {}
+  int get dataBus => pinsD0D7;
 
   @override
-  void puFlipFlop({bool value}) => pu = value;
+  set dataBus(int value) => pinsD0D7 = value;
 
   @override
-  void pvFlipFlop({bool value}) => pv = value;
+  void puFlipflop({bool value}) => pinPU = value;
 
   @override
-  void bfFlipFlop({bool value}) => bf = value;
+  void pvFlipflop({bool value}) => pinPV = value;
 
   @override
-  void disp({bool value}) {}
+  void bfFlipflop({bool value}) => pinBF = value;
+
+  @override
+  void dispFlipflop({bool value}) => pinDisp = value;
 }
 
 void testSBCReg(System system, List<int> opcodes, Register8 register) {
@@ -1242,6 +1248,19 @@ void testDCARReg(
   _test(0x35, 0x67, true, 0x03, isTrue, isTrue);
 }
 
+void testATT(System system) {
+  final List<int> opcodes = <int>[0xFD, 0xEC];
+
+  system.load(0x0000, opcodes);
+  system.cpu.a.value = 0x1F;
+  system.cpu.t.statusRegister = 0;
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.t.statusRegister, 0x1F);
+}
+
 void testTTA(System system) {
   void _test(int initialStatusRegisterValue, Matcher zFlagMatcher) {
     final List<int> opcodes = <int>[0xFD, 0xAA];
@@ -2171,7 +2190,7 @@ void testRECSEC(System system, List<int> opcodes, {bool expectedCarry = false}) 
 
   expect(system.cpu.t.h, equals(flags.h));
   expect(system.cpu.t.v, equals(flags.v));
-  expect(system.cpu.t.z, equals(flags.h));
+  expect(system.cpu.t.z, equals(flags.z));
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, equals(expectedCarry));
 }
@@ -2199,7 +2218,7 @@ void testRPUSPU(System system, List<int> opcodes, {bool expectedPU = false}) {
   expect(cycles, equals(4));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.pu, equals(expectedPU));
+  expect(system.pinPU, equals(expectedPU));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2212,9 +2231,37 @@ void testRPVSPV(System system, List<int> opcodes, {bool expectedPV = false}) {
   expect(cycles, equals(4));
   expect(system.cpu.p.value, equals(opcodes.length));
 
-  expect(system.pv, equals(expectedPV));
+  expect(system.pinPV, equals(expectedPV));
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testSDPRDP(System system, List<int> opcodes, {bool expectedDisp = false}) {
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, opcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(8));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.pinDisp, equals(expectedDisp));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testSIERIE(System system, List<int> opcodes, {bool expectedIE = false}) {
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.load(0x0000, opcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(8));
+  expect(system.cpu.p.value, equals(opcodes.length));
+
+  expect(system.cpu.t.h, equals(flags.h));
+  expect(system.cpu.t.v, equals(flags.v));
+  expect(system.cpu.t.z, equals(flags.z));
+  expect(system.cpu.t.ie, equals(expectedIE));
+  expect(system.cpu.t.c, equals(flags.c));
 }
 
 void testSHR(System system) {
@@ -2259,13 +2306,80 @@ void testOFF(System system) {
   final List<int> memOpcodes = <int>[0xFD, 0x4C];
   final int statusRegister = system.cpu.t.statusRegister;
 
-  system.bf = true;
+  system.pinBF = true;
   system.load(0x0000, memOpcodes);
   final int cycles = system.step(0x0000);
   expect(cycles, equals(8));
   expect(system.cpu.p.value, equals(memOpcodes.length));
 
-  expect(system.bf, isFalse);
+  expect(system.pinBF, isFalse);
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testATP(System system) {
+  final List<int> memOpcodes = <int>[0xFD, 0xCC];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.pinsD0D7 = 0x00;
+  system.cpu.a.value = 0x07;
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.pinsD0D7, system.cpu.a.value);
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testITA(System system) {
+  void _test(int inputPortsValue, Matcher zFlagMatcher) {
+    final List<int> memOpcodes = <int>[0xFD, 0xBA];
+    final LH5801Flags flags = system.cpu.t.clone();
+
+    system.pinsD0D7 = inputPortsValue;
+    system.load(0x0000, memOpcodes);
+    final int cycles = system.step(0x0000);
+    expect(cycles, equals(9));
+    expect(system.cpu.p.value, equals(memOpcodes.length));
+
+    expect(system.cpu.a.value, inputPortsValue);
+
+    expect(system.cpu.t.h, equals(flags.h));
+    expect(system.cpu.t.v, equals(flags.v));
+    expect(system.cpu.t.z, zFlagMatcher);
+    expect(system.cpu.t.ie, equals(flags.ie));
+    expect(system.cpu.t.c, equals(flags.c));
+  }
+
+  _test(0x01, isFalse);
+  _test(0x00, isTrue);
+}
+
+void testNOP(System system) {
+  final List<int> memOpcodes = <int>[0x38];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(5));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.t.statusRegister, equals(statusRegister));
+}
+
+void testHLT(System system) {
+  final List<int> memOpcodes = <int>[0xFD, 0xB1];
+  final int statusRegister = system.cpu.t.statusRegister;
+
+  system.cpu.hlt = false;
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.hlt, isTrue);
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }

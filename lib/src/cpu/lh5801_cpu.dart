@@ -111,10 +111,6 @@ class LH5801CPU extends LH5801State {
     _core.memWrite(address, andValue);
   }
 
-  void _atp(int value) => _core.dataBus(value);
-
-  void _att() => t.statusRegister = a.value;
-
   int _branchForward(int addCyclesTable, {bool cond = false}) {
     final int offset = _readOp8();
 
@@ -163,9 +159,6 @@ class LH5801CPU extends LH5801State {
 
   void _dcs(int value) => a.value = _bcdAdd(a.value, value ^ 0xFF, carry: t.c);
 
-  void _decRegister8(Register8 register) =>
-      register.value = _binaryAdd(register.value, (0x01 ^ 0xFF) + 1);
-
   void _decRegister16(Register16 register) => register.value--;
 
   void _drl(int address) {
@@ -188,12 +181,9 @@ class LH5801CPU extends LH5801State {
   }
 
   void _ita() {
-    // TODO(cbonello): handle IN
-    a.value = 0;
+    a.value = _core.dataBus;
     t.z = a.value == 0;
   }
-
-  void _jmp(int address) => p.value = address;
 
   void _lda(int value) {
     a.value = value;
@@ -255,8 +245,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _popRegister(Register16 register) {
-    register.high = _pop8();
-    register.low = _pop8();
+    register.value = _pop16();
   }
 
   void _push8(int value) {
@@ -491,7 +480,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(x.value), _readOp8());
         break;
       case 0x4C: // OFF
-        _core.bfFlipFlop(value: false);
+        _core.bfFlipflop(value: false);
         break;
       case 0x4D: // BII #(X), i
         _bit(_core.memRead(_me1(x.value)), _readOp8());
@@ -525,7 +514,7 @@ class LH5801CPU extends LH5801State {
         _bit(_core.memRead(_me1(y.value)), _readOp8());
         break;
       case 0x5E: // STX P
-        _jmp(_me0(x.value));
+        p.value = _me0(x.value);
         break;
       case 0x5F: // ADI #(Y), i
         _addMemory(_me1(y.value), _readOp8());
@@ -625,10 +614,10 @@ class LH5801CPU extends LH5801State {
         break;
 
       case 0xC0: // RDP
-        disp = false;
+        _core.dispFlipflop(value: false);
         break;
       case 0xC1: // SDP
-        disp = true;
+        _core.dispFlipflop(value: true);
         break;
       case 0xC8: // PSH A
         _push8(a.value);
@@ -637,7 +626,7 @@ class LH5801CPU extends LH5801State {
         _addRegister(x);
         break;
       case 0xCC: // ATP
-        _atp(a.value);
+        _core.dataBus = a.value;
         break;
       case 0xCE: // AM0
         _am0();
@@ -1115,7 +1104,7 @@ class LH5801CPU extends LH5801State {
         _cpi(a.value, _readOp16Ind(0));
         break;
       case 0xA8: // SPV
-        _core.pvFlipFlop(value: true);
+        _core.pvFlipflop(value: true);
         break;
       case 0xA9: // AND (ab)
         _andAccumulator(_readOp16Ind(0));
@@ -1153,13 +1142,13 @@ class LH5801CPU extends LH5801State {
         _cpi(a.value, _readOp8());
         break;
       case 0xB8: // RPV
-        _core.pvFlipFlop(value: false);
+        _core.pvFlipflop(value: false);
         break;
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
         break;
       case 0xBA: // JMP i, j
-        _jmp(_me0(_readOp16()));
+        p.value = _me0(_readOp16());
         break;
       case 0xBB: // ORI A, i
         _orAccumulator(_readOp8());
@@ -1276,13 +1265,13 @@ class LH5801CPU extends LH5801State {
         cycles += _vector(cyclesTable.additional, true, 0xE0);
         break;
       case 0xE1: // SPU
-        _core.puFlipFlop(value: true);
+        _core.puFlipflop(value: true);
         break;
       case 0xE2: // VEJ (E2)
         cycles += _vector(cyclesTable.additional, true, 0xE2);
         break;
       case 0xE3: // RPU
-        _core.puFlipFlop(value: false);
+        _core.puFlipflop(value: false);
         break;
       case 0xE4: // VEJ (E4)
         cycles += _vector(cyclesTable.additional, true, 0xE4);
