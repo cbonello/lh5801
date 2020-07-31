@@ -22,14 +22,6 @@ class System implements LH5801Core {
   int pinsD0D7;
   bool pinDisp, pinPU, pinPV, pinBF;
 
-  void reset() {
-    _me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
-    _me1.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
-    pinsD0D7 = 0x00;
-    pinDisp = true;
-    pinPU = pinPV = pinBF = false;
-  }
-
   void load(int address, List<int> data) {
     if (address & 0x10000 != 0) {
       final int a = address & 0xFFFF;
@@ -43,6 +35,21 @@ class System implements LH5801Core {
     cpu.p.value = address;
     return cpu.step();
   }
+
+  @override
+  void reset() {
+    _me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
+    _me1.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
+    pinsD0D7 = 0x00;
+    pinDisp = true;
+    pinPU = pinPV = pinBF = false;
+  }
+
+  @override
+  void nmi() => cpu.ir0 = true;
+
+  @override
+  void mi() => cpu.ir2 = true;
 
   @override
   int memRead(int address) {
@@ -60,10 +67,10 @@ class System implements LH5801Core {
   }
 
   @override
-  int get dataBus => pinsD0D7;
+  int get inputPorts => pinsD0D7;
 
   @override
-  set dataBus(int value) => pinsD0D7 = value;
+  set inputPorts(int value) => pinsD0D7 = value;
 
   @override
   void puFlipflop({bool value}) => pinPU = value;
@@ -72,7 +79,10 @@ class System implements LH5801Core {
   void pvFlipflop({bool value}) => pinPV = value;
 
   @override
-  void bfFlipflop({bool value}) => pinBF = value;
+  bool get bfFlipflop => pinBF;
+
+  @override
+  set bfFlipflop(bool value) => pinBF = value;
 
   @override
   void dispFlipflop({bool value}) => pinDisp = value;

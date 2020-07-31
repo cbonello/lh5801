@@ -18,17 +18,65 @@ class LH5801CPU extends LH5801State {
   final LH5801Core _core;
   final int clockFrequency;
 
-  void MI() => ir2 = true;
+  void nmi() => ir0 = true;
 
-  void NMI() => ir0 = true;
-
-  void BFI() => throw Exception();
+  void mi() => ir2 = true;
 
   @override
   void reset() {
     super.reset();
     p.high = _core.memRead(_me0(0xFFFE));
     p.low = _core.memRead(_me0(0xFFFF));
+  }
+
+  int step() {
+    // 	if cpu.interrupt.isInterruptRaised() && cpu.ir0 {
+    // 	// Non-maskable interrupt
+    // 	if err = cpu.push8(uint8(cpu.t)); err == nil {
+    // 		cpu.t.Reset(FlagIE)
+    // 		cpu.ir0 = false
+    // 		if err = cpu.push16(cpu.p.Value()); err == nil {
+    // 			if *cpu.p.High(), err = cpu.Read(me0(0xFFFC)); err != nil {
+    // 				return
+    // 			}
+    // 			if *cpu.p.Low(), err = cpu.Read(me0(0xFFFD)); err != nil {
+    // 				return
+    // 			}
+    // 		}
+    // 	}
+    // } else
+    if (ir1 && ie) {
+      // Timer interrupt
+      _push8(t.statusRegister);
+      ir1 = ie = false;
+      _push16(p.value);
+      p.high = _core.memRead(_me0(0xFFFA));
+      p.low = _core.memRead(_me0(0xFFFB));
+    }
+
+    // else if cpu.interrupt.isInterruptRaised() && cpu.ir2 && cpu.ie {
+    // 	// Maskable interrupt
+    // 	if err = cpu.push8(uint8(cpu.t)); err == nil {
+    // 		cpu.t.Reset(FlagIE)
+    // 		cpu.hlt = false
+    // 		cpu.ir2 = false
+    // 		if err = cpu.push16(cpu.p.Value()); err == nil {
+    // 			if *cpu.p.High(), err = cpu.Read(me0(0xFFF8)); err != nil {
+    // 				return
+    // 			}
+    // 			if *cpu.p.Low(), err = cpu.Read(me0(0xFFF9)); err != nil {
+    // 				return
+    // 			}
+    // 		}
+    // 	}
+    // } else if cpu.hlt {
+    // 	//
+    // }
+
+    final int opcode = _readOp8();
+    final int cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
+
+    return cycles;
   }
 
   int _me0(int address) => address & 0xFFFF;
@@ -181,7 +229,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _ita() {
-    a.value = _core.dataBus;
+    a.value = _core.inputPorts;
     t.z = a.value == 0;
   }
 
@@ -337,14 +385,7 @@ class LH5801CPU extends LH5801State {
     return cycles;
   }
 
-  int step() {
-    final int opcode = _readOp8();
-    final int cycles = opcode == 0xFD ? stepExtendedInstruction() : stepOpcode(opcode);
-
-    return cycles;
-  }
-
-  int stepExtendedInstruction() {
+  int _stepExtendedInstruction() {
     final int opcode = _readOp8();
     final CyclesCount cyclesTable = instructionTableFD[opcode].cycles;
     final int cycles = cyclesTable.basic;
@@ -480,7 +521,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(x.value), _readOp8());
         break;
       case 0x4C: // OFF
-        _core.bfFlipflop(value: false);
+        _core.bfFlipflop = false;
         break;
       case 0x4D: // BII #(X), i
         _bit(_core.memRead(_me1(x.value)), _readOp8());
@@ -626,7 +667,7 @@ class LH5801CPU extends LH5801State {
         _addRegister(x);
         break;
       case 0xCC: // ATP
-        _core.dataBus = a.value;
+        _core.inputPorts = a.value;
         break;
       case 0xCE: // AM0
         _am0();
@@ -679,7 +720,7 @@ class LH5801CPU extends LH5801State {
     return cycles;
   }
 
-  int stepOpcode(int opcode) {
+  int _stepOpcode(int opcode) {
     final CyclesCount cyclesTable = instructionTable[opcode].cycles;
     int cycles = cyclesTable.basic;
     int o8, p8, o16;

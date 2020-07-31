@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 
 import 'package:lh5801/lh5801.dart';
 
+// See PC-1500 Technical Reference Manual at page 15.
 final List<int> expectedCounterValues = <int>[
   0x1FF,
   0x1FE,
@@ -525,11 +526,11 @@ void main() {
     );
 
     test('should generate the expected values', () {
-      timer.set(LH5801Timer.maxCounterValue);
+      timer.value = LH5801Timer.maxCounterValue;
       for (final int expected in expectedCounterValues) {
-        expect(timer.counterValue, equals(expected));
+        expect(timer.value, equals(expected));
         final bool ir2 = timer.incrementClock();
-        expect(ir2, equals(timer.counterValue == LH5801Timer.maxCounterValue));
+        expect(ir2, equals(timer.value == LH5801Timer.maxCounterValue));
       }
     });
   });

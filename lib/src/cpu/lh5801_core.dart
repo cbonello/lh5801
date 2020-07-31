@@ -1,4 +1,13 @@
 abstract class LH5801Core {
+  /// CPU reset.
+  void reset();
+
+  /// Non-maskable interrupt input (NMI).
+  void nmi();
+
+  /// Maskable interrupt input (MI).
+  void mi();
+
   /// Return the byte at the given memory address.
   int memRead(int address);
 
@@ -11,13 +20,14 @@ abstract class LH5801Core {
   /// CPU internal PV flipflop output.
   void pvFlipflop({bool value});
 
-  /// CPU internal BF flipflop output.
-  void bfFlipflop({bool value});
+  /// CPU internal BF flipflops.
+  bool get bfFlipflop;
+  set bfFlipflop(bool value);
 
   /// LCD on/off control signal output.
   void dispFlipflop({bool value});
 
-  /// Read/Write an 8-bit byte value from/to the data bus.
-  int get dataBus;
-  set dataBus(int value);
+  /// Input ports through which the CPU receives 8-bit data into the accumulator.
+  int get inputPorts;
+  set inputPorts(int value);
 }
