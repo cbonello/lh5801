@@ -1338,5 +1338,11 @@ void main() {
         testSHR(system);
       });
     });
+
+    group('SHL [page 39]', () {
+      test('SHL', () {
+        testSHL(system);
+      });
+    });
   });
 }

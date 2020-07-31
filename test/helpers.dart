@@ -2202,3 +2202,22 @@ void testSHR(System system) {
   expect(system.cpu.t.ie, equals(flags.ie));
   expect(system.cpu.t.c, isTrue);
 }
+
+void testSHL(System system) {
+  final List<int> memOpcodes = <int>[0xD9];
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.cpu.a.value = 0x9D;
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(6));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.a.value, equals((0x9D << 1) & 0xFF));
+
+  expect(system.cpu.t.h, isTrue);
+  expect(system.cpu.t.v, isTrue);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isTrue);
+}
