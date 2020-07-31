@@ -3,6 +3,11 @@ import 'package:test/test.dart';
 import 'package:lh5801/lh5801.dart';
 
 void main() {
+  final LH5801Timer tm = LH5801Timer(
+    cpuClockFrequency: 1300000,
+    timerClockFrequency: 31250,
+  );
+
   group('LH5801State', () {
     group('Register8', () {
       test('should be initialized properly', () {
@@ -82,14 +87,14 @@ void main() {
 
     group('LH5801State', () {
       test('should be initialized properly', () {
-        final LH5801State state = LH5801State();
+        final LH5801State state = LH5801State(tm: tm);
         expect(state.p.value, equals(Register16().value));
         expect(state.s.value, equals(Register16().value));
         expect(state.a.value, equals(Register8().value));
         expect(state.x.value, equals(Register16().value));
         expect(state.y.value, equals(Register16().value));
         expect(state.u.value, equals(Register16().value));
-        expect(state.tm, equals(0x000));
+        expect(state.tm, equals(tm));
         expect(state.pu, equals(false));
         expect(state.pv, equals(false));
         expect(state.disp, equals(true));
@@ -103,8 +108,8 @@ void main() {
       });
 
       test('reset() should create an initial state', () {
-        final LH5801State state1 = LH5801State();
-        final LH5801State state2 = LH5801State()..reset();
+        final LH5801State state1 = LH5801State(tm: tm);
+        final LH5801State state2 = LH5801State(tm: tm)..reset();
 
         expect(state1, equals(state2));
       });

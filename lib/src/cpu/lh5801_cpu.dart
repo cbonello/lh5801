@@ -13,7 +13,13 @@ class LH5801CPU extends LH5801State {
     @required LH5801Core core,
     @required this.clockFrequency,
   })  : assert(core != null),
-        _core = core;
+        _core = core,
+        super(
+          tm: LH5801Timer(
+            cpuClockFrequency: clockFrequency,
+            timerClockFrequency: clockFrequency31Khz,
+          ),
+        );
 
   final LH5801Core _core;
   final int clockFrequency;
@@ -140,12 +146,9 @@ class LH5801CPU extends LH5801State {
 
   void _aex() => a.value = (a.value << 4) | (a.value >> 4);
 
-  void _am0() => tm = a.value;
+  void _am0() => tm.value = a.value;
 
-  void _am1() {
-    tm = 0x100 | a.value;
-    // _ir2 = tm.isInterruptRaised()
-  }
+  void _am1() => tm.value = 0x100 | a.value;
 
   void _andAccumulator(int value) {
     a.value &= value;

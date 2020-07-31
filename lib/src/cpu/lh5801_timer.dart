@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
+
+part 'lh5801_timer.g.dart';
+
 const int clockFrequency2Mhz = 2000000;
 const int clockFrequency1Mhz = 1000000;
 const int clockFrequency500Khz = 500000;
@@ -21,17 +26,26 @@ class LH5801ClockControl {
 }
 
 abstract class _SubClock {
+  void reset();
   void incrementClock(int cpuCycles) {}
   bool get isInterruptRaised;
 }
 
+@JsonSerializable(
+  createFactory: true,
+  disallowUnrecognizedKeys: true,
+)
 class LH5801Timer implements _SubClock {
-  LH5801Timer({int cpuClockFrequency, int timerClockFrequency})
+  LH5801Timer({@required int cpuClockFrequency, @required int timerClockFrequency})
       : _cpuCyclesPerTick = (cpuClockFrequency / timerClockFrequency).round() {
     _value = 0;
     _cpuCycles = 0;
     _interruptRaised = false;
   }
+
+  factory LH5801Timer.fromJson(Map<String, dynamic> json) => _$LH5801TimerFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LH5801TimerToJson(this);
 
   int _value;
   // Number of CPU cycles during one timer clock tick.
@@ -46,6 +60,12 @@ class LH5801Timer implements _SubClock {
   set value(int value) {
     _value = value;
     _interruptRaised = value == 0x1FF;
+  }
+
+  @override
+  void reset() {
+    _cpuCycles = 0;
+    _interruptRaised = false;
   }
 
   @override
@@ -64,4 +84,25 @@ class LH5801Timer implements _SubClock {
 
   @override
   bool get isInterruptRaised => _interruptRaised;
+
+  @override
+  String toString() =>
+      'LH5801Timer(value: $_value, isInterruptRaised: $_interruptRaised)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LH5801Timer &&
+          runtimeType == other.runtimeType &&
+          _value == other._value &&
+          _cpuCyclesPerTick == other._cpuCyclesPerTick &&
+          _cpuCycles == other._cpuCycles &&
+          _interruptRaised == other._interruptRaised;
+
+  @override
+  int get hashCode =>
+      _value.hashCode ^
+      _cpuCyclesPerTick.hashCode ^
+      _cpuCycles.hashCode ^
+      _interruptRaised.hashCode;
 }

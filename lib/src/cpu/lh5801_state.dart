@@ -93,7 +93,7 @@ class LH5801State {
     Register16 x,
     Register16 y,
     Register16 u,
-    this.tm = 0x000,
+    @required this.tm,
     this.pu = false,
     this.pv = false,
     this.disp = true,
@@ -104,7 +104,8 @@ class LH5801State {
     this.ir2 = false,
     this.hlt = false,
     this.cycleCounter = 0,
-  })  : p = p ?? Register16(),
+  })  : assert(tm != null),
+        p = p ?? Register16(),
         a = a ?? Register8(),
         s = s ?? Register16(),
         x = x ?? Register16(),
@@ -125,7 +126,7 @@ class LH5801State {
   // General purpose registers.
   Register16 x, y, u;
   // Timer counter (9-bit).
-  int tm;
+  LH5801Timer tm;
   // General purpose flip-flops.
   bool pu, pv;
   // LCD on/off control.
@@ -150,7 +151,7 @@ class LH5801State {
     x.reset();
     y.reset();
     u.reset();
-    tm = 0x00;
+    tm.reset();
     pu = false;
     pv = false;
     disp = true;

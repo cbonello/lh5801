@@ -71,7 +71,9 @@ LH5801State _$LH5801StateFromJson(Map<String, dynamic> json) {
     u: json['u'] == null
         ? null
         : Register16.fromJson(json['u'] as Map<String, dynamic>),
-    tm: json['tm'] as int,
+    tm: json['tm'] == null
+        ? null
+        : LH5801Timer.fromJson(json['tm'] as Map<String, dynamic>),
     pu: json['pu'] as bool,
     pv: json['pv'] as bool,
     disp: json['disp'] as bool,
