@@ -1239,8 +1239,9 @@ class LH5801CPU extends LH5801State {
       case 0xD4: // VEJ (D4)
         cycles += _vector(cyclesTable.additional, true, 0xD4);
         break;
-// 	case 0xD5: // SHR
-// 		cpu.shr()
+      case 0xD5: // SHR
+        _shr();
+        break;
       case 0xD6: // VEJ (D6)
         cycles += _vector(cyclesTable.additional, true, 0xD6);
         break;

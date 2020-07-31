@@ -1332,5 +1332,11 @@ void main() {
         testRPVSPV(system, <int>[0xB8]);
       });
     });
+
+    group('SHR [page 40]', () {
+      test('SHR', () {
+        testSHR(system);
+      });
+    });
   });
 }

@@ -2183,3 +2183,22 @@ void testRPVSPV(System system, List<int> opcodes, {bool expectedPV = false}) {
 
   expect(system.cpu.t.statusRegister, equals(statusRegister));
 }
+
+void testSHR(System system) {
+  final List<int> memOpcodes = <int>[0xD5];
+  final LH5801Flags flags = system.cpu.t.clone();
+
+  system.cpu.a.value = 0x93;
+  system.load(0x0000, memOpcodes);
+  final int cycles = system.step(0x0000);
+  expect(cycles, equals(9));
+  expect(system.cpu.p.value, equals(memOpcodes.length));
+
+  expect(system.cpu.a.value, equals(0x93 >> 1));
+
+  expect(system.cpu.t.h, isTrue);
+  expect(system.cpu.t.v, isTrue);
+  expect(system.cpu.t.z, isFalse);
+  expect(system.cpu.t.ie, equals(flags.ie));
+  expect(system.cpu.t.c, isTrue);
+}
