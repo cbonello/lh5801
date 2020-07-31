@@ -29,6 +29,7 @@ abstract class _SubClock {
   void reset();
   void incrementClock(int cpuCycles) {}
   bool get isInterruptRaised;
+  void resetInterrupt();
 }
 
 @JsonSerializable(
@@ -84,6 +85,9 @@ class LH5801Timer implements _SubClock {
 
   @override
   bool get isInterruptRaised => _interruptRaised;
+
+  @override
+  void resetInterrupt() => _interruptRaised = false;
 
   @override
   String toString() =>

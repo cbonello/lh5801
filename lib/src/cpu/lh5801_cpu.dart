@@ -36,52 +36,38 @@ class LH5801CPU extends LH5801State {
   }
 
   int step() {
-    // 	if cpu.interrupt.isInterruptRaised() && cpu.ir0 {
-    // 	// Non-maskable interrupt
-    // 	if err = cpu.push8(uint8(cpu.t)); err == nil {
-    // 		cpu.t.Reset(FlagIE)
-    // 		cpu.ir0 = false
-    // 		if err = cpu.push16(cpu.p.Value()); err == nil {
-    // 			if *cpu.p.High(), err = cpu.Read(me0(0xFFFC)); err != nil {
-    // 				return
-    // 			}
-    // 			if *cpu.p.Low(), err = cpu.Read(me0(0xFFFD)); err != nil {
-    // 				return
-    // 			}
-    // 		}
-    // 	}
-    // } else
-    if (ir1 && ie) {
+    if (tm.isInterruptRaised) {
+      ir1 = true;
+      tm.resetInterrupt();
+    }
+
+    if (ir0) {
+      // Non-maskable interrupt
+      _push8(t.statusRegister);
+      ie = ir0 = false;
+      _push16(p.value);
+      p.high = _core.memRead(_me0(0xFFFC));
+      p.low = _core.memRead(_me0(0xFFFD));
+    } else if (ir1 && ie) {
       // Timer interrupt
       _push8(t.statusRegister);
-      ir1 = ie = false;
+      ie = ir1 = false;
       _push16(p.value);
       p.high = _core.memRead(_me0(0xFFFA));
       p.low = _core.memRead(_me0(0xFFFB));
+    } else if (ir2 && ie) {
+      // Maskable interrupt
+      _push8(t.statusRegister);
+      ie = hlt = ir2 = false;
+      _push16(p.value);
+      p.high = _core.memRead(_me0(0xFFF8));
+      p.low = _core.memRead(_me0(0xFFF9));
+    } else if (hlt) {
+      return 2;
     }
-
-    // else if cpu.interrupt.isInterruptRaised() && cpu.ir2 && cpu.ie {
-    // 	// Maskable interrupt
-    // 	if err = cpu.push8(uint8(cpu.t)); err == nil {
-    // 		cpu.t.Reset(FlagIE)
-    // 		cpu.hlt = false
-    // 		cpu.ir2 = false
-    // 		if err = cpu.push16(cpu.p.Value()); err == nil {
-    // 			if *cpu.p.High(), err = cpu.Read(me0(0xFFF8)); err != nil {
-    // 				return
-    // 			}
-    // 			if *cpu.p.Low(), err = cpu.Read(me0(0xFFF9)); err != nil {
-    // 				return
-    // 			}
-    // 		}
-    // 	}
-    // } else if cpu.hlt {
-    // 	//
-    // }
 
     final int opcode = _readOp8();
     final int cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
-
     return cycles;
   }
 

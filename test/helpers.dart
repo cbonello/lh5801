@@ -43,6 +43,7 @@ class System implements LH5801Core {
     pinsD0D7 = 0x00;
     pinDisp = true;
     pinPU = pinPV = pinBF = false;
+    cpu.reset();
   }
 
   @override
