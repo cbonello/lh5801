@@ -4,6 +4,7 @@ import 'helpers.dart';
 
 void main() {
   final System system = System();
+
   group('LH5801CPU', () {
     setUp(() {
       system.reset();
@@ -164,7 +165,7 @@ void main() {
         });
 
         test('SBC UL', () {
-          testSBCReg(system, <int>[0x00], system.cpu.u.lowRegister);
+          testSBCReg(system, <int>[0x20], system.cpu.u.lowRegister);
         });
 
         test('SBC UH', () {
