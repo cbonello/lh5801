@@ -1,12 +1,12 @@
 import 'package:meta/meta.dart';
 
-const int clockFrequency2Mhz = 2000000;
-const int clockFrequency1Mhz = 1000000;
-const int clockFrequency500Khz = 500000;
-const int clockFrequency250Khz = 250000;
-const int clockFrequency125Khz = 125000;
-const int clockFrequency62Khz = 62500;
-const int clockFrequency31Khz = 31250;
+const int kFrequency2Mhz = 2000000;
+const int kFrequency1Mhz = 1000000;
+const int kFrequency500Khz = 500000;
+const int kFrequency250Khz = 250000;
+const int kFrequency125Khz = 125000;
+const int kFrequency62Khz = 62500;
+const int kFrequency31Khz = 31250;
 
 class LH5801ClockControl {
   LH5801ClockControl() : _subClocks = <_SubClock>[];

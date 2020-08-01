@@ -18,7 +18,7 @@ class LH5801CPU extends LH5801State {
         super(
           tm: LH5801Timer(
             cpuClockFrequency: clockFrequency,
-            timerClockFrequency: clockFrequency31Khz,
+            timerClockFrequency: kFrequency31Khz,
           ),
         );
 
