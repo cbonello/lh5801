@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
-import 'processor.dart';
+import 'cpu.dart';
+import 'pins.dart';
 
 /// Return the byte at the given memory address.
 typedef LH5801MemoryRead = int Function(int address);
@@ -8,8 +9,8 @@ typedef LH5801MemoryRead = int Function(int address);
 /// Write the given 8-bit byte value to the given memory address.
 typedef LH5801MemoryWrite = void Function(int address, int value);
 
-class LH5801Processor extends LH5801Pins {
-  LH5801Processor({
+class LH5801Emulator extends LH5801Pins {
+  LH5801Emulator({
     @required int clockFrequency,
     @required LH5801MemoryRead memRead,
     @required LH5801MemoryWrite memWrite,
@@ -23,15 +24,15 @@ class LH5801Processor extends LH5801Pins {
     );
   }
 
-  LH5801Processor._();
+  LH5801Emulator._();
 
-  factory LH5801Processor.fromJson({
+  factory LH5801Emulator.fromJson({
     @required int clockFrequency,
     @required LH5801MemoryRead memRead,
     @required LH5801MemoryWrite memWrite,
     @required Map<String, dynamic> json,
   }) {
-    final LH5801Processor lh5801 = LH5801Processor._()
+    final LH5801Emulator lh5801 = LH5801Emulator._()
       ..inputPorts = json['inputPorts'] as int
       ..resetPin = json['resetPin'] as bool
       ..nmiPin = json['nmiPin'] as bool

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'lh5801_instruction_tables.freezed.dart';
+part 'instruction_tables.freezed.dart';
 
 @freezed
 abstract class InstructionCategory with _$InstructionCategory {

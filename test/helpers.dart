@@ -28,7 +28,7 @@ void _memWrite(int address, int value) {
   }
 }
 
-class LH5801Test extends LH5801Processor {
+class LH5801Test extends LH5801Emulator {
   LH5801Test() : super(clockFrequency: 1300000, memRead: _memRead, memWrite: _memWrite);
 
   void resetTestEnv() {
@@ -38,7 +38,7 @@ class LH5801Test extends LH5801Processor {
   }
 }
 
-void testSBCReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testSBCReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   memLoad(0x0000, opcodes);
   lh5801.cpu.a.value = 56;
   register.value = 33;
@@ -56,7 +56,7 @@ void testSBCReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void testSBCRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -81,7 +81,7 @@ void testSBCRReg(
   expect(lh5801.cpu.t.h, isTrue);
 }
 
-void testSBCab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testSBCab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -102,7 +102,7 @@ void testSBCab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   expect(lh5801.cpu.t.h, isTrue);
 }
 
-void testADCReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testADCReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   memLoad(0x0000, opcodes);
   lh5801.cpu.a.value = 2;
   register.value = 51;
@@ -120,7 +120,7 @@ void testADCReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void testADCRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -145,7 +145,7 @@ void testADCRReg(
   expect(lh5801.cpu.t.h, isFalse);
 }
 
-void testADCab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testADCab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -166,7 +166,7 @@ void testADCab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   expect(lh5801.cpu.t.h, isFalse);
 }
 
-void testADIAcc(LH5801Processor lh5801) {
+void testADIAcc(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xB3, 0x20];
   final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -186,7 +186,7 @@ void testADIAcc(LH5801Processor lh5801) {
 }
 
 void testADIRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -213,7 +213,7 @@ void testADIRReg(
   expect(lh5801.cpu.t.c, isFalse);
 }
 
-void testADIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testADIab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[
@@ -240,7 +240,7 @@ void testADIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   expect(lh5801.cpu.t.c, isFalse);
 }
 
-void testLDAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testLDAReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -266,7 +266,7 @@ void testLDAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void testLDARReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -298,7 +298,7 @@ void testLDARReg(
   _test(0xFD, isFalse);
 }
 
-void testLDAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testLDAab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
@@ -326,7 +326,7 @@ void testLDAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   _test(0xFD, isFalse);
 }
 
-void testCPAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testCPAReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     memLoad(0x0000, opcodes);
     lh5801.cpu.a.value = op1;
@@ -345,7 +345,7 @@ void testCPAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void testCPARReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -371,7 +371,7 @@ void testCPARReg(
   _test(84, 110, isFalse, isFalse);
 }
 
-void testCPAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testCPAab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -388,7 +388,7 @@ void testCPAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
 }
 
 void testANDRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -421,7 +421,7 @@ void testANDRReg(
   _test(0xFF, 0x0F, isFalse);
 }
 
-void testANDab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testANDab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -444,7 +444,7 @@ void testANDab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   expect(lh5801.cpu.t.c, equals(flags.c));
 }
 
-void testANIAcc(LH5801Processor lh5801) {
+void testANIAcc(LH5801Emulator lh5801) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[0xB9, i & 0xFF];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -470,7 +470,7 @@ void testANIAcc(LH5801Processor lh5801) {
 }
 
 void testANIRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -503,7 +503,7 @@ void testANIRReg(
   _test(0x12, 0x36, isFalse);
 }
 
-void testANIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testANIab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x16001 : 0x6001;
@@ -531,7 +531,7 @@ void testANIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   _test(0x12, 0x36, isFalse);
 }
 
-void testPOPRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testPOPRReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   void _test(int intialValue) {
     final int statusRegister = lh5801.cpu.t.statusRegister;
     const int initialStackValue = 0x46FD;
@@ -554,7 +554,7 @@ void testPOPRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
   _test(0x0000);
 }
 
-void testPOPA(LH5801Processor lh5801) {
+void testPOPA(LH5801Emulator lh5801) {
   void _test(int intialValue, Matcher zFlagMatcher) {
     final List<int> opcodes = <int>[0xFD, 0x8A];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -584,7 +584,7 @@ void testPOPA(LH5801Processor lh5801) {
 }
 
 void testORARReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -616,7 +616,7 @@ void testORARReg(
   _test(0x00, 0x00, isTrue);
 }
 
-void testORAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testORAab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int op1, int op2, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
@@ -644,7 +644,7 @@ void testORAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   _test(0x00, 0x00, isTrue);
 }
 
-void testORIAcc(LH5801Processor lh5801) {
+void testORIAcc(LH5801Emulator lh5801) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[0xBB, i & 0xFF];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -670,7 +670,7 @@ void testORIAcc(LH5801Processor lh5801) {
 }
 
 void testORIRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -703,7 +703,7 @@ void testORIRReg(
   _test(0x10, 0x01, isFalse);
 }
 
-void testORIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testORIab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
@@ -732,7 +732,7 @@ void testORIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
 }
 
 void testDCSRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -770,7 +770,7 @@ void testDCSRReg(
 }
 
 void testEORRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -807,7 +807,7 @@ void testEORRReg(
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testEORab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testEORab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(
     int initialOp1Value,
@@ -840,7 +840,7 @@ void testEORab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testSTAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testSTAReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -856,7 +856,7 @@ void testSTAReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void testSTARReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -877,7 +877,7 @@ void testSTARReg(
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testSTAab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x1CB00 : 0xCB00;
   final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -896,7 +896,7 @@ void testSTAab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
 }
 
 void testBITRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -929,7 +929,7 @@ void testBITRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBITab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testBITab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int accValue, int abValue, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
@@ -958,7 +958,7 @@ void testBITab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIAcc(LH5801Processor lh5801) {
+void testBIIAcc(LH5801Emulator lh5801) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[0xBF, i & 0xFF];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -985,7 +985,7 @@ void testBIIAcc(LH5801Processor lh5801) {
 }
 
 void testBIIRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -1019,7 +1019,7 @@ void testBIIRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
+void testBIIab(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
@@ -1054,7 +1054,7 @@ void testBIIab(LH5801Processor lh5801, int expectedCycles, List<int> opcodes,
 }
 
 void testIncReg8(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register8 register,
@@ -1077,7 +1077,7 @@ void testIncReg8(
 }
 
 void testIncReg16(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register,
@@ -1096,7 +1096,7 @@ void testIncReg16(
 }
 
 void testDecReg8(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register8 register,
@@ -1119,7 +1119,7 @@ void testDecReg8(
 }
 
 void testDecReg16(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register,
@@ -1137,7 +1137,7 @@ void testDecReg16(
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testLDXReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testLDXReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -1151,7 +1151,7 @@ void testLDXReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) 
   expect(lh5801.cpu.t.statusRegister, statusRegister);
 }
 
-void testSTXReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testSTXReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -1165,7 +1165,7 @@ void testSTXReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) 
   expect(lh5801.cpu.t.statusRegister, statusRegister);
 }
 
-void testPSHRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testPSHRReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -1184,7 +1184,7 @@ void testPSHRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
 }
 
 void testDCARReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes,
   Register16 register, {
@@ -1221,7 +1221,7 @@ void testDCARReg(
   _test(0x35, 0x67, true, 0x03, isTrue, isTrue);
 }
 
-void testATT(LH5801Processor lh5801) {
+void testATT(LH5801Emulator lh5801) {
   final List<int> opcodes = <int>[0xFD, 0xEC];
 
   memLoad(0x0000, opcodes);
@@ -1234,7 +1234,7 @@ void testATT(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, 0x1F);
 }
 
-void testTTA(LH5801Processor lh5801) {
+void testTTA(LH5801Emulator lh5801) {
   void _test(int initialStatusRegisterValue, Matcher zFlagMatcher) {
     final List<int> opcodes = <int>[0xFD, 0xAA];
 
@@ -1254,7 +1254,7 @@ void testTTA(LH5801Processor lh5801) {
   _test(0x00, isTrue);
 }
 
-void testADRRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testADRRReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -1270,7 +1270,7 @@ void testADRRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
 }
 
 void testDRRRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes, {
   bool me1 = false,
@@ -1293,7 +1293,7 @@ void testDRRRReg(
 }
 
 void testDRLRReg(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int expectedCycles,
   List<int> opcodes, {
   bool me1 = false,
@@ -1315,7 +1315,7 @@ void testDRLRReg(
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSINRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testSINRReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   void _test(int regValue) {
     final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -1340,7 +1340,7 @@ void testSINRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
   _test(0xFFFF);
 }
 
-void testSDERReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testSDERReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   void _test(int regValue) {
     final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -1365,7 +1365,7 @@ void testSDERReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
   _test(0x0000);
 }
 
-void testLINRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testLINRReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   void _test(int regValue, int memValue, Matcher zFlagMatcher) {
     final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -1392,7 +1392,7 @@ void testLINRReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
   _test(0xFFFF, 0x00, isTrue);
 }
 
-void testLDERReg(LH5801Processor lh5801, List<int> opcodes, Register16 register) {
+void testLDERReg(LH5801Emulator lh5801, List<int> opcodes, Register16 register) {
   void _test(int regValue, int memValue, Matcher zFlagMatcher) {
     final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -1419,7 +1419,7 @@ void testLDERReg(LH5801Processor lh5801, List<int> opcodes, Register16 register)
   _test(0x0000, 0x00, isTrue);
 }
 
-void testLDIAcc(LH5801Processor lh5801) {
+void testLDIAcc(LH5801Emulator lh5801) {
   void _test(int i, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[0xB5, i & 0xFF];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -1443,7 +1443,7 @@ void testLDIAcc(LH5801Processor lh5801) {
   _test(0xAA, isFalse);
 }
 
-void testLDIReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testLDIReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   final List<int> memOpcodes = <int>[...opcodes, 0x5A];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -1458,7 +1458,7 @@ void testLDIReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testLDISij(LH5801Processor lh5801) {
+void testLDISij(LH5801Emulator lh5801) {
   const int ij = 0x1234;
   final List<int> memOpcodes = <int>[0xAA, ij >> 8, ij & 0xFF];
   final int statusRegister = lh5801.cpu.t.statusRegister;
@@ -1474,7 +1474,7 @@ void testLDISij(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testCPIReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
+void testCPIReg(LH5801Emulator lh5801, List<int> opcodes, Register8 register) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[...opcodes, op2 & 0xFF];
 
@@ -1494,7 +1494,7 @@ void testCPIReg(LH5801Processor lh5801, List<int> opcodes, Register8 register) {
 }
 
 void _testBranch(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   int additionalCycles,
   List<int> opcodes,
   int flagMask,
@@ -1526,7 +1526,7 @@ void _testBranch(
   }
 }
 
-void testBCR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBCR(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1546,7 +1546,7 @@ void testBCR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBCS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBCS(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1566,7 +1566,7 @@ void testBCS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBHR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBHR(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1586,7 +1586,7 @@ void testBHR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBHS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBHS(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1606,7 +1606,7 @@ void testBHS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBZR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBZR(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1626,7 +1626,7 @@ void testBZR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBZS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBZS(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1646,7 +1646,7 @@ void testBZS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBVR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBVR(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1666,7 +1666,7 @@ void testBVR(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBVS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBVS(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     2,
@@ -1686,7 +1686,7 @@ void testBVS(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testBCH(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
+void testBCH(LH5801Emulator lh5801, List<int> opcodes, {bool forward = true}) {
   _testBranch(
     lh5801,
     0,
@@ -1697,7 +1697,7 @@ void testBCH(LH5801Processor lh5801, List<int> opcodes, {bool forward = true}) {
   );
 }
 
-void testLOP(LH5801Processor lh5801) {
+void testLOP(LH5801Emulator lh5801) {
   int _unsignedByteToSignedInt(int value) =>
       (value & 0x80 != 0) ? -((0xff & ~value) + 1) : value;
 
@@ -1738,7 +1738,7 @@ void testLOP(LH5801Processor lh5801) {
   _test(0);
 }
 
-void testSBIAcc(LH5801Processor lh5801) {
+void testSBIAcc(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xB1, 7];
 
   memLoad(0x0000, memOpcodes);
@@ -1756,7 +1756,7 @@ void testSBIAcc(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.h, isFalse);
 }
 
-void testJMP(LH5801Processor lh5801) {
+void testJMP(LH5801Emulator lh5801) {
   const int initialPValue = 0x4000;
   const int ij = 0x4100;
   final List<int> memOpcodes = <int>[0xBA, ij >> 8, ij & 0xFF];
@@ -1772,7 +1772,7 @@ void testJMP(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testEAI(LH5801Processor lh5801) {
+void testEAI(LH5801Emulator lh5801) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -1802,7 +1802,7 @@ void testEAI(LH5801Processor lh5801) {
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testSJP(LH5801Processor lh5801) {
+void testSJP(LH5801Emulator lh5801) {
   const int initialPValue = 0x4000;
   const int initialSValue = 0x6000;
   const int ij = 0xE000;
@@ -1824,7 +1824,7 @@ void testSJP(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRTN(LH5801Processor lh5801) {
+void testRTN(LH5801Emulator lh5801) {
   const int initialPValue = 0x4000;
   const int initialSValue = 0x6000;
   const int ij = 0xE000;
@@ -1858,7 +1858,7 @@ void testRTN(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRTI(LH5801Processor lh5801) {
+void testRTI(LH5801Emulator lh5801) {
   const int initialPValue = 0x4000;
   const int initialSValue = 0x6000;
   const int statusRegister =
@@ -1889,7 +1889,7 @@ void testRTI(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testVSJ(LH5801Processor lh5801, int expectedCycles, List<int> opcodes) {
+void testVSJ(LH5801Emulator lh5801, int expectedCycles, List<int> opcodes) {
   const int initialSValue = 0x6000;
   const int initialPValue = 0x4000;
   const int subroutineAddress = 0x4500;
@@ -1927,7 +1927,7 @@ void testVSJ(LH5801Processor lh5801, int expectedCycles, List<int> opcodes) {
 }
 
 void _testVSJConditional(
-  LH5801Processor lh5801,
+  LH5801Emulator lh5801,
   List<int> opcodes,
   int statusRegister, {
   bool jump = false,
@@ -1977,7 +1977,7 @@ void _testVSJConditional(
   expect(lh5801.cpu.t.c, equals(flags.c));
 }
 
-void testVCS(LH5801Processor lh5801, List<int> opcodes) {
+void testVCS(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -1988,7 +1988,7 @@ void testVCS(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, 0);
 }
 
-void testVCR(LH5801Processor lh5801, List<int> opcodes) {
+void testVCR(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -1999,7 +1999,7 @@ void testVCR(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, LH5801Flags.C);
 }
 
-void testVHS(LH5801Processor lh5801, List<int> opcodes) {
+void testVHS(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -2010,7 +2010,7 @@ void testVHS(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, 0);
 }
 
-void testVHR(LH5801Processor lh5801, List<int> opcodes) {
+void testVHR(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -2021,7 +2021,7 @@ void testVHR(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, LH5801Flags.H);
 }
 
-void testVZS(LH5801Processor lh5801, List<int> opcodes) {
+void testVZS(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -2032,7 +2032,7 @@ void testVZS(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, 0);
 }
 
-void testVZR(LH5801Processor lh5801, List<int> opcodes) {
+void testVZR(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -2043,7 +2043,7 @@ void testVZR(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, LH5801Flags.Z);
 }
 
-void testVVS(LH5801Processor lh5801, List<int> opcodes) {
+void testVVS(LH5801Emulator lh5801, List<int> opcodes) {
   _testVSJConditional(
     lh5801,
     opcodes,
@@ -2054,7 +2054,7 @@ void testVVS(LH5801Processor lh5801, List<int> opcodes) {
   _testVSJConditional(lh5801, opcodes, 0);
 }
 
-void testROR(LH5801Processor lh5801) {
+void testROR(LH5801Emulator lh5801) {
   void _test(
     int initialAccValue,
     int expectedAccValue,
@@ -2084,7 +2084,7 @@ void testROR(LH5801Processor lh5801) {
   _test(0x01, 0x00, LH5801Flags.Z | LH5801Flags.C);
 }
 
-void testROL(LH5801Processor lh5801) {
+void testROL(LH5801Emulator lh5801) {
   void _test(
     int initialAccValue,
     int expectedAccValue,
@@ -2113,7 +2113,7 @@ void testROL(LH5801Processor lh5801) {
   _test(0x80, 0x00, LH5801Flags.V | LH5801Flags.Z | LH5801Flags.C);
 }
 
-void testTIN(LH5801Processor lh5801) {
+void testTIN(LH5801Emulator lh5801) {
   const int initialXValue = 0x4700;
   const int memXValue = 0x33;
   const int initialYValue = 0x4800;
@@ -2136,7 +2136,7 @@ void testTIN(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, statusRegister);
 }
 
-void testCIN(LH5801Processor lh5801) {
+void testCIN(LH5801Emulator lh5801) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     const int initialXValue = 0x4700;
     final List<int> memOpcodes = <int>[0xF7];
@@ -2160,7 +2160,7 @@ void testCIN(LH5801Processor lh5801) {
   _test(84, 110, isFalse, isFalse);
 }
 
-void testRECSEC(LH5801Processor lh5801, List<int> opcodes, {bool expectedCarry = false}) {
+void testRECSEC(LH5801Emulator lh5801, List<int> opcodes, {bool expectedCarry = false}) {
   final LH5801Flags flags = lh5801.cpu.t.clone();
 
   memLoad(0x0000, opcodes);
@@ -2175,7 +2175,7 @@ void testRECSEC(LH5801Processor lh5801, List<int> opcodes, {bool expectedCarry =
   expect(lh5801.cpu.t.c, equals(expectedCarry));
 }
 
-void testAEX(LH5801Processor lh5801) {
+void testAEX(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xF1];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -2190,7 +2190,7 @@ void testAEX(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRPUSPU(LH5801Processor lh5801, List<int> opcodes, {bool expectedPU = false}) {
+void testRPUSPU(LH5801Emulator lh5801, List<int> opcodes, {bool expectedPU = false}) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -2203,7 +2203,7 @@ void testRPUSPU(LH5801Processor lh5801, List<int> opcodes, {bool expectedPU = fa
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRPVSPV(LH5801Processor lh5801, List<int> opcodes, {bool expectedPV = false}) {
+void testRPVSPV(LH5801Emulator lh5801, List<int> opcodes, {bool expectedPV = false}) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -2216,7 +2216,7 @@ void testRPVSPV(LH5801Processor lh5801, List<int> opcodes, {bool expectedPV = fa
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSDPRDP(LH5801Processor lh5801, List<int> opcodes, {bool expectedDisp = false}) {
+void testSDPRDP(LH5801Emulator lh5801, List<int> opcodes, {bool expectedDisp = false}) {
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
@@ -2229,7 +2229,7 @@ void testSDPRDP(LH5801Processor lh5801, List<int> opcodes, {bool expectedDisp = 
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSIERIE(LH5801Processor lh5801, List<int> opcodes, {bool expectedIE = false}) {
+void testSIERIE(LH5801Emulator lh5801, List<int> opcodes, {bool expectedIE = false}) {
   final LH5801Flags flags = lh5801.cpu.t.clone();
 
   memLoad(0x0000, opcodes);
@@ -2244,7 +2244,7 @@ void testSIERIE(LH5801Processor lh5801, List<int> opcodes, {bool expectedIE = fa
   expect(lh5801.cpu.t.c, equals(flags.c));
 }
 
-void testSHR(LH5801Processor lh5801) {
+void testSHR(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xD5];
   final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -2263,7 +2263,7 @@ void testSHR(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.c, isTrue);
 }
 
-void testSHL(LH5801Processor lh5801) {
+void testSHL(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xD9];
   final LH5801Flags flags = lh5801.cpu.t.clone();
 
@@ -2282,7 +2282,7 @@ void testSHL(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.c, isTrue);
 }
 
-void testOFF(LH5801Processor lh5801) {
+void testOFF(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xFD, 0x4C];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -2297,7 +2297,7 @@ void testOFF(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testATP(LH5801Processor lh5801) {
+void testATP(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xFD, 0xCC];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -2313,7 +2313,7 @@ void testATP(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testITA(LH5801Processor lh5801) {
+void testITA(LH5801Emulator lh5801) {
   void _test(int inputPortsValue, Matcher zFlagMatcher) {
     final List<int> memOpcodes = <int>[0xFD, 0xBA];
     final LH5801Flags flags = lh5801.cpu.t.clone();
@@ -2337,7 +2337,7 @@ void testITA(LH5801Processor lh5801) {
   _test(0x00, isTrue);
 }
 
-void testNOP(LH5801Processor lh5801) {
+void testNOP(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0x38];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -2349,7 +2349,7 @@ void testNOP(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testHLT(LH5801Processor lh5801) {
+void testHLT(LH5801Emulator lh5801) {
   final List<int> memOpcodes = <int>[0xFD, 0xB1];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 
@@ -2364,7 +2364,7 @@ void testHLT(LH5801Processor lh5801) {
   expect(lh5801.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testAM(LH5801Processor lh5801, List<int> opcodes, int bit8) {
+void testAM(LH5801Emulator lh5801, List<int> opcodes, int bit8) {
   final List<int> memOpcodes = <int>[...opcodes];
   final int statusRegister = lh5801.cpu.t.statusRegister;
 

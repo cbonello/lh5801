@@ -1,6 +1,11 @@
 import 'package:meta/meta.dart';
 
-import 'processor.dart';
+import 'emulator.dart';
+import 'flags.dart';
+import 'instruction_tables.dart';
+import 'pins.dart';
+import 'state.dart';
+import 'timer.dart';
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({

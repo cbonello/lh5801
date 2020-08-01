@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-import 'processor.dart';
+import 'flags.dart';
+import 'timer.dart';
 
 class Register8 extends Object {
   Register8([int value = 0x00]) : _value = value & 0xFF;
