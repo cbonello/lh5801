@@ -96,14 +96,14 @@ class LH5801State {
     @required this.tm,
     this.pu = false,
     this.pv = false,
-    this.disp = true,
+    this.bf = true,
+    this.disp = false,
     LH5801Flags t,
     this.ie = false,
     this.ir0 = false,
     this.ir1 = false,
     this.ir2 = false,
     this.hlt = false,
-    this.cycleCounter = 0,
   })  : assert(tm != null),
         p = p ?? Register16(),
         a = a ?? Register8(),
@@ -128,7 +128,7 @@ class LH5801State {
   // Timer counter (9-bit).
   LH5801Timer tm;
   // General purpose flip-flops.
-  bool pu, pv;
+  bool pu, pv, bf;
   // LCD on/off control.
   bool disp;
   // Status register.
@@ -142,7 +142,6 @@ class LH5801State {
   // Maskable interrupt request flip-flop.
   bool ir2;
   bool hlt;
-  int cycleCounter;
 
   void reset() {
     p.reset();
@@ -154,20 +153,20 @@ class LH5801State {
     tm.reset();
     pu = false;
     pv = false;
-    disp = true;
+    bf = true;
+    disp = false;
     t.reset();
     ie = false;
     ir0 = false;
     ir1 = false;
     ir2 = false;
     hlt = false;
-    cycleCounter = 0;
   }
 
   @override
   String toString() {
     final String hash = hashCode.toUnsigned(20).toRadixString(16).padLeft(5, '0');
-    return 'Z80State($hash)';
+    return 'LH5801State($hash)';
   }
 
   @override
@@ -184,14 +183,14 @@ class LH5801State {
           tm == other.tm &&
           pu == other.pu &&
           pv == other.pv &&
+          bf == other.bf &&
           disp == other.disp &&
           t == other.t &&
           ie == other.ie &&
           ir0 == other.ir0 &&
           ir1 == other.ir1 &&
           ir2 == other.ir2 &&
-          hlt == other.hlt &&
-          cycleCounter == other.cycleCounter;
+          hlt == other.hlt;
 
   @override
   int get hashCode =>
@@ -204,12 +203,12 @@ class LH5801State {
       tm.hashCode ^
       pu.hashCode ^
       pv.hashCode ^
+      bf.hashCode ^
       disp.hashCode ^
       t.hashCode ^
       ie.hashCode ^
       ir0.hashCode ^
       ir1.hashCode ^
       ir2.hashCode ^
-      hlt.hashCode ^
-      cycleCounter.hashCode;
+      hlt.hashCode;
 }

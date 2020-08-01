@@ -1,3 +1,3 @@
 library lh5801;
 
-export 'src/cpu/cpu.dart';
+export 'src/processor/processor.dart';

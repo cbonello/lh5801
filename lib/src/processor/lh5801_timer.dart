@@ -1,7 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
-
-part 'lh5801_timer.g.dart';
 
 const int clockFrequency2Mhz = 2000000;
 const int clockFrequency1Mhz = 1000000;
@@ -29,13 +26,8 @@ abstract class _SubClock {
   void reset();
   void incrementClock(int cpuCycles) {}
   bool get isInterruptRaised;
-  void resetInterrupt();
 }
 
-@JsonSerializable(
-  createFactory: true,
-  disallowUnrecognizedKeys: true,
-)
 class LH5801Timer implements _SubClock {
   LH5801Timer({@required int cpuClockFrequency, @required int timerClockFrequency})
       : _cpuCyclesPerTick = (cpuClockFrequency / timerClockFrequency).round() {
@@ -44,15 +36,34 @@ class LH5801Timer implements _SubClock {
     _interruptRaised = false;
   }
 
-  factory LH5801Timer.fromJson(Map<String, dynamic> json) => _$LH5801TimerFromJson(json);
+  LH5801Timer._(
+    this._value,
+    this._cpuCycles,
+    this._cpuCyclesPerTick,
+    this._interruptRaised,
+  );
 
-  Map<String, dynamic> toJson() => _$LH5801TimerToJson(this);
+  factory LH5801Timer.fromJson(Map<String, dynamic> json) {
+    return LH5801Timer._(
+      json['value'] as int,
+      json['cpuCycles'] as int,
+      json['cpuCyclesPerTick'] as int,
+      json['interruptRaised'] as bool,
+    );
+  }
 
-  int _value;
-  // Number of CPU cycles during one timer clock tick.
-  final int _cpuCyclesPerTick;
-  int _cpuCycles;
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'value': _value,
+        'cpuCycles': _cpuCycles,
+        'cpuCyclesPerTick': _cpuCyclesPerTick,
+        'interruptRaised': _interruptRaised,
+      };
+
   bool _interruptRaised;
+  int _value, _cpuCycles;
+
+  // Number of CPU cycles during one timer clock-tick.
+  final int _cpuCyclesPerTick;
 
   static const int maxCounterValue = 0x1FF;
 
@@ -84,10 +95,11 @@ class LH5801Timer implements _SubClock {
   }
 
   @override
-  bool get isInterruptRaised => _interruptRaised;
-
-  @override
-  void resetInterrupt() => _interruptRaised = false;
+  bool get isInterruptRaised {
+    final bool isRaised = _interruptRaised;
+    _interruptRaised = false;
+    return isRaised;
+  }
 
   @override
   String toString() =>

@@ -97,14 +97,14 @@ void main() {
         expect(state.tm, equals(tm));
         expect(state.pu, equals(false));
         expect(state.pv, equals(false));
-        expect(state.disp, equals(true));
+        expect(state.bf, equals(true));
+        expect(state.disp, equals(false));
         expect(state.t, equals(LH5801Flags()));
         expect(state.ie, equals(false));
         expect(state.ir0, equals(false));
         expect(state.ir1, equals(false));
         expect(state.ir2, equals(false));
         expect(state.hlt, equals(false));
-        expect(state.cycleCounter, equals(0));
       });
 
       test('reset() should create an initial state', () {

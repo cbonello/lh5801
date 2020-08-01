@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-import 'cpu.dart';
+import 'processor.dart';
 
 part 'lh5801_state.dart';
 part 'lh5801_cpu.g.dart';
@@ -10,10 +10,12 @@ typedef LH5801Instruction = void Function();
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({
-    @required LH5801Core core,
+    @required LH5801Pins pins,
     @required this.clockFrequency,
-  })  : assert(core != null),
-        _core = core,
+    @required this.memRead,
+    @required this.memWrite,
+  })  : assert(pins != null),
+        _pins = pins,
         super(
           tm: LH5801Timer(
             cpuClockFrequency: clockFrequency,
@@ -21,24 +23,20 @@ class LH5801CPU extends LH5801State {
           ),
         );
 
-  final LH5801Core _core;
+  final LH5801Pins _pins;
   final int clockFrequency;
-
-  void nmi() => ir0 = true;
-
-  void mi() => ir2 = true;
-
-  @override
-  void reset() {
-    super.reset();
-    p.high = _core.memRead(_me0(0xFFFE));
-    p.low = _core.memRead(_me0(0xFFFF));
-  }
+  final LH5801MemoryRead memRead;
+  final LH5801MemoryWrite memWrite;
 
   int step() {
-    if (tm.isInterruptRaised) {
-      ir1 = true;
-      tm.resetInterrupt();
+    if (_pins.isResetPinHigh) {
+      super.reset();
+      p.high = memRead(_me0(0xFFFE));
+      p.low = memRead(_me0(0xFFFF));
+    } else {
+      ir0 = _pins.isNMIPinHigh;
+      ir1 = tm.isInterruptRaised;
+      ir2 = _pins.isMIPinHigh;
     }
 
     if (ir0) {
@@ -46,22 +44,22 @@ class LH5801CPU extends LH5801State {
       _push8(t.statusRegister);
       ie = ir0 = false;
       _push16(p.value);
-      p.high = _core.memRead(_me0(0xFFFC));
-      p.low = _core.memRead(_me0(0xFFFD));
-    } else if (ir1 && ie) {
+      p.high = memRead(_me0(0xFFFC));
+      p.low = memRead(_me0(0xFFFD));
+    } else if (ie && ir1) {
       // Timer interrupt
       _push8(t.statusRegister);
       ie = ir1 = false;
       _push16(p.value);
-      p.high = _core.memRead(_me0(0xFFFA));
-      p.low = _core.memRead(_me0(0xFFFB));
-    } else if (ir2 && ie) {
+      p.high = memRead(_me0(0xFFFA));
+      p.low = memRead(_me0(0xFFFB));
+    } else if (ie && ir2) {
       // Maskable interrupt
       _push8(t.statusRegister);
       ie = hlt = ir2 = false;
       _push16(p.value);
-      p.high = _core.memRead(_me0(0xFFF8));
-      p.low = _core.memRead(_me0(0xFFF9));
+      p.high = memRead(_me0(0xFFF8));
+      p.low = memRead(_me0(0xFFF9));
     } else if (hlt) {
       return 2;
     }
@@ -75,7 +73,7 @@ class LH5801CPU extends LH5801State {
   int _me1(int address) => 0x10000 | address & 0xFFFF;
 
   int _readOp8() {
-    final int op8 = _core.memRead(p.value);
+    final int op8 = memRead(p.value);
     p.value += 1;
     return op8;
   }
@@ -88,7 +86,7 @@ class LH5801CPU extends LH5801State {
 
   int _readOp16Ind(int b) {
     final int ab = _readOp16();
-    return _core.memRead((b << 16) | ab);
+    return memRead((b << 16) | ab);
   }
 
   int unsignedByteToInt(int value) {
@@ -114,9 +112,9 @@ class LH5801CPU extends LH5801State {
   void _addAccumulator(int value) => a.value = _binaryAdd(a.value, value, carry: t.c);
 
   void _addMemory(int address, int value) {
-    final int m = _core.memRead(address);
+    final int m = memRead(address);
     final int sum = _binaryAdd(m, value);
-    _core.memWrite(address, sum);
+    memWrite(address, sum);
   }
 
   void _addRegister(Register16 register) {
@@ -142,10 +140,10 @@ class LH5801CPU extends LH5801State {
   }
 
   void _andMemory(int address, int value) {
-    final int m = _core.memRead(address);
+    final int m = memRead(address);
     final int andValue = m & value;
     t.z = (andValue & 0xFF) == 0;
-    _core.memWrite(address, andValue);
+    memWrite(address, andValue);
   }
 
   int _branchForward(int addCyclesTable, {bool cond = false}) {
@@ -173,7 +171,7 @@ class LH5801CPU extends LH5801State {
   void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
 
   void _cin() {
-    final int m = _core.memRead(_me0(x.value));
+    final int m = memRead(_me0(x.value));
     _cpi(a.value, m);
     x.value += 1;
   }
@@ -199,17 +197,17 @@ class LH5801CPU extends LH5801State {
   void _decRegister16(Register16 register) => register.value--;
 
   void _drl(int address) {
-    final int m = _core.memRead(address);
+    final int m = memRead(address);
     final int tmp = (m << 8) | a.value;
     a.value = m;
-    _core.memWrite(address, (tmp >> 4) & 0xFF);
+    memWrite(address, (tmp >> 4) & 0xFF);
   }
 
   void _drr(int address) {
-    final int m = _core.memRead(address);
+    final int m = memRead(address);
     final int tmp = (a.value << 8) | m;
     a.value = tmp;
-    _core.memWrite(address, (tmp >> 4) & 0xFF);
+    memWrite(address, (tmp >> 4) & 0xFF);
   }
 
   void _eorAccumulator(int value) {
@@ -218,7 +216,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _ita() {
-    a.value = _core.inputPorts;
+    a.value = _pins.inputPorts;
     t.z = a.value == 0;
   }
 
@@ -228,7 +226,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _lde(Register16 register) {
-    a.value = _core.memRead(_me0(register.value--));
+    a.value = memRead(_me0(register.value--));
     t.z = a.value == 0;
   }
 
@@ -240,7 +238,7 @@ class LH5801CPU extends LH5801State {
   void _ldx(Register16 register) => x.value = register.value;
 
   void _lin(Register16 register) {
-    a.value = _core.memRead(_me0(register.value++));
+    a.value = memRead(_me0(register.value++));
     t.z = a.value == 0;
   }
 
@@ -259,15 +257,15 @@ class LH5801CPU extends LH5801State {
   }
 
   void _orMemory(int address, int value) {
-    final int m = _core.memRead(address);
+    final int m = memRead(address);
     final int orValue = value | m;
-    _core.memWrite(address, orValue);
+    memWrite(address, orValue);
     t.z = orValue == 0;
   }
 
   int _pop8() {
     s.value++;
-    return _core.memRead(_me0(s.value));
+    return memRead(_me0(s.value));
   }
 
   int _pop16() {
@@ -286,7 +284,7 @@ class LH5801CPU extends LH5801State {
   }
 
   void _push8(int value) {
-    _core.memWrite(_me0(s.value), value);
+    memWrite(_me0(s.value), value);
     _decRegister16(s);
   }
 
@@ -323,7 +321,7 @@ class LH5801CPU extends LH5801State {
 
   void _sbc(int value) => a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
 
-  void _sde(Register16 register) => _core.memWrite(_me0(register.value--), a.value);
+  void _sde(Register16 register) => memWrite(_me0(register.value--), a.value);
 
   void _shl() {
     final int accumulator = a.value;
@@ -344,7 +342,7 @@ class LH5801CPU extends LH5801State {
     t.c = (accumulator & 0x01) != 0;
   }
 
-  void _sin(Register16 register) => _core.memWrite(_me0(register.value++), a.value);
+  void _sin(Register16 register) => memWrite(_me0(register.value++), a.value);
 
   void _sjp(int address) {
     _push16(p.value);
@@ -352,8 +350,8 @@ class LH5801CPU extends LH5801State {
   }
 
   void _tin() {
-    final int m = _core.memRead(_me0(x.value++));
-    _core.memWrite(_me0(y.value++), m);
+    final int m = memRead(_me0(x.value++));
+    memWrite(_me0(y.value++), m);
   }
 
   void _tta() {
@@ -366,8 +364,8 @@ class LH5801CPU extends LH5801State {
     if (cond) {
       cycles += addCyclesTable;
       _push16(p.value);
-      final int h = _core.memRead(_me0(0xFF00 + vectorID));
-      final int l = _core.memRead(_me0(0xFF00 + vectorID + 1));
+      final int h = memRead(_me0(0xFF00 + vectorID));
+      final int l = memRead(_me0(0xFF00 + vectorID + 1));
       p.value = (h << 8) | l;
     }
     t.z = false;
@@ -382,114 +380,114 @@ class LH5801CPU extends LH5801State {
 
     switch (opcode) {
       case 0x01: // SBC #(X)
-        _sbc(_core.memRead(_me1(x.value)));
+        _sbc(memRead(_me1(x.value)));
         break;
       case 0x03: // ADC #(X)
-        _addAccumulator(_core.memRead(_me1(x.value)));
+        _addAccumulator(memRead(_me1(x.value)));
         break;
       case 0x05: // LDA #(X)
-        _lda(_core.memRead(_me1(x.value)));
+        _lda(memRead(_me1(x.value)));
         break;
       case 0x07: // CPA #(X)
-        _cpi(a.value, _core.memRead(_me1(x.value)));
+        _cpi(a.value, memRead(_me1(x.value)));
         break;
       case 0x08: // LDX X
         //_ldx(x);
         break;
       case 0x09: // AND #(X)
-        _andAccumulator(_core.memRead(_me1(x.value)));
+        _andAccumulator(memRead(_me1(x.value)));
         break;
       case 0x0A: // POP X
         _popRegister(x);
         break;
       case 0x0B: // ORA #(X)
-        _orAccumulator(_core.memRead(_me1(x.value)));
+        _orAccumulator(memRead(_me1(x.value)));
         break;
       case 0x0C: // DCS #(X)
-        _dcs(_core.memRead(_me1(x.value)));
+        _dcs(memRead(_me1(x.value)));
         break;
       case 0x0D: // EOR #(X)
-        _eorAccumulator(_core.memRead(_me1(x.value)));
+        _eorAccumulator(memRead(_me1(x.value)));
         break;
       case 0x0E: // STA #(X)
-        _core.memWrite(_me1(x.value), a.value);
+        memWrite(_me1(x.value), a.value);
         break;
       case 0x0F: // BIT #(X)
-        _bit(_core.memRead(_me1(x.value)), a.value);
+        _bit(memRead(_me1(x.value)), a.value);
         break;
 
       case 0x11: // SBC #(Y)
-        _sbc(_core.memRead(_me1(y.value)));
+        _sbc(memRead(_me1(y.value)));
         break;
       case 0x13: // ADC #(Y)
-        _addAccumulator(_core.memRead(_me1(y.value)));
+        _addAccumulator(memRead(_me1(y.value)));
         break;
       case 0x15: // LDA #(Y)
-        _lda(_core.memRead(_me1(y.value)));
+        _lda(memRead(_me1(y.value)));
         break;
       case 0x17: // CPA #(Y)
-        _cpi(a.value, _core.memRead(_me1(y.value)));
+        _cpi(a.value, memRead(_me1(y.value)));
         break;
       case 0x18: // LDX Y
         _ldx(y);
         break;
       case 0x19: // AND #(Y)
-        _andAccumulator(_core.memRead(_me1(y.value)));
+        _andAccumulator(memRead(_me1(y.value)));
         break;
       case 0x1A: // POP Y
         _popRegister(y);
         break;
       case 0x1B: // ORA #(Y)
-        _orAccumulator(_core.memRead(_me1(y.value)));
+        _orAccumulator(memRead(_me1(y.value)));
         break;
       case 0x1C: //DCS #(Y)
-        _dcs(_core.memRead(_me1(y.value)));
+        _dcs(memRead(_me1(y.value)));
         break;
       case 0x1D: // EOR #(Y)
-        _eorAccumulator(_core.memRead(_me1(y.value)));
+        _eorAccumulator(memRead(_me1(y.value)));
         break;
       case 0x1E: // STA #(Y)
-        _core.memWrite(_me1(y.value), a.value);
+        memWrite(_me1(y.value), a.value);
         break;
       case 0x1F: // BIT #(Y)
-        _bit(_core.memRead(_me1(y.value)), a.value);
+        _bit(memRead(_me1(y.value)), a.value);
         break;
 
       case 0x21: // SBC #(U)
-        _sbc(_core.memRead(_me1(u.value)));
+        _sbc(memRead(_me1(u.value)));
         break;
       case 0x23: // ADC #(U)
-        _addAccumulator(_core.memRead(_me1(u.value)));
+        _addAccumulator(memRead(_me1(u.value)));
         break;
       case 0x25: // LDA #(U)
-        _lda(_core.memRead(_me1(u.value)));
+        _lda(memRead(_me1(u.value)));
         break;
       case 0x27: // CPA #(U)
-        _cpi(a.value, _core.memRead(_me1(u.value)));
+        _cpi(a.value, memRead(_me1(u.value)));
         break;
       case 0x28: // LDX U
         _ldx(u);
         break;
       case 0x29: // AND #(U)
-        _andAccumulator(_core.memRead(_me1(u.value)));
+        _andAccumulator(memRead(_me1(u.value)));
         break;
       case 0x2A: // POP U
         _popRegister(u);
         break;
       case 0x2B: // ORA #(U)
-        _orAccumulator(_core.memRead(_me1(u.value)));
+        _orAccumulator(memRead(_me1(u.value)));
         break;
       case 0x2C: // DCS #(U)
-        _dcs(_core.memRead(_me1(u.value)));
+        _dcs(memRead(_me1(u.value)));
         break;
       case 0x2D: // EOR #(U)
-        _eorAccumulator(_core.memRead(_me1(u.value)));
+        _eorAccumulator(memRead(_me1(u.value)));
         break;
       case 0x2E: // STA #(U)
-        _core.memWrite(_me1(u.value), a.value);
+        memWrite(_me1(u.value), a.value);
         break;
       case 0x2F: // BIT #(U)
-        _bit(_core.memRead(_me1(u.value)), a.value);
+        _bit(memRead(_me1(u.value)), a.value);
         break;
 
       case 0x40: // INC XH
@@ -510,10 +508,10 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(x.value), _readOp8());
         break;
       case 0x4C: // OFF
-        _core.bfFlipflop = false;
+        _pins.bfFlipflop = false;
         break;
       case 0x4D: // BII #(X), i
-        _bit(_core.memRead(_me1(x.value)), _readOp8());
+        _bit(memRead(_me1(x.value)), _readOp8());
         break;
       case 0x4E: // STX S
         s.value = x.value;
@@ -541,7 +539,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(y.value), _readOp8());
         break;
       case 0x5D: // BII #(Y), i
-        _bit(_core.memRead(_me1(y.value)), _readOp8());
+        _bit(memRead(_me1(y.value)), _readOp8());
         break;
       case 0x5E: // STX P
         p.value = _me0(x.value);
@@ -566,7 +564,7 @@ class LH5801CPU extends LH5801State {
         _orMemory(_me1(u.value), _readOp8());
         break;
       case 0x6D: // BII #(U), i
-        _bit(_core.memRead(_me1(u.value)), _readOp8());
+        _bit(memRead(_me1(u.value)), _readOp8());
         break;
       case 0x6F: // ADI #(U), i
         _addMemory(_me1(u.value), _readOp8());
@@ -582,18 +580,17 @@ class LH5801CPU extends LH5801State {
         _popAccumulator();
         break;
       case 0x8C: // DCA #(X)
-        _dca(_core.memRead(_me1(x.value)));
+        _dca(memRead(_me1(x.value)));
         break;
       case 0x8E: // CDV
         // TODO(cbonello): implement CDV instruction
-        print('lh5801 opcode FD 8E (CDV instruction) not implemented');
         break;
 
       case 0x98: // PSH Y
         _push16(y.value);
         break;
       case 0x9C: // DCA #(Y)
-        _dca(_core.memRead(_me1(y.value)));
+        _dca(memRead(_me1(y.value)));
         break;
 
       case 0xA1: // SBC #(ab)
@@ -621,13 +618,13 @@ class LH5801CPU extends LH5801State {
         _orAccumulator(_readOp16Ind(1));
         break;
       case 0xAC: // DCA #(U)
-        _dca(_core.memRead(_me1(u.value)));
+        _dca(memRead(_me1(u.value)));
         break;
       case 0xAD: // EOR #(ab)
         _eorAccumulator(_readOp16Ind(1));
         break;
       case 0xAE: // STA #(ab)
-        _core.memWrite(_me1(_readOp16()), a.value);
+        memWrite(_me1(_readOp16()), a.value);
         break;
       case 0xAF: // BIT #(ab)
         _bit(_readOp16Ind(1), a.value);
@@ -644,10 +641,10 @@ class LH5801CPU extends LH5801State {
         break;
 
       case 0xC0: // RDP
-        _core.dispFlipflop(value: false);
+        _pins.dispFlipflop = false;
         break;
       case 0xC1: // SDP
-        _core.dispFlipflop(value: true);
+        _pins.dispFlipflop = true;
         break;
       case 0xC8: // PSH A
         _push8(a.value);
@@ -656,7 +653,7 @@ class LH5801CPU extends LH5801State {
         _addRegister(x);
         break;
       case 0xCC: // ATP
-        _core.inputPorts = a.value;
+        _pins.inputPorts = a.value;
         break;
       case 0xCE: // AM0
         _am0();
@@ -719,149 +716,149 @@ class LH5801CPU extends LH5801State {
         _sbc(x.low);
         break;
       case 0x01: // SBC (X)
-        _sbc(_core.memRead(_me0(x.value)));
+        _sbc(memRead(_me0(x.value)));
         break;
       case 0x02: // ADC XL
         _addAccumulator(x.low);
         break;
       case 0x03: // ADC (X)
-        _addAccumulator(_core.memRead(_me0(x.value)));
+        _addAccumulator(memRead(_me0(x.value)));
         break;
       case 0x04: // LDA XL
         _lda(x.low);
         break;
       case 0x05: // LDA (X)
-        _lda(_core.memRead(_me0(x.value)));
+        _lda(memRead(_me0(x.value)));
         break;
       case 0x06: // CPA XL
         _cpi(a.value, x.low);
         break;
       case 0x07: // CPA (X)
-        _cpi(a.value, _core.memRead(_me0(x.value)));
+        _cpi(a.value, memRead(_me0(x.value)));
         break;
       case 0x08: // STA XH
         x.high = a.value;
         break;
       case 0x09: // AND (X)
-        _andAccumulator(_core.memRead(_me0(x.value)));
+        _andAccumulator(memRead(_me0(x.value)));
         break;
       case 0x0A: // STA XL
         x.low = a.value;
         break;
       case 0x0B: // ORA (X)
-        _orAccumulator(_core.memRead(_me0(x.value)));
+        _orAccumulator(memRead(_me0(x.value)));
         break;
       case 0x0C: // DCS (X)
-        _dcs(_core.memRead(_me0(x.value)));
+        _dcs(memRead(_me0(x.value)));
         break;
       case 0x0D: // EOR (X)
-        _eorAccumulator(_core.memRead(_me0(x.value)));
+        _eorAccumulator(memRead(_me0(x.value)));
         break;
       case 0x0E: // STA (X)
-        _core.memWrite(_me0(x.value), a.value);
+        memWrite(_me0(x.value), a.value);
         break;
       case 0x0F: // BIT (X)
-        _bit(_core.memRead(_me0(x.value)), a.value);
+        _bit(memRead(_me0(x.value)), a.value);
         break;
 
       case 0x10: // SBC YL
         _sbc(y.low);
         break;
       case 0x11: // SBC (Y)
-        _sbc(_core.memRead(_me0(y.value)));
+        _sbc(memRead(_me0(y.value)));
         break;
       case 0x12: // ADC YL
         _addAccumulator(y.low);
         break;
       case 0x13: // ADC (Y)
-        _addAccumulator(_core.memRead(_me0(y.value)));
+        _addAccumulator(memRead(_me0(y.value)));
         break;
       case 0x14: // LDA YL
         _lda(y.low);
         break;
       case 0x15: // LDA (Y)
-        _lda(_core.memRead(_me0(y.value)));
+        _lda(memRead(_me0(y.value)));
         break;
 
       case 0x16: // CPA YL
         _cpi(a.value, y.low);
         break;
       case 0x17: // CPA (Y)
-        _cpi(a.value, _core.memRead(_me0(y.value)));
+        _cpi(a.value, memRead(_me0(y.value)));
         break;
       case 0x18: // STA YH
         y.high = a.value;
         break;
       case 0x19: // AND (Y)
-        _andAccumulator(_core.memRead(_me0(y.value)));
+        _andAccumulator(memRead(_me0(y.value)));
         break;
       case 0x1A: // STA YL
         y.low = a.value;
         break;
       case 0x1B: // ORA (Y)
-        _orAccumulator(_core.memRead(_me0(y.value)));
+        _orAccumulator(memRead(_me0(y.value)));
         break;
       case 0x1C: // DCS (Y)
-        _dcs(_core.memRead(_me0(y.value)));
+        _dcs(memRead(_me0(y.value)));
         break;
       case 0x1D: // EOR (Y)
-        _eorAccumulator(_core.memRead(_me0(y.value)));
+        _eorAccumulator(memRead(_me0(y.value)));
         break;
       case 0x1E: // STA (Y)
-        _core.memWrite(_me0(y.value), a.value);
+        memWrite(_me0(y.value), a.value);
         break;
       case 0x1F: // BIT (Y)
-        _bit(_core.memRead(_me0(y.value)), a.value);
+        _bit(memRead(_me0(y.value)), a.value);
         break;
 
       case 0x20: // SBC UL
         _sbc(u.low);
         break;
       case 0x21: // SBC (U)
-        _sbc(_core.memRead(_me0(u.value)));
+        _sbc(memRead(_me0(u.value)));
         break;
       case 0x22: // ADC UL
         _addAccumulator(u.low);
         break;
       case 0x23: // ADC (U)
-        _addAccumulator(_core.memRead(_me0(u.value)));
+        _addAccumulator(memRead(_me0(u.value)));
         break;
       case 0x24: // LDA UL
         _lda(u.low);
         break;
       case 0x25: // LDA (U)
-        _lda(_core.memRead(_me0(u.value)));
+        _lda(memRead(_me0(u.value)));
         break;
       case 0x26: // CPA UL
         _cpi(a.value, u.low);
         break;
       case 0x27: // CPA (U)
-        _cpi(a.value, _core.memRead(_me0(u.value)));
+        _cpi(a.value, memRead(_me0(u.value)));
         break;
       case 0x28: // STA UH
         u.high = a.value;
         break;
       case 0x29: // AND (U)
-        _andAccumulator(_core.memRead(_me0(u.value)));
+        _andAccumulator(memRead(_me0(u.value)));
         break;
 
       case 0x2A: // STA UL
         u.low = a.value;
         break;
       case 0x2B: // ORA (U)
-        _orAccumulator(_core.memRead(_me0(u.value)));
+        _orAccumulator(memRead(_me0(u.value)));
         break;
       case 0x2C: // DCS (U)
-        _dcs(_core.memRead(_me0(u.value)));
+        _dcs(memRead(_me0(u.value)));
         break;
       case 0x2D: // EOR (U)
-        _eorAccumulator(_core.memRead(_me0(u.value)));
+        _eorAccumulator(memRead(_me0(u.value)));
         break;
       case 0x2E: // STA (U)
-        _core.memWrite(_me0(u.value), a.value);
+        memWrite(_me0(u.value), a.value);
         break;
       case 0x2F: // BIT (U)
-        _bit(_core.memRead(_me0(u.value)), a.value);
+        _bit(memRead(_me0(u.value)), a.value);
         break;
 
       case 0x38: // NOP
@@ -907,7 +904,7 @@ class LH5801CPU extends LH5801State {
         _cpi(x.high, _readOp8());
         break;
       case 0x4D: // BII (X), i
-        _bit(_core.memRead(_me0(x.value)), _readOp8());
+        _bit(memRead(_me0(x.value)), _readOp8());
         break;
       case 0x4E: // CPI XL, i
         _cpi(x.low, _readOp8());
@@ -956,7 +953,7 @@ class LH5801CPU extends LH5801State {
         _cpi(y.high, _readOp8());
         break;
       case 0x5D: // BII (Y), i
-        _bit(_core.memRead(_me0(y.value)), _readOp8());
+        _bit(memRead(_me0(y.value)), _readOp8());
         break;
       case 0x5E: // CPI YL, i
         _cpi(y.low, _readOp8());
@@ -1005,7 +1002,7 @@ class LH5801CPU extends LH5801State {
         _cpi(u.high, _readOp8());
         break;
       case 0x6D: // BII (U), i
-        _bit(_core.memRead(_me0(u.value)), _readOp8());
+        _bit(memRead(_me0(u.value)), _readOp8());
         break;
       case 0x6E: // CPI UL, i
         _cpi(u.low, _readOp8());
@@ -1051,7 +1048,7 @@ class LH5801CPU extends LH5801State {
         cycles += _branchForward(cyclesTable.additional, cond: t.z == true);
         break;
       case 0x8C: // DCA (X)
-        _dca(_core.memRead(_me0(x.value)));
+        _dca(memRead(_me0(x.value)));
         break;
       case 0x8D: // BVR +i
         cycles += _branchForward(cyclesTable.additional, cond: t.v == false);
@@ -1097,7 +1094,7 @@ class LH5801CPU extends LH5801State {
         cycles += _branchBackward(cyclesTable.additional, cond: t.z == true);
         break;
       case 0x9C: // DCA (Y)
-        _dca(_core.memRead(_me0(y.value)));
+        _dca(memRead(_me0(y.value)));
         break;
       case 0x9D: // BVR -i
         cycles += _branchBackward(cyclesTable.additional, cond: t.v == false);
@@ -1134,7 +1131,7 @@ class LH5801CPU extends LH5801State {
         _cpi(a.value, _readOp16Ind(0));
         break;
       case 0xA8: // SPV
-        _core.pvFlipflop(value: true);
+        _pins.pvFlipflop = true;
         break;
       case 0xA9: // AND (ab)
         _andAccumulator(_readOp16Ind(0));
@@ -1147,13 +1144,13 @@ class LH5801CPU extends LH5801State {
         _orAccumulator(_readOp16Ind(0));
         break;
       case 0xAC: // DCA (U)
-        _dca(_core.memRead(_me0(u.value)));
+        _dca(memRead(_me0(u.value)));
         break;
       case 0xAD: // EOR (ab)
         _eorAccumulator(_readOp16Ind(0));
         break;
       case 0xAE: // STA (ab)
-        _core.memWrite(_me0(_readOp16()), a.value);
+        memWrite(_me0(_readOp16()), a.value);
         break;
       case 0xAF: // BIT (ab)
         _bit(_readOp16Ind(0), a.value);
@@ -1172,7 +1169,7 @@ class LH5801CPU extends LH5801State {
         _cpi(a.value, _readOp8());
         break;
       case 0xB8: // RPV
-        _core.pvFlipflop(value: false);
+        _pins.pvFlipflop = false;
         break;
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
@@ -1295,13 +1292,13 @@ class LH5801CPU extends LH5801State {
         cycles += _vector(cyclesTable.additional, true, 0xE0);
         break;
       case 0xE1: // SPU
-        _core.puFlipflop(value: true);
+        _pins.puFlipflop = true;
         break;
       case 0xE2: // VEJ (E2)
         cycles += _vector(cyclesTable.additional, true, 0xE2);
         break;
       case 0xE3: // RPU
-        _core.puFlipflop(value: false);
+        _pins.puFlipflop = false;
         break;
       case 0xE4: // VEJ (E4)
         cycles += _vector(cyclesTable.additional, true, 0xE4);

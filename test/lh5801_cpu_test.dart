@@ -3,512 +3,512 @@ import 'package:test/test.dart';
 import 'helpers.dart';
 
 void main() {
-  final System system = System();
+  final LH5801Test lh5801 = LH5801Test();
 
   group('LH5801CPU', () {
     setUp(() {
-      system.reset();
+      lh5801.resetTestEnv();
     });
 
     group('Add, subtract and logical instructions', () {
       group('ADC [page 25]', () {
         test('ADC XL', () {
-          testADCReg(system, <int>[0x02], system.cpu.x.lowRegister);
+          testADCReg(lh5801, <int>[0x02], lh5801.cpu.x.lowRegister);
         });
 
         test('ADC XH', () {
-          testADCReg(system, <int>[0x82], system.cpu.x.highRegister);
+          testADCReg(lh5801, <int>[0x82], lh5801.cpu.x.highRegister);
         });
 
         test('ADC YL', () {
-          testADCReg(system, <int>[0x12], system.cpu.y.lowRegister);
+          testADCReg(lh5801, <int>[0x12], lh5801.cpu.y.lowRegister);
         });
 
         test('ADC YH', () {
-          testADCReg(system, <int>[0x92], system.cpu.y.highRegister);
+          testADCReg(lh5801, <int>[0x92], lh5801.cpu.y.highRegister);
         });
 
         test('ADC UL', () {
-          testADCReg(system, <int>[0x22], system.cpu.u.lowRegister);
+          testADCReg(lh5801, <int>[0x22], lh5801.cpu.u.lowRegister);
         });
 
         test('ADC UH', () {
-          testADCReg(system, <int>[0xA2], system.cpu.u.highRegister);
+          testADCReg(lh5801, <int>[0xA2], lh5801.cpu.u.highRegister);
         });
 
         test('ADC (X)', () {
-          testADCRReg(system, 7, <int>[0x03], system.cpu.x);
+          testADCRReg(lh5801, 7, <int>[0x03], lh5801.cpu.x);
         });
 
         test('ADC #(X)', () {
-          testADCRReg(system, 11, <int>[0xFD, 0x03], system.cpu.x, me1: true);
+          testADCRReg(lh5801, 11, <int>[0xFD, 0x03], lh5801.cpu.x, me1: true);
         });
 
         test('ADC (Y)', () {
-          testADCRReg(system, 7, <int>[0x13], system.cpu.y);
+          testADCRReg(lh5801, 7, <int>[0x13], lh5801.cpu.y);
         });
 
         test('ADC #(Y)', () {
-          testADCRReg(system, 11, <int>[0xFD, 0x13], system.cpu.y, me1: true);
+          testADCRReg(lh5801, 11, <int>[0xFD, 0x13], lh5801.cpu.y, me1: true);
         });
 
         test('ADC (U)', () {
-          testADCRReg(system, 7, <int>[0x23], system.cpu.u);
+          testADCRReg(lh5801, 7, <int>[0x23], lh5801.cpu.u);
         });
 
         test('ADC #(U)', () {
-          testADCRReg(system, 11, <int>[0xFD, 0x23], system.cpu.u, me1: true);
+          testADCRReg(lh5801, 11, <int>[0xFD, 0x23], lh5801.cpu.u, me1: true);
         });
 
         test('ADC (ab)', () {
-          testADCab(system, 13, <int>[0xA3]);
+          testADCab(lh5801, 13, <int>[0xA3]);
         });
 
         test('ADC #(ab)', () {
-          testADCab(system, 17, <int>[0xFD, 0xA3], me1: true);
+          testADCab(lh5801, 17, <int>[0xFD, 0xA3], me1: true);
         });
       });
 
       group('ADI [page 26]', () {
         test('ADI A, i', () {
-          testADIAcc(system);
+          testADIAcc(lh5801);
         });
 
         test('ADI (X), i', () {
-          testADIRReg(system, 13, <int>[0x4F], system.cpu.x);
+          testADIRReg(lh5801, 13, <int>[0x4F], lh5801.cpu.x);
         });
 
         test('ADI #(X), i', () {
-          testADIRReg(system, 17, <int>[0xFD, 0x4F], system.cpu.x, me1: true);
+          testADIRReg(lh5801, 17, <int>[0xFD, 0x4F], lh5801.cpu.x, me1: true);
         });
 
         test('ADI (Y), i', () {
-          testADIRReg(system, 13, <int>[0x5F], system.cpu.y);
+          testADIRReg(lh5801, 13, <int>[0x5F], lh5801.cpu.y);
         });
 
         test('ADI #(Y), i', () {
-          testADIRReg(system, 17, <int>[0xFD, 0x5F], system.cpu.y, me1: true);
+          testADIRReg(lh5801, 17, <int>[0xFD, 0x5F], lh5801.cpu.y, me1: true);
         });
 
         test('ADI (U), i', () {
-          testADIRReg(system, 13, <int>[0x6F], system.cpu.u);
+          testADIRReg(lh5801, 13, <int>[0x6F], lh5801.cpu.u);
         });
 
         test('ADI #(U), i', () {
-          testADIRReg(system, 17, <int>[0xFD, 0x6F], system.cpu.u, me1: true);
+          testADIRReg(lh5801, 17, <int>[0xFD, 0x6F], lh5801.cpu.u, me1: true);
         });
 
         test('ADI (ab), i', () {
-          testADIab(system, 19, <int>[0xEF]);
+          testADIab(lh5801, 19, <int>[0xEF]);
         });
 
         test('ADI #(ab), i', () {
-          testADIab(system, 23, <int>[0xFD, 0xEF], me1: true);
+          testADIab(lh5801, 23, <int>[0xFD, 0xEF], me1: true);
         });
       });
 
       group('DCA [page 26]', () {
         test('DCA (X)', () {
-          testDCARReg(system, 15, <int>[0x8C], system.cpu.x);
+          testDCARReg(lh5801, 15, <int>[0x8C], lh5801.cpu.x);
         });
 
         test('DCA #(X)', () {
-          testDCARReg(system, 19, <int>[0xFD, 0x8C], system.cpu.x, me1: true);
+          testDCARReg(lh5801, 19, <int>[0xFD, 0x8C], lh5801.cpu.x, me1: true);
         });
 
         test('DCA (Y)', () {
-          testDCARReg(system, 15, <int>[0x9C], system.cpu.y);
+          testDCARReg(lh5801, 15, <int>[0x9C], lh5801.cpu.y);
         });
 
         test('DCA #(Y)', () {
-          testDCARReg(system, 19, <int>[0xFD, 0x9C], system.cpu.y, me1: true);
+          testDCARReg(lh5801, 19, <int>[0xFD, 0x9C], lh5801.cpu.y, me1: true);
         });
 
         test('DCA (U)', () {
-          testDCARReg(system, 15, <int>[0xAC], system.cpu.u);
+          testDCARReg(lh5801, 15, <int>[0xAC], lh5801.cpu.u);
         });
 
         test('DCA #(U)', () {
-          testDCARReg(system, 19, <int>[0xFD, 0xAC], system.cpu.u, me1: true);
+          testDCARReg(lh5801, 19, <int>[0xFD, 0xAC], lh5801.cpu.u, me1: true);
         });
       });
 
       group('ADR [page 27]', () {
         test('ADR X', () {
-          testADRRReg(system, <int>[0xFD, 0xCA], system.cpu.x);
+          testADRRReg(lh5801, <int>[0xFD, 0xCA], lh5801.cpu.x);
         });
 
         test('ADR Y', () {
-          testADRRReg(system, <int>[0xFD, 0xDA], system.cpu.y);
+          testADRRReg(lh5801, <int>[0xFD, 0xDA], lh5801.cpu.y);
         });
 
         test('ADR U', () {
-          testADRRReg(system, <int>[0xFD, 0xEA], system.cpu.u);
+          testADRRReg(lh5801, <int>[0xFD, 0xEA], lh5801.cpu.u);
         });
       });
 
       group('SBC [page 27]', () {
         test('SBC XL', () {
-          testSBCReg(system, <int>[0x00], system.cpu.x.lowRegister);
+          testSBCReg(lh5801, <int>[0x00], lh5801.cpu.x.lowRegister);
         });
 
         test('SBC XH', () {
-          testSBCReg(system, <int>[0x80], system.cpu.x.highRegister);
+          testSBCReg(lh5801, <int>[0x80], lh5801.cpu.x.highRegister);
         });
 
         test('SBC YL', () {
-          testSBCReg(system, <int>[0x10], system.cpu.y.lowRegister);
+          testSBCReg(lh5801, <int>[0x10], lh5801.cpu.y.lowRegister);
         });
 
         test('SBC YH', () {
-          testSBCReg(system, <int>[0x90], system.cpu.y.highRegister);
+          testSBCReg(lh5801, <int>[0x90], lh5801.cpu.y.highRegister);
         });
 
         test('SBC UL', () {
-          testSBCReg(system, <int>[0x20], system.cpu.u.lowRegister);
+          testSBCReg(lh5801, <int>[0x20], lh5801.cpu.u.lowRegister);
         });
 
         test('SBC UH', () {
-          testSBCReg(system, <int>[0xA0], system.cpu.u.highRegister);
+          testSBCReg(lh5801, <int>[0xA0], lh5801.cpu.u.highRegister);
         });
 
         test('SBC (X)', () {
-          testSBCRReg(system, 7, <int>[0x01], system.cpu.x);
+          testSBCRReg(lh5801, 7, <int>[0x01], lh5801.cpu.x);
         });
 
         test('SBC #(X)', () {
-          testSBCRReg(system, 11, <int>[0xFD, 0x01], system.cpu.x, me1: true);
+          testSBCRReg(lh5801, 11, <int>[0xFD, 0x01], lh5801.cpu.x, me1: true);
         });
 
         test('SBC (Y)', () {
-          testSBCRReg(system, 7, <int>[0x11], system.cpu.y);
+          testSBCRReg(lh5801, 7, <int>[0x11], lh5801.cpu.y);
         });
 
         test('SBC #(Y)', () {
-          testSBCRReg(system, 11, <int>[0xFD, 0x11], system.cpu.y, me1: true);
+          testSBCRReg(lh5801, 11, <int>[0xFD, 0x11], lh5801.cpu.y, me1: true);
         });
 
         test('SBC (U)', () {
-          testSBCRReg(system, 7, <int>[0x21], system.cpu.u);
+          testSBCRReg(lh5801, 7, <int>[0x21], lh5801.cpu.u);
         });
 
         test('SBC #(U)', () {
-          testSBCRReg(system, 11, <int>[0xFD, 0x21], system.cpu.u, me1: true);
+          testSBCRReg(lh5801, 11, <int>[0xFD, 0x21], lh5801.cpu.u, me1: true);
         });
 
         test('SBC (ab)', () {
-          testSBCab(system, 13, <int>[0xA1]);
+          testSBCab(lh5801, 13, <int>[0xA1]);
         });
 
         test('SBC #(ab)', () {
-          testSBCab(system, 17, <int>[0xFD, 0xA1], me1: true);
+          testSBCab(lh5801, 17, <int>[0xFD, 0xA1], me1: true);
         });
       });
 
       group('SBI [page 28]', () {
         test('SBI A, i', () {
-          testSBIAcc(system);
+          testSBIAcc(lh5801);
         });
       });
 
       group('DCS [page 28]', () {
         test('DCS (X)', () {
-          testDCSRReg(system, 13, <int>[0x0C], system.cpu.x);
+          testDCSRReg(lh5801, 13, <int>[0x0C], lh5801.cpu.x);
         });
 
         test('DCS #(X)', () {
-          testDCSRReg(system, 17, <int>[0xFD, 0x0C], system.cpu.x, me1: true);
+          testDCSRReg(lh5801, 17, <int>[0xFD, 0x0C], lh5801.cpu.x, me1: true);
         });
 
         test('DCS (Y)', () {
-          testDCSRReg(system, 13, <int>[0x1C], system.cpu.y);
+          testDCSRReg(lh5801, 13, <int>[0x1C], lh5801.cpu.y);
         });
 
         test('DCS #(Y)', () {
-          testDCSRReg(system, 17, <int>[0xFD, 0x1C], system.cpu.y, me1: true);
+          testDCSRReg(lh5801, 17, <int>[0xFD, 0x1C], lh5801.cpu.y, me1: true);
         });
 
         test('DCS (U)', () {
-          testDCSRReg(system, 13, <int>[0x2C], system.cpu.u);
+          testDCSRReg(lh5801, 13, <int>[0x2C], lh5801.cpu.u);
         });
 
         test('DCS #(U)', () {
-          testDCSRReg(system, 17, <int>[0xFD, 0x2C], system.cpu.u, me1: true);
+          testDCSRReg(lh5801, 17, <int>[0xFD, 0x2C], lh5801.cpu.u, me1: true);
         });
       });
 
       group('AND [page 29]', () {
         test('AND (X)', () {
-          testANDRReg(system, 7, <int>[0x09], system.cpu.x);
+          testANDRReg(lh5801, 7, <int>[0x09], lh5801.cpu.x);
         });
 
         test('AND #(X)', () {
-          testANDRReg(system, 11, <int>[0xFD, 0x09], system.cpu.x, me1: true);
+          testANDRReg(lh5801, 11, <int>[0xFD, 0x09], lh5801.cpu.x, me1: true);
         });
 
         test('AND (Y)', () {
-          testANDRReg(system, 7, <int>[0x19], system.cpu.y);
+          testANDRReg(lh5801, 7, <int>[0x19], lh5801.cpu.y);
         });
 
         test('AND #(Y)', () {
-          testANDRReg(system, 11, <int>[0xFD, 0x19], system.cpu.y, me1: true);
+          testANDRReg(lh5801, 11, <int>[0xFD, 0x19], lh5801.cpu.y, me1: true);
         });
 
         test('AND (U)', () {
-          testANDRReg(system, 7, <int>[0x29], system.cpu.u);
+          testANDRReg(lh5801, 7, <int>[0x29], lh5801.cpu.u);
         });
 
         test('AND #(U)', () {
-          testANDRReg(system, 11, <int>[0xFD, 0x29], system.cpu.u, me1: true);
+          testANDRReg(lh5801, 11, <int>[0xFD, 0x29], lh5801.cpu.u, me1: true);
         });
 
         test('AND (ab)', () {
-          testANDab(system, 13, <int>[0xA9]);
+          testANDab(lh5801, 13, <int>[0xA9]);
         });
 
         test('AND #(ab)', () {
-          testANDab(system, 17, <int>[0xFD, 0xA9], me1: true);
+          testANDab(lh5801, 17, <int>[0xFD, 0xA9], me1: true);
         });
       });
 
       group('ANI [page 29]', () {
         test('ANI A, i', () {
-          testANIAcc(system);
+          testANIAcc(lh5801);
         });
 
         test('ANI (X), i', () {
-          testANIRReg(system, 13, <int>[0x49], system.cpu.x);
+          testANIRReg(lh5801, 13, <int>[0x49], lh5801.cpu.x);
         });
 
         test('ANI #(X), i', () {
-          testANIRReg(system, 17, <int>[0xFD, 0x49], system.cpu.x, me1: true);
+          testANIRReg(lh5801, 17, <int>[0xFD, 0x49], lh5801.cpu.x, me1: true);
         });
 
         test('ANI (Y), i', () {
-          testANIRReg(system, 13, <int>[0x59], system.cpu.y);
+          testANIRReg(lh5801, 13, <int>[0x59], lh5801.cpu.y);
         });
 
         test('ANI #(Y), i', () {
-          testANIRReg(system, 17, <int>[0xFD, 0x59], system.cpu.y, me1: true);
+          testANIRReg(lh5801, 17, <int>[0xFD, 0x59], lh5801.cpu.y, me1: true);
         });
 
         test('ANI (U), i', () {
-          testANIRReg(system, 13, <int>[0x69], system.cpu.u);
+          testANIRReg(lh5801, 13, <int>[0x69], lh5801.cpu.u);
         });
 
         test('ANI #(U), i', () {
-          testANIRReg(system, 17, <int>[0xFD, 0x69], system.cpu.u, me1: true);
+          testANIRReg(lh5801, 17, <int>[0xFD, 0x69], lh5801.cpu.u, me1: true);
         });
 
         test('ANI (ab), i', () {
-          testANIab(system, 19, <int>[0xE9]);
+          testANIab(lh5801, 19, <int>[0xE9]);
         });
 
         test('ANI #(ab), i', () {
-          testANIab(system, 23, <int>[0xFD, 0xE9], me1: true);
+          testANIab(lh5801, 23, <int>[0xFD, 0xE9], me1: true);
         });
       });
 
       group('ORA [page 29]', () {
         test('ORA (X)', () {
-          testORARReg(system, 7, <int>[0x0B], system.cpu.x);
+          testORARReg(lh5801, 7, <int>[0x0B], lh5801.cpu.x);
         });
 
         test('ORA #(X)', () {
-          testORARReg(system, 11, <int>[0xFD, 0x0B], system.cpu.x, me1: true);
+          testORARReg(lh5801, 11, <int>[0xFD, 0x0B], lh5801.cpu.x, me1: true);
         });
 
         test('ORA (Y)', () {
-          testORARReg(system, 7, <int>[0x1B], system.cpu.y);
+          testORARReg(lh5801, 7, <int>[0x1B], lh5801.cpu.y);
         });
 
         test('ORA #(Y)', () {
-          testORARReg(system, 11, <int>[0xFD, 0x1B], system.cpu.y, me1: true);
+          testORARReg(lh5801, 11, <int>[0xFD, 0x1B], lh5801.cpu.y, me1: true);
         });
 
         test('ORA (U)', () {
-          testORARReg(system, 7, <int>[0x2B], system.cpu.u);
+          testORARReg(lh5801, 7, <int>[0x2B], lh5801.cpu.u);
         });
 
         test('ORA #(U)', () {
-          testORARReg(system, 11, <int>[0xFD, 0x2B], system.cpu.u, me1: true);
+          testORARReg(lh5801, 11, <int>[0xFD, 0x2B], lh5801.cpu.u, me1: true);
         });
 
         test('ORA (ab)', () {
-          testORAab(system, 13, <int>[0xAB]);
+          testORAab(lh5801, 13, <int>[0xAB]);
         });
 
         test('ORA #(ab)', () {
-          testORAab(system, 17, <int>[0xFD, 0xAB], me1: true);
+          testORAab(lh5801, 17, <int>[0xFD, 0xAB], me1: true);
         });
       });
 
       group('ORI [page 30]', () {
         test('ORI A, i', () {
-          testORIAcc(system);
+          testORIAcc(lh5801);
         });
 
         test('ORI (X), i', () {
-          testORIRReg(system, 13, <int>[0x4B], system.cpu.x);
+          testORIRReg(lh5801, 13, <int>[0x4B], lh5801.cpu.x);
         });
 
         test('ORI #(X), i', () {
-          testORIRReg(system, 17, <int>[0xFD, 0x4B], system.cpu.x, me1: true);
+          testORIRReg(lh5801, 17, <int>[0xFD, 0x4B], lh5801.cpu.x, me1: true);
         });
 
         test('ORI (Y), i', () {
-          testORIRReg(system, 13, <int>[0x5B], system.cpu.y);
+          testORIRReg(lh5801, 13, <int>[0x5B], lh5801.cpu.y);
         });
 
         test('ORI #(Y), i', () {
-          testORIRReg(system, 17, <int>[0xFD, 0x5B], system.cpu.y, me1: true);
+          testORIRReg(lh5801, 17, <int>[0xFD, 0x5B], lh5801.cpu.y, me1: true);
         });
 
         test('ORI (U), i', () {
-          testORIRReg(system, 13, <int>[0x6B], system.cpu.u);
+          testORIRReg(lh5801, 13, <int>[0x6B], lh5801.cpu.u);
         });
 
         test('ORI #(U), i', () {
-          testORIRReg(system, 17, <int>[0xFD, 0x6B], system.cpu.u, me1: true);
+          testORIRReg(lh5801, 17, <int>[0xFD, 0x6B], lh5801.cpu.u, me1: true);
         });
 
         test('ORI (ab), i', () {
-          testORIab(system, 19, <int>[0xEB]);
+          testORIab(lh5801, 19, <int>[0xEB]);
         });
 
         test('ORI #(ab), i', () {
-          testORIab(system, 23, <int>[0xFD, 0xEB], me1: true);
+          testORIab(lh5801, 23, <int>[0xFD, 0xEB], me1: true);
         });
       });
 
       group('EOR [page 30]', () {
         test('EOR (X)', () {
-          testEORRReg(system, 7, <int>[0x0D], system.cpu.x);
+          testEORRReg(lh5801, 7, <int>[0x0D], lh5801.cpu.x);
         });
 
         test('EOR #(X)', () {
-          testEORRReg(system, 11, <int>[0xFD, 0x0D], system.cpu.x, me1: true);
+          testEORRReg(lh5801, 11, <int>[0xFD, 0x0D], lh5801.cpu.x, me1: true);
         });
 
         test('EOR (Y)', () {
-          testEORRReg(system, 7, <int>[0x1D], system.cpu.y);
+          testEORRReg(lh5801, 7, <int>[0x1D], lh5801.cpu.y);
         });
 
         test('EOR #(Y)', () {
-          testEORRReg(system, 11, <int>[0xFD, 0x1D], system.cpu.y, me1: true);
+          testEORRReg(lh5801, 11, <int>[0xFD, 0x1D], lh5801.cpu.y, me1: true);
         });
 
         test('EOR (U)', () {
-          testEORRReg(system, 7, <int>[0x2D], system.cpu.u);
+          testEORRReg(lh5801, 7, <int>[0x2D], lh5801.cpu.u);
         });
 
         test('EOR #(U)', () {
-          testEORRReg(system, 11, <int>[0xFD, 0x2D], system.cpu.u, me1: true);
+          testEORRReg(lh5801, 11, <int>[0xFD, 0x2D], lh5801.cpu.u, me1: true);
         });
 
         test('EOR (ab)', () {
-          testEORab(system, 13, <int>[0xAD]);
+          testEORab(lh5801, 13, <int>[0xAD]);
         });
 
         test('EOR #(ab)', () {
-          testEORab(system, 17, <int>[0xFD, 0xAD], me1: true);
+          testEORab(lh5801, 17, <int>[0xFD, 0xAD], me1: true);
         });
       });
 
       group('EAI [page 30]', () {
         test('EAI i', () {
-          testEAI(system);
+          testEAI(lh5801);
         });
       });
 
       group('INC [page 30]', () {
         test('INC A', () {
           testIncReg8(
-            system,
+            lh5801,
             5,
             <int>[0xDD],
-            system.cpu.a,
+            lh5801.cpu.a,
           );
         });
 
         test('INC XL', () {
           testIncReg8(
-            system,
+            lh5801,
             5,
             <int>[0x40],
-            system.cpu.x.lowRegister,
+            lh5801.cpu.x.lowRegister,
           );
         });
 
         test('INC XH', () {
           testIncReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x40],
-            system.cpu.x.highRegister,
+            lh5801.cpu.x.highRegister,
           );
         });
 
         test('INC YL', () {
           testIncReg8(
-            system,
+            lh5801,
             5,
             <int>[0x50],
-            system.cpu.y.lowRegister,
+            lh5801.cpu.y.lowRegister,
           );
         });
 
         test('INC YH', () {
           testIncReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x50],
-            system.cpu.y.highRegister,
+            lh5801.cpu.y.highRegister,
           );
         });
 
         test('INC UL', () {
           testIncReg8(
-            system,
+            lh5801,
             5,
             <int>[0x60],
-            system.cpu.u.lowRegister,
+            lh5801.cpu.u.lowRegister,
           );
         });
 
         test('INC UH', () {
           testIncReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x60],
-            system.cpu.u.highRegister,
+            lh5801.cpu.u.highRegister,
           );
         });
 
         test('INC X', () {
           testIncReg16(
-            system,
+            lh5801,
             5,
             <int>[0x44],
-            system.cpu.x,
+            lh5801.cpu.x,
           );
         });
 
         test('INC Y', () {
           testIncReg16(
-            system,
+            lh5801,
             5,
             <int>[0x54],
-            system.cpu.y,
+            lh5801.cpu.y,
           );
         });
 
         test('INC U', () {
           testIncReg16(
-            system,
+            lh5801,
             5,
             <int>[0x64],
-            system.cpu.u,
+            lh5801.cpu.u,
           );
         });
       });
@@ -516,91 +516,91 @@ void main() {
       group('DEC [page 31]', () {
         test('DEC A', () {
           testDecReg8(
-            system,
+            lh5801,
             5,
             <int>[0xDF],
-            system.cpu.a,
+            lh5801.cpu.a,
           );
         });
 
         test('DEC XL', () {
           testDecReg8(
-            system,
+            lh5801,
             5,
             <int>[0x42],
-            system.cpu.x.lowRegister,
+            lh5801.cpu.x.lowRegister,
           );
         });
 
         test('DEC XH', () {
           testDecReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x42],
-            system.cpu.x.highRegister,
+            lh5801.cpu.x.highRegister,
           );
         });
 
         test('DEC YL', () {
           testDecReg8(
-            system,
+            lh5801,
             5,
             <int>[0x52],
-            system.cpu.y.lowRegister,
+            lh5801.cpu.y.lowRegister,
           );
         });
 
         test('DEC YH', () {
           testDecReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x52],
-            system.cpu.y.highRegister,
+            lh5801.cpu.y.highRegister,
           );
         });
 
         test('DEC UL', () {
           testDecReg8(
-            system,
+            lh5801,
             5,
             <int>[0x62],
-            system.cpu.u.lowRegister,
+            lh5801.cpu.u.lowRegister,
           );
         });
 
         test('DEC UH', () {
           testDecReg8(
-            system,
+            lh5801,
             9,
             <int>[0xFD, 0x62],
-            system.cpu.u.highRegister,
+            lh5801.cpu.u.highRegister,
           );
         });
 
         test('DEC X', () {
           testDecReg16(
-            system,
+            lh5801,
             5,
             <int>[0x46],
-            system.cpu.x,
+            lh5801.cpu.x,
           );
         });
 
         test('DEC Y', () {
           testDecReg16(
-            system,
+            lh5801,
             5,
             <int>[0x56],
-            system.cpu.y,
+            lh5801.cpu.y,
           );
         });
 
         test('DEC U', () {
           testDecReg16(
-            system,
+            lh5801,
             5,
             <int>[0x66],
-            system.cpu.u,
+            lh5801.cpu.u,
           );
         });
       });
@@ -609,161 +609,161 @@ void main() {
     group('Compare and bit test instructions', () {
       group('CPA [page 31]', () {
         test('CPA XL', () {
-          testCPAReg(system, <int>[0x06], system.cpu.x.lowRegister);
+          testCPAReg(lh5801, <int>[0x06], lh5801.cpu.x.lowRegister);
         });
 
         test('CPA XH', () {
-          testCPAReg(system, <int>[0x86], system.cpu.x.highRegister);
+          testCPAReg(lh5801, <int>[0x86], lh5801.cpu.x.highRegister);
         });
 
         test('CPA YL', () {
-          testCPAReg(system, <int>[0x16], system.cpu.y.lowRegister);
+          testCPAReg(lh5801, <int>[0x16], lh5801.cpu.y.lowRegister);
         });
 
         test('CPA YH', () {
-          testCPAReg(system, <int>[0x96], system.cpu.y.highRegister);
+          testCPAReg(lh5801, <int>[0x96], lh5801.cpu.y.highRegister);
         });
 
         test('CPA UL', () {
-          testCPAReg(system, <int>[0x26], system.cpu.u.lowRegister);
+          testCPAReg(lh5801, <int>[0x26], lh5801.cpu.u.lowRegister);
         });
 
         test('CPA UH', () {
-          testCPAReg(system, <int>[0xA6], system.cpu.u.highRegister);
+          testCPAReg(lh5801, <int>[0xA6], lh5801.cpu.u.highRegister);
         });
 
         test('CPA (X)', () {
-          testCPARReg(system, 7, <int>[0x07], system.cpu.x);
+          testCPARReg(lh5801, 7, <int>[0x07], lh5801.cpu.x);
         });
 
         test('CPA #(X)', () {
-          testCPARReg(system, 11, <int>[0xFD, 0x07], system.cpu.x, me1: true);
+          testCPARReg(lh5801, 11, <int>[0xFD, 0x07], lh5801.cpu.x, me1: true);
         });
 
         test('CPA (Y)', () {
-          testCPARReg(system, 7, <int>[0x17], system.cpu.y);
+          testCPARReg(lh5801, 7, <int>[0x17], lh5801.cpu.y);
         });
 
         test('CPA #(Y)', () {
-          testCPARReg(system, 11, <int>[0xFD, 0x17], system.cpu.y, me1: true);
+          testCPARReg(lh5801, 11, <int>[0xFD, 0x17], lh5801.cpu.y, me1: true);
         });
 
         test('CPA (U)', () {
-          testCPARReg(system, 7, <int>[0x27], system.cpu.u);
+          testCPARReg(lh5801, 7, <int>[0x27], lh5801.cpu.u);
         });
 
         test('CPA #(U)', () {
-          testCPARReg(system, 11, <int>[0xFD, 0x27], system.cpu.u, me1: true);
+          testCPARReg(lh5801, 11, <int>[0xFD, 0x27], lh5801.cpu.u, me1: true);
         });
 
         test('CPA (ab)', () {
-          testCPAab(system, 13, <int>[0xA7]);
+          testCPAab(lh5801, 13, <int>[0xA7]);
         });
 
         test('CPA #(ab)', () {
-          testCPAab(system, 17, <int>[0xFD, 0xA7], me1: true);
+          testCPAab(lh5801, 17, <int>[0xFD, 0xA7], me1: true);
         });
       });
 
       group('CPI [page 32]', () {
         test('CPI XL, i', () {
-          testCPIReg(system, <int>[0x4E], system.cpu.x.lowRegister);
+          testCPIReg(lh5801, <int>[0x4E], lh5801.cpu.x.lowRegister);
         });
 
         test('CPI XH, i', () {
-          testCPIReg(system, <int>[0x4C], system.cpu.x.highRegister);
+          testCPIReg(lh5801, <int>[0x4C], lh5801.cpu.x.highRegister);
         });
 
         test('CPI YL, i', () {
-          testCPIReg(system, <int>[0x5E], system.cpu.y.lowRegister);
+          testCPIReg(lh5801, <int>[0x5E], lh5801.cpu.y.lowRegister);
         });
 
         test('CPI YH, i', () {
-          testCPIReg(system, <int>[0x5C], system.cpu.y.highRegister);
+          testCPIReg(lh5801, <int>[0x5C], lh5801.cpu.y.highRegister);
         });
 
         test('CPI UL, i', () {
-          testCPIReg(system, <int>[0x6E], system.cpu.u.lowRegister);
+          testCPIReg(lh5801, <int>[0x6E], lh5801.cpu.u.lowRegister);
         });
 
         test('CPI UH, i', () {
-          testCPIReg(system, <int>[0x6C], system.cpu.u.highRegister);
+          testCPIReg(lh5801, <int>[0x6C], lh5801.cpu.u.highRegister);
         });
 
         test('CPI A, i', () {
-          testCPIReg(system, <int>[0xB7], system.cpu.a);
+          testCPIReg(lh5801, <int>[0xB7], lh5801.cpu.a);
         });
       });
 
       group('BIT [page 32]', () {
         test('BIT (X)', () {
-          testBITRReg(system, 7, <int>[0x0F], system.cpu.x);
+          testBITRReg(lh5801, 7, <int>[0x0F], lh5801.cpu.x);
         });
 
         test('BIT #(X)', () {
-          testBITRReg(system, 11, <int>[0xFD, 0x0F], system.cpu.x, me1: true);
+          testBITRReg(lh5801, 11, <int>[0xFD, 0x0F], lh5801.cpu.x, me1: true);
         });
 
         test('BIT (Y)', () {
-          testBITRReg(system, 7, <int>[0x1F], system.cpu.y);
+          testBITRReg(lh5801, 7, <int>[0x1F], lh5801.cpu.y);
         });
 
         test('BIT #(Y)', () {
-          testBITRReg(system, 11, <int>[0xFD, 0x1F], system.cpu.y, me1: true);
+          testBITRReg(lh5801, 11, <int>[0xFD, 0x1F], lh5801.cpu.y, me1: true);
         });
 
         test('BIT (U)', () {
-          testBITRReg(system, 7, <int>[0x2F], system.cpu.u);
+          testBITRReg(lh5801, 7, <int>[0x2F], lh5801.cpu.u);
         });
 
         test('BIT #(U)', () {
-          testBITRReg(system, 11, <int>[0xFD, 0x2F], system.cpu.u, me1: true);
+          testBITRReg(lh5801, 11, <int>[0xFD, 0x2F], lh5801.cpu.u, me1: true);
         });
 
         test('BIT (ab)', () {
-          testBITab(system, 13, <int>[0xAF]);
+          testBITab(lh5801, 13, <int>[0xAF]);
         });
 
         test('BIT #(ab)', () {
-          testBITab(system, 17, <int>[0xFD, 0xAF], me1: true);
+          testBITab(lh5801, 17, <int>[0xFD, 0xAF], me1: true);
         });
       });
 
       group('BII [page 32]', () {
         test('BII A, i', () {
-          testBIIAcc(system);
+          testBIIAcc(lh5801);
         });
 
         test('BII (X), i', () {
-          testBIIRReg(system, 10, <int>[0x4D], system.cpu.x);
+          testBIIRReg(lh5801, 10, <int>[0x4D], lh5801.cpu.x);
         });
 
         test('BII #(X), i', () {
-          testBIIRReg(system, 14, <int>[0xFD, 0x4D], system.cpu.x, me1: true);
+          testBIIRReg(lh5801, 14, <int>[0xFD, 0x4D], lh5801.cpu.x, me1: true);
         });
 
         test('BII (Y), i', () {
-          testBIIRReg(system, 10, <int>[0x5D], system.cpu.y);
+          testBIIRReg(lh5801, 10, <int>[0x5D], lh5801.cpu.y);
         });
 
         test('BII #(Y), i', () {
-          testBIIRReg(system, 14, <int>[0xFD, 0x5D], system.cpu.y, me1: true);
+          testBIIRReg(lh5801, 14, <int>[0xFD, 0x5D], lh5801.cpu.y, me1: true);
         });
 
         test('BII (U), i', () {
-          testBIIRReg(system, 10, <int>[0x6D], system.cpu.u);
+          testBIIRReg(lh5801, 10, <int>[0x6D], lh5801.cpu.u);
         });
 
         test('BII #(U), i', () {
-          testBIIRReg(system, 14, <int>[0xFD, 0x6D], system.cpu.u, me1: true);
+          testBIIRReg(lh5801, 14, <int>[0xFD, 0x6D], lh5801.cpu.u, me1: true);
         });
 
         test('BII (ab), i', () {
-          testBIIab(system, 16, <int>[0xED]);
+          testBIIab(lh5801, 16, <int>[0xED]);
         });
 
         test('BII #(ab), i', () {
-          testBIIab(system, 20, <int>[0xFD, 0xED], me1: true);
+          testBIIab(lh5801, 20, <int>[0xFD, 0xED], me1: true);
         });
       });
     });
@@ -771,324 +771,324 @@ void main() {
     group('Transfer and search instructions', () {
       group('LDA [page 33]', () {
         test('LDA XL', () {
-          testLDAReg(system, <int>[0x04], system.cpu.x.lowRegister);
+          testLDAReg(lh5801, <int>[0x04], lh5801.cpu.x.lowRegister);
         });
 
         test('LDA XH', () {
-          testLDAReg(system, <int>[0x84], system.cpu.x.highRegister);
+          testLDAReg(lh5801, <int>[0x84], lh5801.cpu.x.highRegister);
         });
 
         test('LDA YL', () {
-          testLDAReg(system, <int>[0x14], system.cpu.y.lowRegister);
+          testLDAReg(lh5801, <int>[0x14], lh5801.cpu.y.lowRegister);
         });
 
         test('LDA YH', () {
-          testLDAReg(system, <int>[0x94], system.cpu.y.highRegister);
+          testLDAReg(lh5801, <int>[0x94], lh5801.cpu.y.highRegister);
         });
 
         test('LDA UL', () {
-          testLDAReg(system, <int>[0x24], system.cpu.u.lowRegister);
+          testLDAReg(lh5801, <int>[0x24], lh5801.cpu.u.lowRegister);
         });
 
         test('LDA UH', () {
-          testLDAReg(system, <int>[0xA4], system.cpu.u.highRegister);
+          testLDAReg(lh5801, <int>[0xA4], lh5801.cpu.u.highRegister);
         });
 
         test('LDA (X)', () {
-          testLDARReg(system, 6, <int>[0x05], system.cpu.x);
+          testLDARReg(lh5801, 6, <int>[0x05], lh5801.cpu.x);
         });
 
         test('LDA #(X)', () {
-          testLDARReg(system, 10, <int>[0xFD, 0x05], system.cpu.x, me1: true);
+          testLDARReg(lh5801, 10, <int>[0xFD, 0x05], lh5801.cpu.x, me1: true);
         });
 
         test('LDA (Y)', () {
-          testLDARReg(system, 6, <int>[0x15], system.cpu.y);
+          testLDARReg(lh5801, 6, <int>[0x15], lh5801.cpu.y);
         });
 
         test('LDA #(Y)', () {
-          testLDARReg(system, 10, <int>[0xFD, 0x15], system.cpu.y, me1: true);
+          testLDARReg(lh5801, 10, <int>[0xFD, 0x15], lh5801.cpu.y, me1: true);
         });
 
         test('LDA (U)', () {
-          testLDARReg(system, 6, <int>[0x25], system.cpu.u);
+          testLDARReg(lh5801, 6, <int>[0x25], lh5801.cpu.u);
         });
 
         test('LDA #(U)', () {
-          testLDARReg(system, 10, <int>[0xFD, 0x25], system.cpu.u, me1: true);
+          testLDARReg(lh5801, 10, <int>[0xFD, 0x25], lh5801.cpu.u, me1: true);
         });
 
         test('LDA (ab)', () {
-          testLDAab(system, 12, <int>[0xA5]);
+          testLDAab(lh5801, 12, <int>[0xA5]);
         });
 
         test('LDA #(ab)', () {
-          testLDAab(system, 16, <int>[0xFD, 0xA5], me1: true);
+          testLDAab(lh5801, 16, <int>[0xFD, 0xA5], me1: true);
         });
       });
 
       group('LDE [page 33]', () {
         test('LDE X', () {
-          testLDERReg(system, <int>[0x47], system.cpu.x);
+          testLDERReg(lh5801, <int>[0x47], lh5801.cpu.x);
         });
 
         test('LDE Y', () {
-          testLDERReg(system, <int>[0x57], system.cpu.y);
+          testLDERReg(lh5801, <int>[0x57], lh5801.cpu.y);
         });
 
         test('LDE U', () {
-          testLDERReg(system, <int>[0x67], system.cpu.u);
+          testLDERReg(lh5801, <int>[0x67], lh5801.cpu.u);
         });
       });
 
       group('LIN [page 34]', () {
         test('LIN X', () {
-          testLINRReg(system, <int>[0x45], system.cpu.x);
+          testLINRReg(lh5801, <int>[0x45], lh5801.cpu.x);
         });
 
         test('LIN Y', () {
-          testLINRReg(system, <int>[0x55], system.cpu.y);
+          testLINRReg(lh5801, <int>[0x55], lh5801.cpu.y);
         });
 
         test('LIN U', () {
-          testLINRReg(system, <int>[0x65], system.cpu.u);
+          testLINRReg(lh5801, <int>[0x65], lh5801.cpu.u);
         });
       });
 
       group('LDI [page 34]', () {
         test('LDI A, i', () {
-          testLDIAcc(system);
+          testLDIAcc(lh5801);
         });
 
         test('LDI XL, i', () {
-          testLDIReg(system, <int>[0x4A], system.cpu.x.lowRegister);
+          testLDIReg(lh5801, <int>[0x4A], lh5801.cpu.x.lowRegister);
         });
 
         test('LDI XH, i', () {
-          testLDIReg(system, <int>[0x48], system.cpu.x.highRegister);
+          testLDIReg(lh5801, <int>[0x48], lh5801.cpu.x.highRegister);
         });
 
         test('LDI YL, i', () {
-          testLDIReg(system, <int>[0x5A], system.cpu.y.lowRegister);
+          testLDIReg(lh5801, <int>[0x5A], lh5801.cpu.y.lowRegister);
         });
 
         test('LDI YH, i', () {
-          testLDIReg(system, <int>[0x58], system.cpu.y.highRegister);
+          testLDIReg(lh5801, <int>[0x58], lh5801.cpu.y.highRegister);
         });
 
         test('LDI UL, i', () {
-          testLDIReg(system, <int>[0x6A], system.cpu.u.lowRegister);
+          testLDIReg(lh5801, <int>[0x6A], lh5801.cpu.u.lowRegister);
         });
 
         test('LDI UH, i', () {
-          testLDIReg(system, <int>[0x68], system.cpu.u.highRegister);
+          testLDIReg(lh5801, <int>[0x68], lh5801.cpu.u.highRegister);
         });
 
         test('LDI S, i, j', () {
-          testLDISij(system);
+          testLDISij(lh5801);
         });
       });
 
       group('LDX [page 35]', () {
         test('LDX S', () {
-          testLDXReg(system, <int>[0xFD, 0x48], system.cpu.s);
+          testLDXReg(lh5801, <int>[0xFD, 0x48], lh5801.cpu.s);
         });
 
         test('LDX P', () {
           final List<int> opcodes = <int>[0xFD, 0x58];
-          final int statusRegister = system.cpu.t.statusRegister;
+          final int statusRegister = lh5801.cpu.t.statusRegister;
 
-          system.load(0x0020, opcodes);
-          final int cycles = system.step(0x0020);
+          memLoad(0x0020, opcodes);
+          final int cycles = lh5801.step(0x0020);
           expect(cycles, equals(11));
-          expect(system.cpu.p.value, equals(0x0020 + opcodes.length));
+          expect(lh5801.cpu.p.value, equals(0x0020 + opcodes.length));
 
-          expect(system.cpu.t.statusRegister, statusRegister);
+          expect(lh5801.cpu.t.statusRegister, statusRegister);
         });
       });
 
       group('STA [page 35]', () {
         test('STA XL', () {
-          testSTAReg(system, <int>[0x0A], system.cpu.x.lowRegister);
+          testSTAReg(lh5801, <int>[0x0A], lh5801.cpu.x.lowRegister);
         });
 
         test('STA XH', () {
-          testSTAReg(system, <int>[0x08], system.cpu.x.highRegister);
+          testSTAReg(lh5801, <int>[0x08], lh5801.cpu.x.highRegister);
         });
 
         test('STA YL', () {
-          testSTAReg(system, <int>[0x1A], system.cpu.y.lowRegister);
+          testSTAReg(lh5801, <int>[0x1A], lh5801.cpu.y.lowRegister);
         });
 
         test('STA YH', () {
-          testSTAReg(system, <int>[0x18], system.cpu.y.highRegister);
+          testSTAReg(lh5801, <int>[0x18], lh5801.cpu.y.highRegister);
         });
 
         test('STA UL', () {
-          testSTAReg(system, <int>[0x2A], system.cpu.u.lowRegister);
+          testSTAReg(lh5801, <int>[0x2A], lh5801.cpu.u.lowRegister);
         });
 
         test('STA UH', () {
-          testSTAReg(system, <int>[0x28], system.cpu.u.highRegister);
+          testSTAReg(lh5801, <int>[0x28], lh5801.cpu.u.highRegister);
         });
 
         test('STA (X)', () {
-          testSTARReg(system, 6, <int>[0x0E], system.cpu.x);
+          testSTARReg(lh5801, 6, <int>[0x0E], lh5801.cpu.x);
         });
 
         test('STA #(X)', () {
-          testSTARReg(system, 10, <int>[0xFD, 0x0E], system.cpu.x, me1: true);
+          testSTARReg(lh5801, 10, <int>[0xFD, 0x0E], lh5801.cpu.x, me1: true);
         });
 
         test('STA (Y)', () {
-          testSTARReg(system, 6, <int>[0x1E], system.cpu.y);
+          testSTARReg(lh5801, 6, <int>[0x1E], lh5801.cpu.y);
         });
 
         test('STA #(Y)', () {
-          testSTARReg(system, 10, <int>[0xFD, 0x1E], system.cpu.y, me1: true);
+          testSTARReg(lh5801, 10, <int>[0xFD, 0x1E], lh5801.cpu.y, me1: true);
         });
 
         test('STA (U)', () {
-          testSTARReg(system, 6, <int>[0x2E], system.cpu.u);
+          testSTARReg(lh5801, 6, <int>[0x2E], lh5801.cpu.u);
         });
 
         test('STA #(U)', () {
-          testSTARReg(system, 10, <int>[0xFD, 0x2E], system.cpu.u, me1: true);
+          testSTARReg(lh5801, 10, <int>[0xFD, 0x2E], lh5801.cpu.u, me1: true);
         });
 
         test('STA (ab)', () {
-          testSTAab(system, 12, <int>[0xAE]);
+          testSTAab(lh5801, 12, <int>[0xAE]);
         });
 
         test('STA #(ab)', () {
-          testSTAab(system, 15, <int>[0xFD, 0xAE], me1: true);
+          testSTAab(lh5801, 15, <int>[0xFD, 0xAE], me1: true);
         });
       });
 
       group('SDE [page 35]', () {
         test('SDE X', () {
-          testSDERReg(system, <int>[0x43], system.cpu.x);
+          testSDERReg(lh5801, <int>[0x43], lh5801.cpu.x);
         });
 
         test('SDE Y', () {
-          testSDERReg(system, <int>[0x53], system.cpu.y);
+          testSDERReg(lh5801, <int>[0x53], lh5801.cpu.y);
         });
 
         test('SDE U', () {
-          testSDERReg(system, <int>[0x63], system.cpu.u);
+          testSDERReg(lh5801, <int>[0x63], lh5801.cpu.u);
         });
       });
 
       group('SIN [page 36]', () {
         test('SIN X', () {
-          testSINRReg(system, <int>[0x41], system.cpu.x);
+          testSINRReg(lh5801, <int>[0x41], lh5801.cpu.x);
         });
 
         test('SIN Y', () {
-          testSINRReg(system, <int>[0x51], system.cpu.y);
+          testSINRReg(lh5801, <int>[0x51], lh5801.cpu.y);
         });
 
         test('SIN U', () {
-          testSINRReg(system, <int>[0x61], system.cpu.u);
+          testSINRReg(lh5801, <int>[0x61], lh5801.cpu.u);
         });
       });
 
       group('STX [page 36]', () {
         test('STX Y', () {
-          testSTXReg(system, <int>[0xFD, 0x5A], system.cpu.y);
+          testSTXReg(lh5801, <int>[0xFD, 0x5A], lh5801.cpu.y);
         });
 
         test('STX U', () {
-          testSTXReg(system, <int>[0xFD, 0x6A], system.cpu.u);
+          testSTXReg(lh5801, <int>[0xFD, 0x6A], lh5801.cpu.u);
         });
 
         test('STX S', () {
-          testSTXReg(system, <int>[0xFD, 0x4E], system.cpu.s);
+          testSTXReg(lh5801, <int>[0xFD, 0x4E], lh5801.cpu.s);
         });
 
         test('STX P', () {
           final List<int> opcodes = <int>[0xFD, 0x5E];
-          final int statusRegister = system.cpu.t.statusRegister;
+          final int statusRegister = lh5801.cpu.t.statusRegister;
 
-          system.load(0x0020, opcodes);
-          system.cpu.x.value = 0x1234;
-          final int cycles = system.step(0x0020);
+          memLoad(0x0020, opcodes);
+          lh5801.cpu.x.value = 0x1234;
+          final int cycles = lh5801.step(0x0020);
           expect(cycles, equals(17));
-          expect(system.cpu.p.value, equals(0x1234));
+          expect(lh5801.cpu.p.value, equals(0x1234));
 
-          expect(system.cpu.t.statusRegister, statusRegister);
+          expect(lh5801.cpu.t.statusRegister, statusRegister);
         });
       });
 
       group('PSH [page 36]', () {
         test('PSH X', () {
-          testPSHRReg(system, <int>[0xFD, 0x88], system.cpu.x);
+          testPSHRReg(lh5801, <int>[0xFD, 0x88], lh5801.cpu.x);
         });
 
         test('PSH Y', () {
-          testPSHRReg(system, <int>[0xFD, 0x98], system.cpu.y);
+          testPSHRReg(lh5801, <int>[0xFD, 0x98], lh5801.cpu.y);
         });
 
         test('PSH U', () {
-          testPSHRReg(system, <int>[0xFD, 0xA8], system.cpu.u);
+          testPSHRReg(lh5801, <int>[0xFD, 0xA8], lh5801.cpu.u);
         });
 
         test('PSH A', () {
           final List<int> opcodes = <int>[0xFD, 0xC8];
-          final int statusRegister = system.cpu.t.statusRegister;
+          final int statusRegister = lh5801.cpu.t.statusRegister;
 
-          system.load(0x0000, opcodes);
-          system.cpu.s.value = 0x46FF;
-          system.cpu.a.value = 0x3F;
-          final int cycles = system.step(0x0000);
+          memLoad(0x0000, opcodes);
+          lh5801.cpu.s.value = 0x46FF;
+          lh5801.cpu.a.value = 0x3F;
+          final int cycles = lh5801.step(0x0000);
           expect(cycles, equals(11));
-          expect(system.cpu.p.value, equals(opcodes.length));
+          expect(lh5801.cpu.p.value, equals(opcodes.length));
 
-          expect(system.cpu.s.value, equals(0x46FF - 1));
-          expect(system.memRead(0x46FF), equals(0x3F));
-          expect(system.cpu.a.value, equals(0x3F));
+          expect(lh5801.cpu.s.value, equals(0x46FF - 1));
+          expect(lh5801.cpu.memRead(0x46FF), equals(0x3F));
+          expect(lh5801.cpu.a.value, equals(0x3F));
 
-          expect(system.cpu.t.statusRegister, statusRegister);
+          expect(lh5801.cpu.t.statusRegister, statusRegister);
         });
       });
 
       group('POP [page 37]', () {
         test('POP X', () {
-          testPOPRReg(system, <int>[0xFD, 0x0A], system.cpu.x);
+          testPOPRReg(lh5801, <int>[0xFD, 0x0A], lh5801.cpu.x);
         });
 
         test('POP Y', () {
-          testPOPRReg(system, <int>[0xFD, 0x1A], system.cpu.y);
+          testPOPRReg(lh5801, <int>[0xFD, 0x1A], lh5801.cpu.y);
         });
 
         test('POP U', () {
-          testPOPRReg(system, <int>[0xFD, 0x2A], system.cpu.u);
+          testPOPRReg(lh5801, <int>[0xFD, 0x2A], lh5801.cpu.u);
         });
 
         test('POP A', () {
-          testPOPA(system);
+          testPOPA(lh5801);
         });
       });
 
       test('ATT [page 37]', () {
-        testATT(system);
+        testATT(lh5801);
       });
 
       test('TTA [page 38]', () {
-        testTTA(system);
+        testTTA(lh5801);
       });
     });
 
     group('Block transfer and search instructions', () {
       group('TIN [page 38]', () {
         test('TIN', () {
-          testTIN(system);
+          testTIN(lh5801);
         });
       });
 
       group('CIN [page 38]', () {
         test('CIN', () {
-          testCIN(system);
+          testCIN(lh5801);
         });
       });
     });
@@ -1096,51 +1096,51 @@ void main() {
     group('Rotate and shift instructions', () {
       group('ROL [page 39]', () {
         test('ROL', () {
-          testROL(system);
+          testROL(lh5801);
         });
       });
 
       group('ROR [page 39]', () {
         test('ROR', () {
-          testROR(system);
+          testROR(lh5801);
         });
       });
 
       group('SHL [page 39]', () {
         test('SHL', () {
-          testSHL(system);
+          testSHL(lh5801);
         });
       });
 
       group('SHR [page 40]', () {
         test('SHR', () {
-          testSHR(system);
+          testSHR(lh5801);
         });
       });
 
       group('DRL [page 40]', () {
         test('DRL (X)', () {
-          testDRLRReg(system, 12, <int>[0xD7]);
+          testDRLRReg(lh5801, 12, <int>[0xD7]);
         });
 
         test('DRL #(X)', () {
-          testDRLRReg(system, 16, <int>[0xFD, 0xD7], me1: true);
+          testDRLRReg(lh5801, 16, <int>[0xFD, 0xD7], me1: true);
         });
       });
 
       group('DRR [page 41]', () {
         test('DRR (X)', () {
-          testDRRRReg(system, 12, <int>[0xD3]);
+          testDRRRReg(lh5801, 12, <int>[0xD3]);
         });
 
         test('DRR #(X)', () {
-          testDRRRReg(system, 16, <int>[0xFD, 0xD3], me1: true);
+          testDRRRReg(lh5801, 16, <int>[0xFD, 0xD3], me1: true);
         });
       });
 
       group('AEX [page 41]', () {
         test('AEX', () {
-          testAEX(system);
+          testAEX(lh5801);
         });
       });
     });
@@ -1148,13 +1148,13 @@ void main() {
     group('CPU control instructions', () {
       group('SEC [page 42]', () {
         test('SEC', () {
-          testRECSEC(system, <int>[0xFB], expectedCarry: true);
+          testRECSEC(lh5801, <int>[0xFB], expectedCarry: true);
         });
       });
 
       group('REC [page 42]', () {
         test('REC', () {
-          testRECSEC(system, <int>[0xF9]);
+          testRECSEC(lh5801, <int>[0xF9]);
         });
       });
 
@@ -1166,91 +1166,91 @@ void main() {
 
       group('ATP [page 42]', () {
         test('ATP', () {
-          testATP(system);
+          testATP(lh5801);
         });
       });
 
       group('SPU [page 43]', () {
         test('SPU', () {
-          testRPUSPU(system, <int>[0xE1], expectedPU: true);
+          testRPUSPU(lh5801, <int>[0xE1], expectedPU: true);
         });
       });
 
       group('RPU [page 43]', () {
         test('RPU', () {
-          testRPUSPU(system, <int>[0xE3]);
+          testRPUSPU(lh5801, <int>[0xE3]);
         });
       });
 
       group('SPV [page 43]', () {
         test('SPV', () {
-          testRPVSPV(system, <int>[0xA8], expectedPV: true);
+          testRPVSPV(lh5801, <int>[0xA8], expectedPV: true);
         });
       });
 
       group('RPV [page 43]', () {
         test('RPV', () {
-          testRPVSPV(system, <int>[0xB8]);
+          testRPVSPV(lh5801, <int>[0xB8]);
         });
       });
 
       group('SDP [page 43]', () {
         test('SDP', () {
-          testSDPRDP(system, <int>[0xFD, 0xC1], expectedDisp: true);
+          testSDPRDP(lh5801, <int>[0xFD, 0xC1], expectedDisp: true);
         });
       });
 
       group('RDP [page 44]', () {
         test('RDP', () {
-          testSDPRDP(system, <int>[0xFD, 0xC0]);
+          testSDPRDP(lh5801, <int>[0xFD, 0xC0]);
         });
       });
 
       group('ITA [page 44]', () {
         test('ITA', () {
-          testITA(system);
+          testITA(lh5801);
         });
       });
 
       group('SIE [page 44]', () {
         test('SIE', () {
-          testSIERIE(system, <int>[0xFD, 0x81], expectedIE: true);
+          testSIERIE(lh5801, <int>[0xFD, 0x81], expectedIE: true);
         });
       });
 
       group('RIE [page 44]', () {
         test('RIE', () {
-          testSIERIE(system, <int>[0xFD, 0xBE]);
+          testSIERIE(lh5801, <int>[0xFD, 0xBE]);
         });
       });
 
       group('AM0 [page 44]', () {
         test('AM0', () {
-          ;
+          testAM(lh5801, <int>[0xFD, 0xCE], 0);
         });
       });
 
       group('AM1 [page 45]', () {
         test('AM1', () {
-          ;
+          testAM(lh5801, <int>[0xFD, 0xDE], 1);
         });
       });
 
       group('NOP [page 45]', () {
         test('NOP', () {
-          testNOP(system);
+          testNOP(lh5801);
         });
       });
 
       group('HLT [page 45]', () {
         test('HLT', () {
-          testHLT(system);
+          testHLT(lh5801);
         });
       });
 
       group('OFF [page 45]', () {
         test('OFF', () {
-          testOFF(system);
+          testOFF(lh5801);
         });
       });
     });
@@ -1258,103 +1258,103 @@ void main() {
     group('Jump instructions', () {
       group('JMP [page 45]', () {
         test('JMP i, j', () {
-          testJMP(system);
+          testJMP(lh5801);
         });
       });
 
       group('BCH [page 46]', () {
         test('BCH +i', () {
-          testBCH(system, <int>[0x8E]);
+          testBCH(lh5801, <int>[0x8E]);
         });
 
         test('BCH -i', () {
-          testBCH(system, <int>[0x9E], forward: false);
+          testBCH(lh5801, <int>[0x9E], forward: false);
         });
       });
 
       group('BCS [page 46]', () {
         test('BCS +i', () {
-          testBCS(system, <int>[0x83]);
+          testBCS(lh5801, <int>[0x83]);
         });
 
         test('BCS -i', () {
-          testBCS(system, <int>[0x93], forward: false);
+          testBCS(lh5801, <int>[0x93], forward: false);
         });
       });
 
       group('BCR [page 47]', () {
         test('BCR +i', () {
-          testBCR(system, <int>[0x81]);
+          testBCR(lh5801, <int>[0x81]);
         });
 
         test('BCR -i', () {
-          testBCR(system, <int>[0x91], forward: false);
+          testBCR(lh5801, <int>[0x91], forward: false);
         });
       });
 
       group('BHS [page 47]', () {
         test('BHS +i', () {
-          testBHS(system, <int>[0x87]);
+          testBHS(lh5801, <int>[0x87]);
         });
 
         test('BHS -i', () {
-          testBHS(system, <int>[0x97], forward: false);
+          testBHS(lh5801, <int>[0x97], forward: false);
         });
       });
 
       group('BHR [page 47]', () {
         test('BHR +i', () {
-          testBHR(system, <int>[0x85]);
+          testBHR(lh5801, <int>[0x85]);
         });
 
         test('BHR -i', () {
-          testBHR(system, <int>[0x95], forward: false);
+          testBHR(lh5801, <int>[0x95], forward: false);
         });
       });
 
       group('BZS [page 47]', () {
         test('BZS +i', () {
-          testBZS(system, <int>[0x8B]);
+          testBZS(lh5801, <int>[0x8B]);
         });
 
         test('BZS -i', () {
-          testBZS(system, <int>[0x9B], forward: false);
+          testBZS(lh5801, <int>[0x9B], forward: false);
         });
       });
 
       group('BZR [page 47]', () {
         test('BZR +i', () {
-          testBZR(system, <int>[0x89]);
+          testBZR(lh5801, <int>[0x89]);
         });
 
         test('BZR -i', () {
-          testBZR(system, <int>[0x99], forward: false);
+          testBZR(lh5801, <int>[0x99], forward: false);
         });
       });
 
       group('BVS [page 47]', () {
         test('BVS +i', () {
-          testBVS(system, <int>[0x8F]);
+          testBVS(lh5801, <int>[0x8F]);
         });
 
         test('BVS -i', () {
-          testBVS(system, <int>[0x9F], forward: false);
+          testBVS(lh5801, <int>[0x9F], forward: false);
         });
       });
 
       group('BVR [page 48]', () {
         test('BVR +i', () {
-          testBVR(system, <int>[0x8D]);
+          testBVR(lh5801, <int>[0x8D]);
         });
 
         test('BVR -i', () {
-          testBVR(system, <int>[0x9D], forward: false);
+          testBVR(lh5801, <int>[0x9D], forward: false);
         });
       });
 
       group('LOP [page 48]', () {
         test('LOP i', () {
-          testLOP(system);
+          testLOP(lh5801);
         });
       });
     });
@@ -1362,14 +1362,14 @@ void main() {
     group('Subroutine jump instructions', () {
       group('SJP [page 49]', () {
         test('SJP i, j', () {
-          testSJP(system);
+          testSJP(lh5801);
         });
       });
 
       group('VEJ [page 50]', () {
         for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
           test('VEJ (${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()})', () {
-            testVSJ(system, 17, <int>[vectorId]);
+            testVSJ(lh5801, 17, <int>[vectorId]);
           });
         }
       });
@@ -1377,50 +1377,50 @@ void main() {
       group('VMJ [page 51]', () {
         for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
           test('VMJ ${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()}', () {
-            testVSJ(system, 20, <int>[0xCD, vectorId]);
+            testVSJ(lh5801, 20, <int>[0xCD, vectorId]);
           });
         }
       });
 
       group('VCS [page 52]', () {
         test('VCS i', () {
-          testVCS(system, <int>[0xC3, 0xC0]);
+          testVCS(lh5801, <int>[0xC3, 0xC0]);
         });
       });
 
       group('VCR [page 52]', () {
         test('VCR i', () {
-          testVCR(system, <int>[0xC1, 0xC0]);
+          testVCR(lh5801, <int>[0xC1, 0xC0]);
         });
       });
 
       group('VHS [page 52]', () {
         test('VHS i', () {
-          testVHS(system, <int>[0xC7, 0xC2]);
+          testVHS(lh5801, <int>[0xC7, 0xC2]);
         });
       });
 
       group('VHR [page 52]', () {
         test('VHR i', () {
-          testVHR(system, <int>[0xC5, 0xC0]);
+          testVHR(lh5801, <int>[0xC5, 0xC0]);
         });
       });
 
       group('VZS [page 52]', () {
         test('VZS i', () {
-          testVZS(system, <int>[0xCB, 0xC4]);
+          testVZS(lh5801, <int>[0xCB, 0xC4]);
         });
       });
 
       group('VZR [page 53]', () {
         test('VZR i', () {
-          testVZR(system, <int>[0xC9, 0xC0]);
+          testVZR(lh5801, <int>[0xC9, 0xC0]);
         });
       });
 
       group('VVS [page 53]', () {
         test('VVS i', () {
-          testVVS(system, <int>[0xCF, 0xC4]);
+          testVVS(lh5801, <int>[0xCF, 0xC4]);
         });
       });
     });
@@ -1428,13 +1428,13 @@ void main() {
     group('Return instructions', () {
       group('RTN [page 53]', () {
         test('RTN', () {
-          testRTN(system);
+          testRTN(lh5801);
         });
       });
 
       group('RTI [page 53]', () {
         test('RTI', () {
-          testRTI(system);
+          testRTI(lh5801);
         });
       });
     });

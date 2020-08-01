@@ -43,14 +43,14 @@ LH5801State _$LH5801StateFromJson(Map<String, dynamic> json) {
     'tm',
     'pu',
     'pv',
+    'bf',
     'disp',
     't',
     'ie',
     'ir0',
     'ir1',
     'ir2',
-    'hlt',
-    'cycleCounter'
+    'hlt'
   ]);
   return LH5801State(
     p: json['p'] == null
@@ -76,6 +76,7 @@ LH5801State _$LH5801StateFromJson(Map<String, dynamic> json) {
         : LH5801Timer.fromJson(json['tm'] as Map<String, dynamic>),
     pu: json['pu'] as bool,
     pv: json['pv'] as bool,
+    bf: json['bf'] as bool,
     disp: json['disp'] as bool,
     t: json['t'] == null
         ? null
@@ -85,7 +86,6 @@ LH5801State _$LH5801StateFromJson(Map<String, dynamic> json) {
     ir1: json['ir1'] as bool,
     ir2: json['ir2'] as bool,
     hlt: json['hlt'] as bool,
-    cycleCounter: json['cycleCounter'] as int,
   );
 }
 
@@ -100,6 +100,7 @@ Map<String, dynamic> _$LH5801StateToJson(LH5801State instance) =>
       'tm': instance.tm,
       'pu': instance.pu,
       'pv': instance.pv,
+      'bf': instance.bf,
       'disp': instance.disp,
       't': instance.t,
       'ie': instance.ie,
@@ -107,5 +108,4 @@ Map<String, dynamic> _$LH5801StateToJson(LH5801State instance) =>
       'ir1': instance.ir1,
       'ir2': instance.ir2,
       'hlt': instance.hlt,
-      'cycleCounter': instance.cycleCounter,
     };
