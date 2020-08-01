@@ -72,5 +72,9 @@ class LH5801Emulator extends LH5801Pins {
     return cpu.step();
   }
 
-  void reset() => cpu.reset();
+  @override
+  void reset() {
+    super.reset();
+    cpu.reset();
+  }
 }
