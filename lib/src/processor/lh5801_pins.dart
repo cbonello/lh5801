@@ -1,52 +1,45 @@
 class _CPUPin {
-  _CPUPin({bool resetUponRead = false})
-      : _resetUponRead = resetUponRead,
-        pin = false;
+  _CPUPin({this.resetUponRead = false, bool pin = false}) : _pin = pin;
 
-  final bool _resetUponRead;
-  bool pin;
+  final bool resetUponRead;
+  bool _pin;
 
-  void set() => pin = true;
-  void reset() => pin = false;
-
-  bool get isHigh {
-    final bool isHigh = pin;
-    if (_resetUponRead) {
-      reset();
+  bool get pin {
+    final bool value = _pin;
+    if (resetUponRead) {
+      _pin = false;
     }
-    return isHigh;
+    return value;
   }
 
-  bool get isLow => pin == false;
+  set pin(bool value) => _pin = value;
 }
 
 class LH5801Pins {
-  LH5801Pins()
-      : _resetPin = _CPUPin(resetUponRead: true),
-        _nmiPin = _CPUPin(resetUponRead: true),
-        _miPin = _CPUPin(resetUponRead: true),
-        _puFlipflop = _CPUPin(),
-        _pvFlipflop = _CPUPin(),
-        _bfFlipflop = _CPUPin(),
-        _dispFlipflop = _CPUPin();
+  LH5801Pins();
 
-  final _CPUPin _resetPin, _nmiPin, _miPin;
-  final _CPUPin _puFlipflop, _pvFlipflop, _bfFlipflop, _dispFlipflop;
+  final _CPUPin _resetPin = _CPUPin(resetUponRead: true);
+  final _CPUPin _nmiPin = _CPUPin(resetUponRead: true);
+  final _CPUPin _miPin = _CPUPin(resetUponRead: true);
+  final _CPUPin _puFlipflop = _CPUPin();
+  final _CPUPin _pvFlipflop = _CPUPin();
+  final _CPUPin _bfFlipflop = _CPUPin();
+  final _CPUPin _dispFlipflop = _CPUPin();
 
   /// Input ports through which the CPU receives 8-bit data into the accumulator.
   int inputPorts;
 
   /// CPU reset.
-  void setResetPinHigh() => _resetPin.set();
-  bool get isResetPinHigh => _resetPin.isHigh;
+  bool get resetPin => _resetPin.pin;
+  set resetPin(bool value) => _resetPin.pin = value;
 
   /// Non-maskable interrupt input (NMI).
-  void setNMIPinHigh() => _nmiPin.set();
-  bool get isNMIPinHigh => _nmiPin.isHigh;
+  bool get nmiPin => _nmiPin.pin;
+  set nmiPin(bool value) => _nmiPin.pin = value;
 
   /// Maskable interrupt input (MI).
-  void setMIPinHigh() => _miPin.set();
-  bool get isMIPinHigh => _miPin.isHigh;
+  bool get miPin => _miPin.pin;
+  set miPin(bool value) => _miPin.pin = value;
 
   /// CPU internal PU flipflop output.
   bool get puFlipflop => _puFlipflop.pin;

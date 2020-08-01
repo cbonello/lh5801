@@ -95,10 +95,6 @@ void main() {
         expect(state.y.value, equals(Register16().value));
         expect(state.u.value, equals(Register16().value));
         expect(state.tm, equals(tm));
-        expect(state.pu, equals(false));
-        expect(state.pv, equals(false));
-        expect(state.bf, equals(true));
-        expect(state.disp, equals(false));
         expect(state.t, equals(LH5801Flags()));
         expect(state.ie, equals(false));
         expect(state.ir0, equals(false));

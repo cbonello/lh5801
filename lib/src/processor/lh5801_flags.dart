@@ -1,11 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'lh5801_flags.g.dart';
-
-@JsonSerializable(
-  createFactory: true,
-  disallowUnrecognizedKeys: true,
-)
 class LH5801Flags {
   LH5801Flags({
     this.h = false,
@@ -15,9 +7,23 @@ class LH5801Flags {
     this.c = false,
   });
 
-  factory LH5801Flags.fromJson(Map<String, dynamic> json) => _$LH5801FlagsFromJson(json);
+  factory LH5801Flags.fromJson(Map<String, dynamic> json) {
+    return LH5801Flags(
+      h: json['h'] as bool,
+      v: json['v'] as bool,
+      z: json['z'] as bool,
+      ie: json['ie'] as bool,
+      c: json['c'] as bool,
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$LH5801FlagsToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'h': h,
+        'v': v,
+        'z': z,
+        'ie': ie,
+        'c': c,
+      };
 
   bool h, v, z, ie, c;
 

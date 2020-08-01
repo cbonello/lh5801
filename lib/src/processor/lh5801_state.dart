@@ -1,15 +1,18 @@
-part of 'lh5801_cpu.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 
-@JsonSerializable(
-  createFactory: true,
-  disallowUnrecognizedKeys: true,
-)
+import 'processor.dart';
+
 class Register8 extends Object {
   Register8([int value = 0x00]) : _value = value & 0xFF;
 
-  factory Register8.fromJson(Map<String, dynamic> json) => _$Register8FromJson(json);
+  factory Register8.fromJson(Map<String, dynamic> json) {
+    return Register8(json['value'] as int);
+  }
 
-  Map<String, dynamic> toJson() => _$Register8ToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'value': value,
+      };
 
   int _value;
 
@@ -34,18 +37,18 @@ class Register8 extends Object {
   int get hashCode => value.hashCode;
 }
 
-@JsonSerializable(
-  createFactory: true,
-  disallowUnrecognizedKeys: true,
-)
 class Register16 extends Object {
-  Register16([int initialValue = 0x0000]) {
-    value = initialValue;
+  Register16([int value = 0x0000]) {
+    this.value = value;
   }
 
-  factory Register16.fromJson(Map<String, dynamic> json) => _$Register16FromJson(json);
+  factory Register16.fromJson(Map<String, dynamic> json) {
+    return Register16(json['value'] as int);
+  }
 
-  Map<String, dynamic> toJson() => _$Register16ToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'value': value,
+      };
 
   final List<Register8> _bytes = <Register8>[Register8(), Register8()];
 
@@ -81,10 +84,6 @@ class Register16 extends Object {
   int get hashCode => value.hashCode;
 }
 
-@JsonSerializable(
-  createFactory: true,
-  disallowUnrecognizedKeys: true,
-)
 class LH5801State {
   LH5801State({
     Register16 p,
@@ -94,10 +93,6 @@ class LH5801State {
     Register16 y,
     Register16 u,
     @required this.tm,
-    this.pu = false,
-    this.pv = false,
-    this.bf = true,
-    this.disp = false,
     LH5801Flags t,
     this.ie = false,
     this.ir0 = false,
@@ -113,34 +108,43 @@ class LH5801State {
         u = u ?? Register16(),
         t = t ?? LH5801Flags();
 
-  factory LH5801State.fromJson(Map<String, dynamic> json) => _$LH5801StateFromJson(json);
-
-  Map<String, dynamic> toJson() => _$LH5801StateToJson(this);
-
   // Program counter.
+  @JsonKey(nullable: false)
   Register16 p;
-  // Program counter.
+
+  // Stack pointer.
+  @JsonKey(nullable: false)
   Register16 s;
+
   // Accumulator.
+  @JsonKey(nullable: false)
   Register8 a;
+
   // General purpose registers.
+  @JsonKey(nullable: false)
   Register16 x, y, u;
-  // Timer counter (9-bit).
+
+  // Timer (9-bit).
+  @JsonKey(nullable: false)
   LH5801Timer tm;
-  // General purpose flip-flops.
-  bool pu, pv, bf;
-  // LCD on/off control.
-  bool disp;
+
   // Status register.
+  @JsonKey(nullable: false)
   LH5801Flags t;
-  // Interrupt enable flip-flop.
+
+  // Interrupt enable.
   bool ie;
-  // Non-maskable interrupt request flip-flop.
+
+  // Non-maskable interrupt request.
   bool ir0;
-  // Timer interrupt request flip-flop.
+
+  // Timer interrupt request.
   bool ir1;
-  // Maskable interrupt request flip-flop.
+
+  // Maskable interrupt request.
   bool ir2;
+
+  // Stops CPU operation if true (only the timer is in operation).
   bool hlt;
 
   void reset() {
@@ -151,10 +155,6 @@ class LH5801State {
     y.reset();
     u.reset();
     tm.reset();
-    pu = false;
-    pv = false;
-    bf = true;
-    disp = false;
     t.reset();
     ie = false;
     ir0 = false;
@@ -181,10 +181,6 @@ class LH5801State {
           y == other.y &&
           u == other.u &&
           tm == other.tm &&
-          pu == other.pu &&
-          pv == other.pv &&
-          bf == other.bf &&
-          disp == other.disp &&
           t == other.t &&
           ie == other.ie &&
           ir0 == other.ir0 &&
@@ -201,10 +197,6 @@ class LH5801State {
       y.hashCode ^
       u.hashCode ^
       tm.hashCode ^
-      pu.hashCode ^
-      pv.hashCode ^
-      bf.hashCode ^
-      disp.hashCode ^
       t.hashCode ^
       ie.hashCode ^
       ir0.hashCode ^
