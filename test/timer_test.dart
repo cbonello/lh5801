@@ -519,13 +519,56 @@ final List<int> expectedCounterValues = <int>[
 ];
 
 void main() {
-  group('Timer', () {
-    final LH5801Timer timer = LH5801Timer(
-      cpuClockFrequency: 1300000,
-      timerClockFrequency: 31250,
-    );
+  group('LH5801Timer', () {
+    test('should be initialized properly', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      expect(timer.value, isZero);
+      expect(timer.isInterruptRaised, isFalse);
+    });
+
+    test('should be serialized/deserialized successfully', () {
+      final LH5801Timer timer1 = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+      final LH5801Timer timer2 = LH5801Timer.fromJson(timer1.toJson());
+
+      expect(timer1, equals(timer2));
+    });
+
+    test('should raise an interrupt whenever a new timer value is generated', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      timer.value = expectedCounterValues[expectedCounterValues.length - 2];
+      timer.incrementClock();
+      expect(timer.isInterruptRaised, isTrue);
+    });
+
+    test('reset() should reset the timer', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      timer.value = expectedCounterValues[expectedCounterValues.length - 2];
+      timer.incrementClock();
+      timer.reset();
+      expect(timer.isInterruptRaised, isFalse);
+    });
 
     test('should generate the expected values', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
       timer.value = LH5801Timer.maxCounterValue;
       for (final int expected in expectedCounterValues) {
         expect(timer.value, equals(expected));
