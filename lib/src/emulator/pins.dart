@@ -23,7 +23,7 @@ class LH5801Pins {
   final _CPUPin _miPin = _CPUPin(resetUponRead: true);
   final _CPUPin _puFlipflop = _CPUPin();
   final _CPUPin _pvFlipflop = _CPUPin();
-  final _CPUPin _bfFlipflop = _CPUPin();
+  final _CPUPin _bfFlipflop = _CPUPin(pin: true);
   final _CPUPin _dispFlipflop = _CPUPin();
 
   /// Input ports through which the CPU receives 8-bit data into the accumulator.
@@ -56,4 +56,9 @@ class LH5801Pins {
   /// LCD on/off control signal output.
   bool get dispFlipflop => _dispFlipflop.pin;
   set dispFlipflop(bool value) => _dispFlipflop.pin = value;
+
+  void reset() {
+    resetPin = nmiPin = miPin = puFlipflop = pvFlipflop = dispFlipflop = false;
+    bfFlipflop = true;
+  }
 }

@@ -75,6 +75,7 @@ class LH5801CPU extends LH5801State {
   int step() {
     if (_pins.resetPin) {
       super.reset();
+      _pins.reset();
       p.high = memRead(_me0(0xFFFE));
       p.low = memRead(_me0(0xFFFF));
     } else {
