@@ -21,6 +21,12 @@ void main() {
         expect(reg.value, equals(0x34));
       });
 
+      test('should be serialized/deserialized successfully', () {
+        final Register8 reg1 = Register8(0x82);
+        final Register8 reg2 = Register8.fromJson(reg1.toJson());
+        expect(reg1, equals(reg2));
+      });
+
       test('reset() should set the register value to zero', () {
         final Register8 reg = Register8(128);
         reg.reset();
@@ -44,6 +50,12 @@ void main() {
 
         reg = Register16(0x123456);
         expect(reg.value, equals(0x3456));
+      });
+
+      test('should be serialized/deserialized successfully', () {
+        final Register16 reg1 = Register16(0x1357);
+        final Register16 reg2 = Register16.fromJson(reg1.toJson());
+        expect(reg1, equals(reg2));
       });
 
       test('value getter should return the 16-bit register value', () {
