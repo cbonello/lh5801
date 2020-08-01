@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import 'flags.dart';
@@ -110,27 +109,21 @@ class LH5801State {
         t = t ?? LH5801Flags();
 
   // Program counter.
-  @JsonKey(nullable: false)
   Register16 p;
 
   // Stack pointer.
-  @JsonKey(nullable: false)
   Register16 s;
 
   // Accumulator.
-  @JsonKey(nullable: false)
   Register8 a;
 
   // General purpose registers.
-  @JsonKey(nullable: false)
   Register16 x, y, u;
 
   // Timer (9-bit).
-  @JsonKey(nullable: false)
   LH5801Timer tm;
 
   // Status register.
-  @JsonKey(nullable: false)
   LH5801Flags t;
 
   // Interrupt enable.
