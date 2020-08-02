@@ -4,21 +4,13 @@
 [![codecov](https://codecov.io/gh/cbonello/lh5801/branch/master/graph/badge.svg)](https://codecov.io/gh/cbonello/lh5801)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-Work in progress...
-
 Sharp [LH5801](docs/PC1500.TechnicalReferenceManual.pdf?raw=true) 8-bit Microprocessor emulator.
+
+This package is part of an ongoing project of writing a Sharp PC-1500 emulator with Dart/Flutter.
 
 ## Usage
 
-A simple usage example:
-
-```dart
-import 'package:lh5801/lh5801.dart';
-
-main() {
-  final cpu = LH5801CPU(...);
-}
-```
+See `example/` folder.
 
 ## Features and bugs
 
