@@ -111,6 +111,9 @@ class LH5801CPU extends LH5801State {
 
     final int opcode = _readOp8();
     final int cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
+
+    tm.incrementClock(cycles);
+
     return cycles;
   }
 

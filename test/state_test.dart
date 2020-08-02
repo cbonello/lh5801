@@ -37,7 +37,7 @@ void main() {
         final Register8 reg1 = Register8(128);
         final Register8 reg2 = reg1.clone();
         expect(reg1, equals(reg2));
-        expect(reg1.hashCode, equals(reg2).hashCode);
+        expect(reg1.hashCode, equals(reg2.hashCode));
       });
     });
 
@@ -122,6 +122,7 @@ void main() {
         final LH5801State state2 = LH5801State(tm: tm)..reset();
 
         expect(state1, equals(state2));
+        expect(state1.hashCode, equals(state2.hashCode));
       });
     });
   });
