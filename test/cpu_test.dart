@@ -30,7 +30,8 @@ void main() {
         json: cpu1.toJson(),
       );
 
-      expect(cpu1 == cpu2, isTrue);
+      expect(cpu1, equals(cpu2));
+      expect(cpu1.hashCode, equals(cpu2.hashCode));
     });
 
     group('Add, subtract and logical instructions', () {
