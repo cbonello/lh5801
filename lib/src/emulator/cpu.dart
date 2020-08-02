@@ -103,12 +103,13 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFF8));
       p.low = memRead(_me0(0xFFF9));
-    } else if (hlt) {
-      return 2;
     }
 
-    final int opcode = _readOp8();
-    final int cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
+    int cycles = 2;
+    if (hlt == false) {
+      final int opcode = _readOp8();
+      cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
+    }
 
     tm.incrementClock(cycles);
 
