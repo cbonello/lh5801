@@ -31,5 +31,15 @@ void main() {
       expect(pins.dispFlipflop, isFalse);
       expect(pins.bfFlipflop, true);
     });
+
+    test('clone() should return an identical LH5801Pins instance', () {
+      final LH5801Pins pins1 = LH5801Pins()
+        ..miPin = true
+        ..inputPorts = 0x49;
+      final LH5801Pins pins2 = pins1.clone();
+
+      expect(pins1 == pins2, isTrue);
+      expect(pins1.hashCode, equals(pins2.hashCode));
+    });
   });
 }

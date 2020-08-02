@@ -12,7 +12,11 @@ class _CPUPin {
     return value;
   }
 
+  bool get peek => _pin;
+
   set pin(bool value) => _pin = value;
+
+  _CPUPin clone() => _CPUPin(resetUponRead: resetUponRead, pin: _pin);
 
   @override
   bool operator ==(Object other) =>
@@ -73,18 +77,31 @@ class LH5801Pins {
     bfFlipflop = true;
   }
 
+  LH5801Pins clone() => LH5801Pins()
+    ..resetPin = _resetPin.peek
+    ..nmiPin = _nmiPin.peek
+    ..miPin = _miPin.peek
+    ..puFlipflop = puFlipflop
+    ..pvFlipflop = pvFlipflop
+    ..bfFlipflop = bfFlipflop
+    ..dispFlipflop = dispFlipflop
+    ..inputPorts = inputPorts;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LH5801Pins &&
           runtimeType == other.runtimeType &&
-          _resetPin == other._resetPin &&
-          _nmiPin == other._nmiPin &&
-          _miPin == other._miPin &&
-          _puFlipflop == other._puFlipflop &&
-          _pvFlipflop == other._pvFlipflop &&
-          _bfFlipflop == other._bfFlipflop &&
-          _dispFlipflop == other._dispFlipflop &&
+          // Using the _CPUPin.pin getter will reset the pin value. And the two
+          // objects won't be identical anymore after performing the equality
+          // test.
+          _resetPin.peek == other._resetPin.peek &&
+          _nmiPin.peek == other._nmiPin.peek &&
+          _miPin.peek == other._miPin.peek &&
+          puFlipflop == other.puFlipflop &&
+          pvFlipflop == other.pvFlipflop &&
+          bfFlipflop == other.bfFlipflop &&
+          dispFlipflop == other.dispFlipflop &&
           inputPorts == other.inputPorts;
 
   @override
