@@ -13,6 +13,17 @@ class _CPUPin {
   }
 
   set pin(bool value) => _pin = value;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _CPUPin &&
+          runtimeType == other.runtimeType &&
+          resetUponRead == other.resetUponRead &&
+          _pin == other._pin;
+
+  @override
+  int get hashCode => resetUponRead.hashCode ^ _pin.hashCode;
 }
 
 class LH5801Pins {
@@ -61,4 +72,29 @@ class LH5801Pins {
     resetPin = nmiPin = miPin = puFlipflop = pvFlipflop = dispFlipflop = false;
     bfFlipflop = true;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LH5801Pins &&
+          runtimeType == other.runtimeType &&
+          _resetPin == other._resetPin &&
+          _nmiPin == other._nmiPin &&
+          _miPin == other._miPin &&
+          _puFlipflop == other._puFlipflop &&
+          _pvFlipflop == other._pvFlipflop &&
+          _bfFlipflop == other._bfFlipflop &&
+          _dispFlipflop == other._dispFlipflop &&
+          inputPorts == other.inputPorts;
+
+  @override
+  int get hashCode =>
+      _resetPin.hashCode ^
+      _nmiPin.hashCode ^
+      _miPin.hashCode ^
+      _puFlipflop.hashCode ^
+      _pvFlipflop.hashCode ^
+      _bfFlipflop.hashCode ^
+      _dispFlipflop.hashCode ^
+      inputPorts.hashCode;
 }

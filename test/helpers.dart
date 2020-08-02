@@ -15,12 +15,12 @@ void memLoad(int address, List<int> data) {
   }
 }
 
-int _memRead(int address) {
+int memRead(int address) {
   final int value = address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
   return value;
 }
 
-void _memWrite(int address, int value) {
+void memWrite(int address, int value) {
   if (address & 0x10000 != 0) {
     me1[address & 0xFFFF] = value;
   } else {
@@ -29,7 +29,7 @@ void _memWrite(int address, int value) {
 }
 
 class LH5801Test extends LH5801Emulator {
-  LH5801Test() : super(clockFrequency: 1300000, memRead: _memRead, memWrite: _memWrite);
+  LH5801Test() : super(clockFrequency: 1300000, memRead: memRead, memWrite: memWrite);
 
   void resetTestEnv() {
     me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));

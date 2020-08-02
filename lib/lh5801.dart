@@ -1,5 +1,6 @@
 library lh5801;
 
+export 'src/emulator/cpu.dart';
 export 'src/emulator/emulator.dart';
 export 'src/emulator/flags.dart';
 export 'src/emulator/instruction_tables.dart';

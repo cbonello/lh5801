@@ -1418,4 +1418,43 @@ class LH5801CPU extends LH5801State {
 
     return cycles;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LH5801CPU &&
+          runtimeType == other.runtimeType &&
+          _pins == other._pins &&
+          clockFrequency == other.clockFrequency &&
+          p == other.p &&
+          s == other.s &&
+          a == other.a &&
+          x == other.x &&
+          y == other.y &&
+          u == other.u &&
+          tm == other.tm &&
+          t == other.t &&
+          ie == other.ie &&
+          ir0 == other.ir0 &&
+          ir1 == other.ir1 &&
+          ir2 == other.ir2 &&
+          hlt == other.hlt;
+
+  @override
+  int get hashCode =>
+      _pins.hashCode ^
+      clockFrequency.hashCode ^
+      p.hashCode ^
+      s.hashCode ^
+      a.hashCode ^
+      x.hashCode ^
+      y.hashCode ^
+      u.hashCode ^
+      tm.hashCode ^
+      t.hashCode ^
+      ie.hashCode ^
+      ir0.hashCode ^
+      ir1.hashCode ^
+      ir2.hashCode ^
+      hlt.hashCode;
 }
