@@ -37,6 +37,7 @@ void main() {
         final Register8 reg1 = Register8(128);
         final Register8 reg2 = reg1.clone();
         expect(reg1, equals(reg2));
+        expect(reg1.hashCode, equals(reg2).hashCode);
       });
     });
 
@@ -94,6 +95,7 @@ void main() {
         final Register16 reg1 = Register16(128);
         final Register16 reg2 = reg1.clone();
         expect(reg1, equals(reg2));
+        expect(reg1.hashCode, equals(reg2.hashCode));
       });
     });
 
