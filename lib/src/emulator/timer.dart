@@ -8,6 +8,7 @@ const int kFrequency125Khz = 125000;
 const int kFrequency62Khz = 62500;
 const int kFrequency31Khz = 31250;
 
+/* Not used for now
 class LH5801ClockControl {
   LH5801ClockControl() : _subClocks = <_SubClock>[];
 
@@ -21,6 +22,7 @@ class LH5801ClockControl {
     }
   }
 }
+*/
 
 abstract class _SubClock {
   void reset();
@@ -79,6 +81,8 @@ class LH5801Timer implements _SubClock {
     _cpuCycles = 0;
     _interruptRaised = false;
   }
+
+  LH5801Timer clone() => LH5801Timer.fromJson(toJson());
 
   @override
   bool incrementClock([int cpuCycles]) {

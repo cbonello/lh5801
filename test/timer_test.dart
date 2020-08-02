@@ -537,30 +537,8 @@ void main() {
       );
       final LH5801Timer timer2 = LH5801Timer.fromJson(timer1.toJson());
 
-      expect(timer1, equals(timer2));
-    });
-
-    test('should raise an interrupt whenever a new timer value is generated', () {
-      final LH5801Timer timer = LH5801Timer(
-        cpuClockFrequency: 1300000,
-        timerClockFrequency: 31250,
-      );
-
-      timer.value = expectedCounterValues[expectedCounterValues.length - 2];
-      timer.incrementClock();
-      expect(timer.isInterruptRaised, isTrue);
-    });
-
-    test('reset() should reset the timer', () {
-      final LH5801Timer timer = LH5801Timer(
-        cpuClockFrequency: 1300000,
-        timerClockFrequency: 31250,
-      );
-
-      timer.value = expectedCounterValues[expectedCounterValues.length - 2];
-      timer.incrementClock();
-      timer.reset();
-      expect(timer.isInterruptRaised, isFalse);
+      expect(timer1 == timer2, isTrue);
+      expect(timer1.hashCode, equals(timer2.hashCode));
     });
 
     test('should generate the expected values', () {
@@ -575,6 +553,45 @@ void main() {
         final bool ir2 = timer.incrementClock();
         expect(ir2, equals(timer.value == LH5801Timer.maxCounterValue));
       }
+    });
+
+    test('should raise an interrupt whenever a new timer value is generated', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      // Setting the timer to 0x1FF will require 510 clock cycles to raise the
+      // interrupt.
+      timer.value = 0x1FF;
+      for (int i = 0; i < 511; i++) {
+        timer.incrementClock();
+      }
+      expect(timer.isInterruptRaised, isTrue);
+    });
+
+    test('reset() should reset the timer', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      timer.value = 0x1FF;
+      for (int i = 0; i < 511; i++) {
+        timer.incrementClock();
+      }
+      timer.reset();
+      expect(timer.isInterruptRaised, isFalse);
+    });
+
+    test('clone() should return an identical LH5801Pins instance', () {
+      final LH5801Timer timer1 = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+      final LH5801Timer timer2 = timer1.clone();
+
+      expect(timer1 == timer2, isTrue);
     });
   });
 }
