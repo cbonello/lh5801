@@ -43,7 +43,6 @@ class LH5801CPU extends LH5801State {
       ..u = Register16.fromJson(json['u'] as Map<String, dynamic>)
       ..tm = LH5801Timer.fromJson(json['tm'] as Map<String, dynamic>)
       ..t = LH5801Flags.fromJson(json['t'] as Map<String, dynamic>)
-      ..ie = json['ie'] as bool
       ..ir0 = json['ir0'] as bool
       ..ir1 = json['ir1'] as bool
       ..ir2 = json['ir2'] as bool
@@ -59,7 +58,6 @@ class LH5801CPU extends LH5801State {
         'u': u.toJson(),
         'tm': tm.toJson(),
         't': t.toJson(),
-        'ie': ie,
         'ir0': ir0,
         'ir1': ir1,
         'ir2': ir2,
@@ -87,21 +85,21 @@ class LH5801CPU extends LH5801State {
     if (ir0) {
       // Non-maskable interrupt
       _push8(t.statusRegister);
-      ie = ir0 = false;
+      t.ie = ir0 = false;
       _push16(p.value);
       p.high = memRead(_me0(0xFFFC));
       p.low = memRead(_me0(0xFFFD));
-    } else if (ie && ir1) {
+    } else if (t.ie && ir1) {
       // Timer interrupt
       _push8(t.statusRegister);
-      ie = ir1 = false;
+      t.ie = ir1 = false;
       _push16(p.value);
       p.high = memRead(_me0(0xFFFA));
       p.low = memRead(_me0(0xFFFB));
-    } else if (ie && ir2) {
+    } else if (t.ie && ir2) {
       // Maskable interrupt
       _push8(t.statusRegister);
-      ie = hlt = ir2 = false;
+      t.ie = hlt = ir2 = false;
       _push16(p.value);
       p.high = memRead(_me0(0xFFF8));
       p.low = memRead(_me0(0xFFF9));
@@ -1437,7 +1435,6 @@ class LH5801CPU extends LH5801State {
           u == other.u &&
           tm == other.tm &&
           t == other.t &&
-          ie == other.ie &&
           ir0 == other.ir0 &&
           ir1 == other.ir1 &&
           ir2 == other.ir2 &&
@@ -1455,7 +1452,6 @@ class LH5801CPU extends LH5801State {
       u.hashCode ^
       tm.hashCode ^
       t.hashCode ^
-      ie.hashCode ^
       ir0.hashCode ^
       ir1.hashCode ^
       ir2.hashCode ^

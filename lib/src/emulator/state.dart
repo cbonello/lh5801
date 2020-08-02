@@ -94,7 +94,6 @@ class LH5801State {
     Register16 u,
     @required this.tm,
     LH5801Flags t,
-    this.ie = false,
     this.ir0 = false,
     this.ir1 = false,
     this.ir2 = false,
@@ -126,9 +125,6 @@ class LH5801State {
   // Status register.
   LH5801Flags t;
 
-  // Interrupt enable.
-  bool ie;
-
   // Non-maskable interrupt request.
   bool ir0;
 
@@ -150,7 +146,6 @@ class LH5801State {
     u.reset();
     tm.reset();
     t.reset();
-    ie = false;
     ir0 = false;
     ir1 = false;
     ir2 = false;
@@ -176,7 +171,6 @@ class LH5801State {
           u == other.u &&
           tm == other.tm &&
           t == other.t &&
-          ie == other.ie &&
           ir0 == other.ir0 &&
           ir1 == other.ir1 &&
           ir2 == other.ir2 &&
@@ -192,7 +186,6 @@ class LH5801State {
       u.hashCode ^
       tm.hashCode ^
       t.hashCode ^
-      ie.hashCode ^
       ir0.hashCode ^
       ir1.hashCode ^
       ir2.hashCode ^

@@ -14,7 +14,7 @@ void main() {
       )
         ..a.value = 0x79
         ..u.low = 0x12
-        ..ie = true;
+        ..ir0 = true;
 
       final LH5801CPU cpu2 = LH5801CPU.fromJson(
         pins: LH5801Pins(),
