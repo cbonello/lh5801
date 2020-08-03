@@ -69,7 +69,7 @@ void main() {
 
   int cycles = 0;
   while (emulator.cpu.hlt == false) {
-    cycles += emulator.step(emulator.cpu.p.value);
+    cycles += emulator.step();
   }
   stdout.write('#CPU cycles: $cycles');
 }

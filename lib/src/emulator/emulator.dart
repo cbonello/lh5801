@@ -76,8 +76,8 @@ class LH5801Emulator extends LH5801Pins {
 
   LH5801CPU cpu;
 
-  int step(int address) {
-    cpu.p.value = address;
+  int step([int address]) {
+    cpu.p.value = address ?? cpu.p.value;
     return cpu.step();
   }
 
