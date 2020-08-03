@@ -6,7 +6,7 @@
 
 Sharp [LH5801](docs/PC1500.TechnicalReferenceManual.pdf?raw=true) 8-bit Microprocessor emulator.
 
-This package is part of an ongoing project of writing a Sharp PC-1500 emulator with Dart/Flutter.
+This package is part of an ongoing project of writing a [Sharp PC-1500](https://en.wikipedia.org/wiki/Sharp_PC-1500) emulator with Dart/Flutter.
 
 ## Usage
 
