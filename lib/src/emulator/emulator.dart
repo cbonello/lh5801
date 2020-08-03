@@ -3,6 +3,15 @@ import 'package:meta/meta.dart';
 import 'cpu.dart';
 import 'pins.dart';
 
+class LH5801Error extends Error {
+  LH5801Error(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'LH5801: $message';
+}
+
 /// Return the byte at the given memory address.
 typedef LH5801MemoryRead = int Function(int address);
 

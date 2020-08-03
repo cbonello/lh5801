@@ -420,6 +420,7 @@ class LH5801CPU extends LH5801State {
   }
 
   int _stepExtendedInstruction() {
+    final int startP = p.value - 1;
     final int opcode = _readOp8();
     final CyclesCount cyclesTable = instructionTableFD[opcode].cycles;
     final int cycles = cyclesTable.basic;
@@ -747,13 +748,16 @@ class LH5801CPU extends LH5801State {
         break;
 
       default:
-        print('LH5801 illegal opcode: $opcode');
+        throw LH5801Error(
+          'illegal opcode FD${_hex8(opcode)}H at address ${_meHex16(startP)}H',
+        );
     }
 
     return cycles;
   }
 
   int _stepOpcode(int opcode) {
+    final int startP = p.value - 1;
     final CyclesCount cyclesTable = instructionTable[opcode].cycles;
     int cycles = cyclesTable.basic;
     int o8, p8, o16;
@@ -1415,10 +1419,23 @@ class LH5801CPU extends LH5801State {
         break;
 
       default:
-        print('LH5801 illegal opcode: $opcode');
+        throw LH5801Error(
+          'illegal opcode ${_hex8(opcode)}H at address ${_meHex16(startP)}H',
+        );
     }
 
     return cycles;
+  }
+
+  String _hex8(int value) =>
+      value.toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0');
+
+  String _hex16(int value) =>
+      value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0');
+
+  String _meHex16(int address) {
+    final String prefix = address >= 0x10000 ? '#' : '';
+    return '$prefix${_hex16(address)}';
   }
 
   @override
