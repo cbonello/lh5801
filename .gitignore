@@ -16,4 +16,4 @@ doc/api/
 coverage/
 
 tools/**/*.exe
-test/**/.test_cov.dart
+test/**/.test_coverage.dart

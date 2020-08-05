@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: pub get
     - name: Run tests
-      run: pub run test_cov
+      run: pub run test_coverage
     - name: Codecov
       uses: codecov/codecov-action@v1.0.12
       with:
