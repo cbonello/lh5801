@@ -15,6 +15,8 @@ class LH5801CPU extends LH5801State {
     @required this.memWrite,
   })  : assert(pins != null),
         _pins = pins,
+        assert(memRead != null),
+        assert(memWrite != null),
         super(
           tm: LH5801Timer(
             cpuClockFrequency: clockFrequency,

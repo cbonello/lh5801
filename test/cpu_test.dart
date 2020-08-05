@@ -5,6 +5,38 @@ import 'helpers.dart';
 
 void main() {
   group('LH5801CPU', () {
+    test('should raise an exception for invalid arguments', () {
+      expect(
+        () => LH5801CPU(
+          pins: null,
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: memWrite,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+
+      expect(
+        () => LH5801CPU(
+          pins: LH5801Pins(),
+          clockFrequency: 1300000,
+          memRead: null,
+          memWrite: memWrite,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+
+      expect(
+        () => LH5801CPU(
+          pins: LH5801Pins(),
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: null,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+    });
+
     test('should be serialized/deserialized successfully', () {
       final LH5801CPU cpu1 = LH5801CPU(
         pins: LH5801Pins(),
