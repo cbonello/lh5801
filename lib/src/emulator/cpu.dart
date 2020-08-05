@@ -1,7 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../common/instruction_tables.dart';
-import 'emulator.dart';
+import '../common/common.dart';
 import 'flags.dart';
 import 'pins.dart';
 import 'state.dart';
