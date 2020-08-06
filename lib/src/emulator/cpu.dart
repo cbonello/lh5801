@@ -750,7 +750,7 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode FD${_hex8(opcode)}H at address ${_meHex16(startP)}H',
+          'illegal opcode FD${hex8(opcode)} at address ${meHex16(startP)}',
         );
     }
 
@@ -1421,22 +1421,11 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode ${_hex8(opcode)}H at address ${_meHex16(startP)}H',
+          'illegal opcode ${hex8(opcode)} at address ${meHex16(startP)}',
         );
     }
 
     return cycles;
-  }
-
-  String _hex8(int value) =>
-      value.toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0');
-
-  String _hex16(int value) =>
-      value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0');
-
-  String _meHex16(int address) {
-    final String prefix = address >= 0x10000 ? '#' : '';
-    return '$prefix${_hex16(address)}';
   }
 
   @override
