@@ -34,8 +34,7 @@ void main() {
     memRead: memRead,
     memWrite: memWrite,
   );
-
-  emulator.cpu.p.value = 0x0000;
+  int cycles = 0;
 
   // Invert LCD screen of a Sharp PC-1500 pocket computer.
   memLoad(emulator.cpu.p.value, <int>[
@@ -51,23 +50,37 @@ void main() {
     0x41,
     // CPI XL, 4EH
     0x4E, 0x4E,
-    // BZR - 08H
+    // BZR -08H
     0x99, 0x08,
     // CPI XH, 77H
     0x4C, 0x77,
-    // BZS + 06H
+    // BZS +06H
     0x8B, 0x06,
     // LDI XH, 77H
     0x48, 0x77,
     // LDI XL, 00H
     0x4A, 0x00,
-    // BCH - 12H
+    // BCH -12H
     0x9E, 0x12,
     // HLT
     0xFD, 0xB1
   ]);
 
-  int cycles = 0;
+  final LH5801DASM dasm = LH5801DASM(memRead: memRead);
+  Instruction instruction;
+
+  emulator.cpu.p.value = 0x0000;
+  do {
+    instruction = dasm.dump(emulator.cpu.p.value);
+    stdout.write(
+      '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H    ',
+    );
+    stdout.writeln(instruction.descriptor);
+    emulator.cpu.p.value += instruction.length;
+  } while (instruction.descriptor.opcode != 0xFDB1);
+  stdout.writeln();
+
+  emulator.cpu.p.value = 0x0000;
   while (emulator.cpu.hlt == false) {
     cycles += emulator.step();
   }
