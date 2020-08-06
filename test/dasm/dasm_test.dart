@@ -59,6 +59,17 @@ void main() {
         expect(actual.cycles, equals(expected.cycles));
       }
 
+      test('should detect illegal instructions', () {
+        final InstructionDescriptor expectedDescriptor = instructionTable[0xFC];
+        memLoad(0x0000, <int>[0xFC]);
+
+        instruction = dasm.dump(0x0000);
+        expect(instruction.address, equals(0x0000));
+        expect(instruction.length, equals(1));
+        check(instruction.descriptor, expectedDescriptor);
+        expect(instruction.descriptor.toString(), equals('ILL'));
+      });
+
       test('OperandType.none()', () {
         final InstructionDescriptor expectedDescriptor = instructionTableFD[0x4C];
         memLoad(0x0000, <int>[0xFD, 0x4C]);
