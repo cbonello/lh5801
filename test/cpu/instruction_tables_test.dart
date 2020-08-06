@@ -113,6 +113,8 @@ void testTable(int opcode, List<InstructionDescriptor> table) {
   for (int i = 0; i < table.length; i++) {
     final InstructionDescriptor descriptor = table[i];
     expect(descriptor.opcode, equals((opcode << 8) | i));
+
+    expect(descriptor.mnemonic, equals(descriptor.mnemonic.trim().toUpperCase()));
   }
 
   for (final InstructionDescriptor instruction in table) {

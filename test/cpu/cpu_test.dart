@@ -37,6 +37,19 @@ void main() {
       );
     });
 
+    test('should be intialized properly', () {
+      final LH5801CPU cpu = LH5801CPU(
+        pins: LH5801Pins(),
+        clockFrequency: 1300000,
+        memRead: memRead,
+        memWrite: memWrite,
+      );
+
+      expect(cpu.clockFrequency, equals(1300000));
+      expect(cpu.memRead, equals(memRead));
+      expect(cpu.memWrite, equals(memWrite));
+    });
+
     test('should be serialized/deserialized successfully', () {
       final LH5801CPU cpu1 = LH5801CPU(
         pins: LH5801Pins(),

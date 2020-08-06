@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../tools/lh5801_add_table.dart';
+import '../../tools/lh5801_add_table.dart';
 import 'helpers.dart';
 
 void main() {

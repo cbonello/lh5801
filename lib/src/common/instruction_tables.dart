@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../lh5801.dart';
+
 part 'instruction_tables.freezed.dart';
 
 @freezed
@@ -28,39 +30,52 @@ abstract class InstructionCategory with _$InstructionCategory {
   const factory InstructionCategory.ret() = _Return;
 }
 
-@freezed
-abstract class OperandType with _$OperandType {
-  // No operand.
-  const factory OperandType.none() = _None;
-  // A register (i.e., 'U').
-  const factory OperandType.reg() = _Reg;
-  // Contents of the ME0 memory addressed by Reg (i.e., '(U)').
-  const factory OperandType.mem0Reg() = _Mem0Reg;
-  // Contents of the ME0 memory addressed by a 16-bit constant (i.e., '(ab)').
-  const factory OperandType.mem0Imm16() = _Mem0Imm16;
-  // Contents of the ME1 memory addressed by Reg (i.e., '(U)').
-  const factory OperandType.mem1Reg() = _Mem1Reg;
-  // Contents of the ME1 memory addressed by a 16-bit constant (i.e., '(ab)').
-  const factory OperandType.mem1Imm16() = _Mem1Imm16;
-  // An 8-bit constant (i.e., 'i').
-  const factory OperandType.imm8() = _Imm8;
-  // An 8-bit positive immediate displacement (i.e., '+i').
-  const factory OperandType.dispPlus() = _DispPlus;
-  // An 8-bit negative immediate displacement (i.e., '-i').
-  const factory OperandType.dispMinus() = _DispMinus;
-  // An 8-bit constant vector ID (i.e., '(i)').
-  const factory OperandType.mem0Imm8() = _Mem0Imm8;
-  // A 16-bit constant.
-  const factory OperandType.imm16() = _Imm16;
-}
-
 // An instruction operand.
-@immutable
-class Operand {
-  const Operand(this.type, this.value);
+@freezed
+abstract class Operand with _$Operand {
+  const Operand._();
 
-  final OperandType type;
-  final Object value;
+  // No operand.
+  const factory Operand.none() = _None;
+  // A register (i.e., 'U').
+  const factory Operand.reg(String registerName) = _Reg;
+  // Contents of the ME0 memory addressed by Reg (i.e., '(U)').
+  const factory Operand.mem0Reg(String registerName) = _Mem0Reg;
+  // Contents of the ME0 memory addressed by a 16-bit constant (i.e., '(ab)').
+  const factory Operand.mem0Imm16(int value) = _Mem0Imm16;
+  // Contents of the ME1 memory addressed by Reg (i.e., '(U)').
+  const factory Operand.mem1Reg(String registerName) = _Mem1Reg;
+  // Contents of the ME1 memory addressed by a 16-bit constant (i.e., '(ab)').
+  const factory Operand.mem1Imm16(int value) = _Mem1Imm16;
+  // An 8-bit constant (i.e., 'i').
+  const factory Operand.imm8(int value) = _Imm8;
+  // An 8-bit positive immediate displacement (i.e., '+i').
+  const factory Operand.dispPlus(int offset) = _DispPlus;
+  // An 8-bit negative immediate displacement (i.e., '-i').
+  const factory Operand.dispMinus(int offset) = _DispMinus;
+  // An 8-bit constant vector ID (i.e., '(i)').
+  const factory Operand.mem0Cst8(int constant) = _Mem0Cst8;
+  // A 16-bit constant.
+  const factory Operand.imm16(int value) = _Imm16;
+
+  // toString() cannot be overridden for now. See https://github.com/rrousselGit/freezed/issues/221
+
+  @late
+  String toStr() {
+    return when<String>(
+      none: () => '',
+      reg: (String registerName) => registerName,
+      mem0Reg: (String registerName) => '($registerName)',
+      mem0Imm16: (int value) => '(${HexDump.meHex16(value)})',
+      mem1Reg: (String registerName) => '#($registerName)',
+      mem1Imm16: (int value) => '#(${HexDump.meHex16(value)})',
+      imm8: (int value) => HexDump.hex8(value),
+      dispPlus: (int offset) => '+${HexDump.hex8(offset)}',
+      dispMinus: (int offset) => '-${HexDump.hex8(offset)}',
+      mem0Cst8: (int constant) => '(${HexDump.hex8(constant)})',
+      imm16: (int value) => '${HexDump.hex8(value >> 8)}, ${HexDump.hex8(value & 0xFF)}',
+    );
+  }
 }
 
 // The number of CPU cycles required to execute an instruction.
@@ -90,6 +105,39 @@ class InstructionDescriptor {
   final String mnemonic;
   final List<Operand> operands;
   final CyclesCount cycles;
+
+  InstructionDescriptor copyWithUpdatedOperands(List<Operand> updatedOperands) =>
+      InstructionDescriptor(
+        category,
+        opcode,
+        size,
+        mnemonic,
+        updatedOperands,
+        cycles,
+      );
+
+  @override
+  String toString() {
+    final StringBuffer output = StringBuffer(mnemonic);
+
+    if (operands[0] != const Operand.none()) {
+      output.write(' ');
+
+      for (int i = 0; i < operands.length; i++) {
+        final Operand operand = operands[i];
+
+        if (i > 0 &&
+            operand != const Operand.none() &&
+            operands[i - 1] != const Operand.none()) {
+          output.write(', ');
+        }
+
+        output.write(operand.toStr());
+      }
+    }
+
+    return output.toString();
+  }
 }
 
 InstructionDescriptor _illegalInstruction(int opcode) => InstructionDescriptor(
@@ -98,8 +146,8 @@ InstructionDescriptor _illegalInstruction(int opcode) => InstructionDescriptor(
       1,
       'ILL',
       const <Operand>[
-        Operand(OperandType.none(), null),
-        Operand(OperandType.none(), null),
+        Operand.none(),
+        Operand.none(),
       ],
       const CyclesCount(0, 0),
     );
@@ -114,8 +162,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -127,8 +175,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -140,8 +188,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -153,8 +201,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -165,8 +213,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDX',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -177,8 +225,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'AND',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -189,8 +237,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'POP',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -201,8 +249,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -213,8 +261,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -225,8 +273,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -237,8 +285,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -249,11 +297,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
+
   // 0x10
   _illegalInstruction(0xFD10),
   const InstructionDescriptor(
@@ -263,8 +312,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -276,8 +325,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -289,8 +338,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -302,8 +351,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -314,8 +363,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDX',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -326,8 +375,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'AND',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -338,8 +387,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'POP',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -350,8 +399,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -362,8 +411,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -374,8 +423,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -386,8 +435,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -398,11 +447,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
+
   // 0x20
   _illegalInstruction(0xFD20),
   const InstructionDescriptor(
@@ -412,8 +462,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -425,8 +475,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -438,8 +488,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -451,8 +501,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -463,8 +513,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDX',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -475,8 +525,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'AND',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -487,8 +537,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'POP',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -499,8 +549,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -511,8 +561,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -523,8 +573,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -535,8 +585,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(10, 0),
   ),
@@ -547,11 +597,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
+
   // 0x30
   _illegalInstruction(0xFD30),
   _illegalInstruction(0xFD31),
@@ -578,8 +629,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -591,8 +642,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -608,8 +659,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDX',
     <Operand>[
-      Operand(OperandType.reg(), 'S'),
-      Operand(OperandType.none(), null),
+      Operand.reg('S'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -620,8 +671,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -632,8 +683,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STX',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -644,8 +695,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -656,8 +707,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'OFF',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
@@ -668,8 +719,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'BII',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(14, 0),
   ),
@@ -680,8 +731,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STX',
     <Operand>[
-      Operand(OperandType.reg(), 'S'),
-      Operand(OperandType.none(), null),
+      Operand.reg('S'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -692,11 +743,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
+
   // 0x50
   const InstructionDescriptor(
     // INC YH
@@ -705,8 +757,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -718,8 +770,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -735,8 +787,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'LDX',
     <Operand>[
-      Operand(OperandType.reg(), 'P'),
-      Operand(OperandType.none(), null),
+      Operand.reg('P'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -747,8 +799,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -759,8 +811,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STX',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -771,8 +823,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -784,8 +836,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'BII',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(14, 0),
   ),
@@ -796,8 +848,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STX',
     <Operand>[
-      Operand(OperandType.reg(), 'P'),
-      Operand(OperandType.none(), null),
+      Operand.reg('P'),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -808,11 +860,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
+
   // 0x60
   const InstructionDescriptor(
     // INC UH
@@ -821,8 +874,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -834,8 +887,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -852,8 +905,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -864,8 +917,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'STX',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -876,8 +929,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
@@ -889,8 +942,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'BII',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(14, 0),
   ),
@@ -902,11 +955,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     3,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(17, 0),
   ),
+
   // 0x70
   _illegalInstruction(0xFD70),
   _illegalInstruction(0xFD71),
@@ -924,6 +978,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   _illegalInstruction(0xFD7D),
   _illegalInstruction(0xFD7E),
   _illegalInstruction(0xFD7F),
+
   // 0x80
   _illegalInstruction(0xFD80),
   const InstructionDescriptor(
@@ -933,8 +988,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'SIE',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
@@ -951,8 +1006,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'PSH',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(14, 0),
   ),
@@ -964,8 +1019,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'POP',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.none(), null),
+      Operand.reg('A'),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
@@ -977,8 +1032,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'A'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(19, 0),
   ),
@@ -990,12 +1045,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'CDV',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
   _illegalInstruction(0xFD8F),
+
   // 0x90
   _illegalInstruction(0xFD90),
   _illegalInstruction(0xFD91),
@@ -1012,8 +1068,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'PSH',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(14, 0),
   ),
@@ -1027,14 +1083,15 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(19, 0),
   ),
   _illegalInstruction(0xFD9D),
   _illegalInstruction(0xFD9E),
   _illegalInstruction(0xFD9F),
+
   // 0xA0
   _illegalInstruction(0xFDA0),
   const InstructionDescriptor(
@@ -1044,8 +1101,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1057,8 +1114,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1070,8 +1127,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(16, 0),
   ),
@@ -1083,8 +1140,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1095,8 +1152,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'PSH',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(14, 0),
   ),
@@ -1107,8 +1164,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'AND',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1119,8 +1176,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'TTA',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -1131,8 +1188,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1143,8 +1200,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(19, 0),
   ),
@@ -1155,8 +1212,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -1167,8 +1224,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'STA',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -1179,11 +1236,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     4,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem1Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
+
   // 0xB0
   _illegalInstruction(0xFDB0),
   const InstructionDescriptor(
@@ -1193,8 +1251,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'HLT',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -1213,8 +1271,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ITA',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -1228,12 +1286,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'RIE',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
   _illegalInstruction(0xFDBF),
+
   // 0xC0
   const InstructionDescriptor(
     // RDP
@@ -1242,8 +1301,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'RDP',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
@@ -1254,8 +1313,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'SDP',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
@@ -1272,8 +1331,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'PSH',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.none(), null),
+      Operand.reg('A'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -1285,8 +1344,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADR',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -1298,8 +1357,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ATP',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -1311,12 +1370,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'AM0',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
   _illegalInstruction(0xFDCF),
+
   // 0xD0
   _illegalInstruction(0xFDD0),
   _illegalInstruction(0xFDD1),
@@ -1328,8 +1388,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DRR',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(16, 0),
   ),
@@ -1343,8 +1403,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'DRL',
     <Operand>[
-      Operand(OperandType.mem1Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem1Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(16, 0),
   ),
@@ -1357,8 +1417,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADR',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -1372,12 +1432,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'AM1',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
   _illegalInstruction(0xFDDF),
+
   // 0xE0
   _illegalInstruction(0xFDE0),
   _illegalInstruction(0xFDE1),
@@ -1395,8 +1456,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     5,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem1Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(23, 0),
   ),
@@ -1407,8 +1468,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ADR',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -1419,8 +1480,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     5,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem1Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(23, 0),
   ),
@@ -1431,8 +1492,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     2,
     'ATT',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -1443,8 +1504,8 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     5,
     'BII',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem1Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(20, 0),
   ),
@@ -1456,11 +1517,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     5,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem1Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem1Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(23, 0),
   ),
+
   // 0xF0
   _illegalInstruction(0xFDF0),
   _illegalInstruction(0xFDF1),
@@ -1490,8 +1552,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1502,8 +1564,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1514,8 +1576,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1526,8 +1588,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1538,8 +1600,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1550,8 +1612,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1562,8 +1624,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1574,8 +1636,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1586,8 +1648,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1598,8 +1660,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'AND',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1610,8 +1672,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1622,8 +1684,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1634,8 +1696,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -1646,8 +1708,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1658,8 +1720,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1670,11 +1732,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
+
   // 0x10
   const InstructionDescriptor(
     // SBC YL
@@ -1683,8 +1746,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1695,8 +1758,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1707,8 +1770,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1719,8 +1782,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1731,8 +1794,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1743,8 +1806,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1755,8 +1818,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1767,8 +1830,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1779,8 +1842,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1791,8 +1854,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'AND',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1803,8 +1866,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1815,8 +1878,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1827,8 +1890,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -1839,8 +1902,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1851,8 +1914,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1863,11 +1926,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
+
   // 0x20
   const InstructionDescriptor(
     // SBC UL
@@ -1876,8 +1940,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1888,8 +1952,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1900,8 +1964,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1912,8 +1976,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1924,8 +1988,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1936,8 +2000,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1948,8 +2012,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -1960,8 +2024,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1972,8 +2036,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -1984,8 +2048,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'AND',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -1996,8 +2060,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2008,8 +2072,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -2020,8 +2084,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCS',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -2032,8 +2096,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -2044,8 +2108,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'STA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2056,11 +2120,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
+
   // 0x30
   _illegalInstruction(0x0030),
   _illegalInstruction(0x0031),
@@ -2077,8 +2142,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'NOP',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2089,6 +2154,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   _illegalInstruction(0x003D),
   _illegalInstruction(0x003E),
   _illegalInstruction(0x003F),
+
   // 0x40
   const InstructionDescriptor(
     // INC XL
@@ -2097,8 +2163,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2109,8 +2175,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SIN',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2121,8 +2187,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2133,8 +2199,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SDE',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2145,8 +2211,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2157,8 +2223,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LIN',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2169,8 +2235,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2181,8 +2247,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDE',
     <Operand>[
-      Operand(OperandType.reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.reg('X'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2193,8 +2259,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('XH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2205,8 +2271,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2217,8 +2283,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('XL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2229,8 +2295,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2241,8 +2307,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('XH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2253,8 +2319,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BII',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(10, 0),
   ),
@@ -2265,8 +2331,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'XL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('XL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2277,11 +2343,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('X'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
+
   // 0x50
   const InstructionDescriptor(
     // INC YL
@@ -2290,8 +2357,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2302,8 +2369,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SIN',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2314,8 +2381,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2326,8 +2393,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SDE',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2338,8 +2405,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2350,8 +2417,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LIN',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2362,8 +2429,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2374,8 +2441,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDE',
     <Operand>[
-      Operand(OperandType.reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2386,8 +2453,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('YH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2398,8 +2465,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2410,8 +2477,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('YL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2422,8 +2489,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2434,8 +2501,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('YH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2446,8 +2513,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BII',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(10, 0),
   ),
@@ -2458,8 +2525,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'YL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('YL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2470,11 +2537,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('Y'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
+
   // 0x60
   const InstructionDescriptor(
     // INC UL
@@ -2483,8 +2551,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2495,8 +2563,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SIN',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2507,8 +2575,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UL'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2519,8 +2587,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SDE',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2531,8 +2599,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2543,8 +2611,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LIN',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2555,8 +2623,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2567,8 +2635,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDE',
     <Operand>[
-      Operand(OperandType.reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.reg('U'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2579,8 +2647,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('UH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2591,8 +2659,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2603,8 +2671,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('UL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -2615,8 +2683,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
@@ -2627,8 +2695,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('UH'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2639,8 +2707,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BII',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(10, 0),
   ),
@@ -2651,8 +2719,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('UL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -2663,11 +2731,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Reg('U'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(13, 0),
   ),
+
   // 0x70
   _illegalInstruction(0x0070),
   _illegalInstruction(0x0071),
@@ -2685,6 +2754,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   _illegalInstruction(0x007D),
   _illegalInstruction(0x007E),
   _illegalInstruction(0x007F),
+
   // 0x80
   const InstructionDescriptor(
     // SBC XH
@@ -2693,8 +2763,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2705,8 +2775,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCR',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2717,8 +2787,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2729,8 +2799,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCS',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2741,8 +2811,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2753,8 +2823,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BHR',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2765,8 +2835,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'XH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('XH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2777,8 +2847,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BHS',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2789,8 +2859,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LOP',
     <Operand>[
-      Operand(OperandType.reg(), 'UL'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('UL'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(8, 3),
   ),
@@ -2801,8 +2871,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BZR',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2813,8 +2883,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'RTI',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(14, 0),
   ),
@@ -2825,8 +2895,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BZS',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2837,8 +2907,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -2849,8 +2919,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BVR',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
@@ -2861,8 +2931,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCH',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
@@ -2873,11 +2943,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BVS',
     <Operand>[
-      Operand(OperandType.dispPlus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispPlus(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 2),
   ),
+
   // 0x90
   const InstructionDescriptor(
     // SBC YH
@@ -2886,8 +2957,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2898,8 +2969,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCR',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -2910,8 +2981,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2922,8 +2993,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCS',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -2934,8 +3005,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -2946,8 +3017,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BHR',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -2958,8 +3029,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'YH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('YH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -2970,8 +3041,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BHS',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -2983,8 +3054,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BZR',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -2995,8 +3066,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'RTN',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(11, 0),
   ),
@@ -3007,8 +3078,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BZS',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -3019,8 +3090,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'Y'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('Y'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -3031,8 +3102,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BVR',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
@@ -3043,8 +3114,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BCH',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
@@ -3055,11 +3126,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BVS',
     <Operand>[
-      Operand(OperandType.dispMinus(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.dispMinus(0x00),
+      Operand.none(),
     ],
     CyclesCount(9, 2),
   ),
+
   // 0xA0
   const InstructionDescriptor(
     // SBC UH
@@ -3068,8 +3140,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SBC',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -3080,8 +3152,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'SBC',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3092,8 +3164,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ADC',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -3104,8 +3176,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'ADC',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3116,8 +3188,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'LDA',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
@@ -3128,8 +3200,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'LDA',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
@@ -3140,8 +3212,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CPA',
     <Operand>[
-      Operand(OperandType.reg(), 'UH'),
-      Operand(OperandType.none(), null),
+      Operand.reg('UH'),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
@@ -3152,8 +3224,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'CPA',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3164,8 +3236,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SPV',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),
@@ -3176,8 +3248,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'AND',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3188,8 +3260,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'S'),
-      Operand(OperandType.imm16(), 0x0000),
+      Operand.reg('S'),
+      Operand.imm16(0x0000),
     ],
     CyclesCount(12, 0),
   ),
@@ -3200,8 +3272,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'ORA',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3212,8 +3284,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DCA',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'U'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('U'),
+      Operand.none(),
     ],
     CyclesCount(15, 0),
   ),
@@ -3224,8 +3296,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'EOR',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
@@ -3236,8 +3308,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'STA',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
@@ -3248,11 +3320,12 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'BIT',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.mem0Imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(13, 0),
   ),
+
   // 0xB0
   _illegalInstruction(0x00B0),
   const InstructionDescriptor(
@@ -3262,8 +3335,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'SBI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -3275,8 +3348,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ADI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -3288,8 +3361,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'LDI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(6, 0),
   ),
@@ -3301,8 +3374,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'CPI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -3313,8 +3386,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'RPV',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),
@@ -3325,20 +3398,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ANI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
   const InstructionDescriptor(
-    // JMP i, i
+    // JMP i, j
     InstructionCategory.jump(),
     0x00BA,
     3,
     'JMP',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
@@ -3349,8 +3422,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'ORI',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.reg('A'),
+      Operand.imm8(0x00),
     ],
     CyclesCount(7, 0),
   ),
@@ -3362,8 +3435,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'EAI',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -3374,8 +3447,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     3,
     'SJP',
     <Operand>[
-      Operand(OperandType.imm16(), 0x0000),
-      Operand(OperandType.none(), null),
+      Operand.imm16(0x0000),
+      Operand.none(),
     ],
     CyclesCount(19, 0),
   ),
@@ -3386,21 +3459,22 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'BII',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
+
   // 0xC0
   const InstructionDescriptor(
-    // VEJ (C0)
+    // VEJ (C0H)
     InstructionCategory.call(),
     0x00C0,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xC0),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xC0),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3411,20 +3485,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VCR',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (C2)
+    // VEJ (C2H)
     InstructionCategory.call(),
     0x00C2,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xC2),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xC2),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3435,20 +3509,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VCS',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (C4)
+    // VEJ (C4H)
     InstructionCategory.call(),
     0x00C4,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xC4),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xC4),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3459,20 +3533,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VHR',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (C6)
+    // VEJ (C6H)
     InstructionCategory.call(),
     0x00C6,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xC6),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xC6),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3483,20 +3557,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VHS',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (C8)
+    // VEJ (C8H)
     InstructionCategory.call(),
     0x00C8,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xC8),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xC8),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3507,20 +3581,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VZR',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (CA)
+    // VEJ (CAH)
     InstructionCategory.call(),
     0x00CA,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xCA),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xCA),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3531,20 +3605,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VZS',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
   const InstructionDescriptor(
-    // VEJ (CC)
+    // VEJ (CCH)
     InstructionCategory.call(),
     0x00CC,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xCC),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xCC),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3555,20 +3629,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VMJ',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(20, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (CE)
+    // VEJ (CEH)
     InstructionCategory.call(),
     0x00CE,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xCE),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xCE),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3579,21 +3653,22 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     2,
     'VVS',
     <Operand>[
-      Operand(OperandType.imm8(), 0x00),
-      Operand(OperandType.none(), null),
+      Operand.imm8(0x00),
+      Operand.none(),
     ],
     CyclesCount(8, 13),
   ),
+
   // 0xD0
   const InstructionDescriptor(
-    // VEJ (D0)
+    // VEJ (D0H)
     InstructionCategory.call(),
     0x00D0,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xD0),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xD0),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3604,20 +3679,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ROR',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (D2)
+    // VEJ (D2H)
     InstructionCategory.call(),
     0x00D2,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xD2),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xD2),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3628,20 +3703,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DRR',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (D4)
+    // VEJ (D4H)
     InstructionCategory.call(),
     0x00D4,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xD4),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xD4),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3652,20 +3727,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SHR',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(9, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (D6)
+    // VEJ (D6H)
     InstructionCategory.call(),
     0x00D6,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xD6),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xD6),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3676,20 +3751,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DRL',
     <Operand>[
-      Operand(OperandType.mem0Reg(), 'X'),
-      Operand(OperandType.none(), null),
+      Operand.mem0Reg('X'),
+      Operand.none(),
     ],
     CyclesCount(12, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (D8)
+    // VEJ (D8H)
     InstructionCategory.call(),
     0x00D8,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xD8),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xD8),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3700,20 +3775,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SHL',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (DA)
+    // VEJ (DAH)
     InstructionCategory.call(),
     0x00DA,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xDA),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xDA),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3724,20 +3799,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'ROL',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(8, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (DC)
+    // VEJ (DCH)
     InstructionCategory.call(),
     0x00DC,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xDC),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xDC),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3748,20 +3823,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'INC',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.none(), null),
+      Operand.reg('A'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (DE)
+    // VEJ (DEH)
     InstructionCategory.call(),
     0x00DE,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xDE),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xDE),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3772,21 +3847,22 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'DEC',
     <Operand>[
-      Operand(OperandType.reg(), 'A'),
-      Operand(OperandType.none(), null),
+      Operand.reg('A'),
+      Operand.none(),
     ],
     CyclesCount(5, 0),
   ),
+
   // 0xE0
   const InstructionDescriptor(
-    // VEJ (E0)
+    // VEJ (E0H)
     InstructionCategory.call(),
     0x00E0,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xE0),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xE0),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3797,20 +3873,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SPU',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (E2)
+    // VEJ (E2H)
     InstructionCategory.call(),
     0x00E2,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xE2),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xE2),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3821,46 +3897,46 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'RPU',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (E4)
+    // VEJ (E4H)
     InstructionCategory.call(),
     0x00E4,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xE4),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xE4),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
   _illegalInstruction(0x0E5),
   const InstructionDescriptor(
-    // VEJ (E6)
+    // VEJ (E6H)
     InstructionCategory.call(),
     0x00E6,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xE6),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xE6),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
   _illegalInstruction(0x00E7),
   const InstructionDescriptor(
-    // VEJ (E8)
+    // VEJ (E8H)
     InstructionCategory.call(),
     0x00E8,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xE8),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xE8),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3871,20 +3947,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     4,
     'ANI',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(19, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (EA)
+    // VEJ (EAH)
     InstructionCategory.call(),
     0x00EA,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xEA),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xEA),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3895,20 +3971,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     4,
     'ORI',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(19, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (EC)
+    // VEJ (ECH)
     InstructionCategory.call(),
     0x00EC,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xEC),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xEC),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3919,20 +3995,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     4,
     'BII',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(16, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (EE)
+    // VEJ (EEH)
     InstructionCategory.call(),
     0x00EE,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xEE),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xEE),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3943,21 +4019,22 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     4,
     'ADI',
     <Operand>[
-      Operand(OperandType.mem0Imm16(), 0x0000),
-      Operand(OperandType.imm8(), 0x00),
+      Operand.mem0Imm16(0x0000),
+      Operand.imm8(0x00),
     ],
     CyclesCount(19, 0),
   ),
+
   // 0xF0
   const InstructionDescriptor(
-    // VEJ (F0)
+    // VEJ (F0H)
     InstructionCategory.call(),
     0x00F0,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xF0),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xF0),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -3968,33 +4045,33 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'AEX',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(6, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (F2)
+    // VEJ (F2H)
     InstructionCategory.call(),
     0x00F2,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xF2),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xF2),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
   _illegalInstruction(0x00F3),
   const InstructionDescriptor(
-    // VEJ (F4)
+    // VEJ (F4H)
     InstructionCategory.call(),
     0x00F4,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xF4),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xF4),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -4005,20 +4082,20 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'TIN',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
   const InstructionDescriptor(
-    // VEJ (F6)
+    // VEJ (F6H)
     InstructionCategory.call(),
     0x00F6,
     1,
     'VEJ',
     <Operand>[
-      Operand(OperandType.mem0Imm8(), 0xF6),
-      Operand(OperandType.none(), null),
+      Operand.mem0Cst8(0xF6),
+      Operand.none(),
     ],
     CyclesCount(17, 0),
   ),
@@ -4029,8 +4106,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'CIN',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(7, 0),
   ),
@@ -4042,8 +4119,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'REC',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),
@@ -4055,8 +4132,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     1,
     'SEC',
     <Operand>[
-      Operand(OperandType.none(), null),
-      Operand(OperandType.none(), null),
+      Operand.none(),
+      Operand.none(),
     ],
     CyclesCount(4, 0),
   ),

@@ -1693,8 +1693,8 @@ abstract class _Return implements InstructionCategory {
   const factory _Return() = _$_Return;
 }
 
-class _$OperandTypeTearOff {
-  const _$OperandTypeTearOff();
+class _$OperandTearOff {
+  const _$OperandTearOff();
 
 // ignore: unused_element
   _None none() {
@@ -1702,87 +1702,107 @@ class _$OperandTypeTearOff {
   }
 
 // ignore: unused_element
-  _Reg reg() {
-    return const _Reg();
+  _Reg reg(String registerName) {
+    return _Reg(
+      registerName,
+    );
   }
 
 // ignore: unused_element
-  _Mem0Reg mem0Reg() {
-    return const _Mem0Reg();
+  _Mem0Reg mem0Reg(String registerName) {
+    return _Mem0Reg(
+      registerName,
+    );
   }
 
 // ignore: unused_element
-  _Mem0Imm16 mem0Imm16() {
-    return const _Mem0Imm16();
+  _Mem0Imm16 mem0Imm16(int value) {
+    return _Mem0Imm16(
+      value,
+    );
   }
 
 // ignore: unused_element
-  _Mem1Reg mem1Reg() {
-    return const _Mem1Reg();
+  _Mem1Reg mem1Reg(String registerName) {
+    return _Mem1Reg(
+      registerName,
+    );
   }
 
 // ignore: unused_element
-  _Mem1Imm16 mem1Imm16() {
-    return const _Mem1Imm16();
+  _Mem1Imm16 mem1Imm16(int value) {
+    return _Mem1Imm16(
+      value,
+    );
   }
 
 // ignore: unused_element
-  _Imm8 imm8() {
-    return const _Imm8();
+  _Imm8 imm8(int value) {
+    return _Imm8(
+      value,
+    );
   }
 
 // ignore: unused_element
-  _DispPlus dispPlus() {
-    return const _DispPlus();
+  _DispPlus dispPlus(int offset) {
+    return _DispPlus(
+      offset,
+    );
   }
 
 // ignore: unused_element
-  _DispMinus dispMinus() {
-    return const _DispMinus();
+  _DispMinus dispMinus(int offset) {
+    return _DispMinus(
+      offset,
+    );
   }
 
 // ignore: unused_element
-  _Mem0Imm8 mem0Imm8() {
-    return const _Mem0Imm8();
+  _Mem0Cst8 mem0Cst8(int constant) {
+    return _Mem0Cst8(
+      constant,
+    );
   }
 
 // ignore: unused_element
-  _Imm16 imm16() {
-    return const _Imm16();
+  _Imm16 imm16(int value) {
+    return _Imm16(
+      value,
+    );
   }
 }
 
 // ignore: unused_element
-const $OperandType = _$OperandTypeTearOff();
+const $Operand = _$OperandTearOff();
 
-mixin _$OperandType {
+mixin _$Operand {
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   });
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   });
   @optionalTypeArgs
@@ -1796,7 +1816,7 @@ mixin _$OperandType {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   });
   @optionalTypeArgs
@@ -1810,24 +1830,23 @@ mixin _$OperandType {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   });
 }
 
-abstract class $OperandTypeCopyWith<$Res> {
-  factory $OperandTypeCopyWith(
-          OperandType value, $Res Function(OperandType) then) =
-      _$OperandTypeCopyWithImpl<$Res>;
+abstract class $OperandCopyWith<$Res> {
+  factory $OperandCopyWith(Operand value, $Res Function(Operand) then) =
+      _$OperandCopyWithImpl<$Res>;
 }
 
-class _$OperandTypeCopyWithImpl<$Res> implements $OperandTypeCopyWith<$Res> {
-  _$OperandTypeCopyWithImpl(this._value, this._then);
+class _$OperandCopyWithImpl<$Res> implements $OperandCopyWith<$Res> {
+  _$OperandCopyWithImpl(this._value, this._then);
 
-  final OperandType _value;
+  final Operand _value;
   // ignore: unused_field
-  final $Res Function(OperandType) _then;
+  final $Res Function(Operand) _then;
 }
 
 abstract class _$NoneCopyWith<$Res> {
@@ -1835,7 +1854,7 @@ abstract class _$NoneCopyWith<$Res> {
       __$NoneCopyWithImpl<$Res>;
 }
 
-class __$NoneCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$NoneCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$NoneCopyWith<$Res> {
   __$NoneCopyWithImpl(_None _value, $Res Function(_None) _then)
       : super(_value, (v) => _then(v as _None));
@@ -1844,12 +1863,12 @@ class __$NoneCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
   _None get _value => super._value as _None;
 }
 
-class _$_None implements _None {
-  const _$_None();
+class _$_None extends _None {
+  const _$_None() : super._();
 
   @override
   String toString() {
-    return 'OperandType.none()';
+    return 'Operand.none()';
   }
 
   @override
@@ -1864,16 +1883,16 @@ class _$_None implements _None {
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -1884,7 +1903,7 @@ class _$_None implements _None {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return none();
   }
@@ -1893,16 +1912,16 @@ class _$_None implements _None {
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
@@ -1924,7 +1943,7 @@ class _$_None implements _None {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -1936,7 +1955,7 @@ class _$_None implements _None {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return none(this);
   }
@@ -1953,7 +1972,7 @@ class _$_None implements _None {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -1965,54 +1984,79 @@ class _$_None implements _None {
   }
 }
 
-abstract class _None implements OperandType {
+abstract class _None extends Operand {
+  const _None._() : super._();
   const factory _None() = _$_None;
 }
 
 abstract class _$RegCopyWith<$Res> {
   factory _$RegCopyWith(_Reg value, $Res Function(_Reg) then) =
       __$RegCopyWithImpl<$Res>;
+  $Res call({String registerName});
 }
 
-class __$RegCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$RegCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$RegCopyWith<$Res> {
   __$RegCopyWithImpl(_Reg _value, $Res Function(_Reg) _then)
       : super(_value, (v) => _then(v as _Reg));
 
   @override
   _Reg get _value => super._value as _Reg;
+
+  @override
+  $Res call({
+    Object registerName = freezed,
+  }) {
+    return _then(_Reg(
+      registerName == freezed ? _value.registerName : registerName as String,
+    ));
+  }
 }
 
-class _$_Reg implements _Reg {
-  const _$_Reg();
+class _$_Reg extends _Reg {
+  const _$_Reg(this.registerName)
+      : assert(registerName != null),
+        super._();
+
+  @override
+  final String registerName;
 
   @override
   String toString() {
-    return 'OperandType.reg()';
+    return 'Operand.reg(registerName: $registerName)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Reg);
+    return identical(this, other) ||
+        (other is _Reg &&
+            (identical(other.registerName, registerName) ||
+                const DeepCollectionEquality()
+                    .equals(other.registerName, registerName)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(registerName);
+
+  @override
+  _$RegCopyWith<_Reg> get copyWith =>
+      __$RegCopyWithImpl<_Reg>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2023,30 +2067,30 @@ class _$_Reg implements _Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return reg();
+    return reg(registerName);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (reg != null) {
-      return reg();
+      return reg(registerName);
     }
     return orElse();
   }
@@ -2063,7 +2107,7 @@ class _$_Reg implements _Reg {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2075,7 +2119,7 @@ class _$_Reg implements _Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return reg(this);
   }
@@ -2092,7 +2136,7 @@ class _$_Reg implements _Reg {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2104,54 +2148,82 @@ class _$_Reg implements _Reg {
   }
 }
 
-abstract class _Reg implements OperandType {
-  const factory _Reg() = _$_Reg;
+abstract class _Reg extends Operand {
+  const _Reg._() : super._();
+  const factory _Reg(String registerName) = _$_Reg;
+
+  String get registerName;
+  _$RegCopyWith<_Reg> get copyWith;
 }
 
 abstract class _$Mem0RegCopyWith<$Res> {
   factory _$Mem0RegCopyWith(_Mem0Reg value, $Res Function(_Mem0Reg) then) =
       __$Mem0RegCopyWithImpl<$Res>;
+  $Res call({String registerName});
 }
 
-class __$Mem0RegCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Mem0RegCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Mem0RegCopyWith<$Res> {
   __$Mem0RegCopyWithImpl(_Mem0Reg _value, $Res Function(_Mem0Reg) _then)
       : super(_value, (v) => _then(v as _Mem0Reg));
 
   @override
   _Mem0Reg get _value => super._value as _Mem0Reg;
+
+  @override
+  $Res call({
+    Object registerName = freezed,
+  }) {
+    return _then(_Mem0Reg(
+      registerName == freezed ? _value.registerName : registerName as String,
+    ));
+  }
 }
 
-class _$_Mem0Reg implements _Mem0Reg {
-  const _$_Mem0Reg();
+class _$_Mem0Reg extends _Mem0Reg {
+  const _$_Mem0Reg(this.registerName)
+      : assert(registerName != null),
+        super._();
+
+  @override
+  final String registerName;
 
   @override
   String toString() {
-    return 'OperandType.mem0Reg()';
+    return 'Operand.mem0Reg(registerName: $registerName)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Mem0Reg);
+    return identical(this, other) ||
+        (other is _Mem0Reg &&
+            (identical(other.registerName, registerName) ||
+                const DeepCollectionEquality()
+                    .equals(other.registerName, registerName)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(registerName);
+
+  @override
+  _$Mem0RegCopyWith<_Mem0Reg> get copyWith =>
+      __$Mem0RegCopyWithImpl<_Mem0Reg>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2162,30 +2234,30 @@ class _$_Mem0Reg implements _Mem0Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem0Reg();
+    return mem0Reg(registerName);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (mem0Reg != null) {
-      return mem0Reg();
+      return mem0Reg(registerName);
     }
     return orElse();
   }
@@ -2202,7 +2274,7 @@ class _$_Mem0Reg implements _Mem0Reg {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2214,7 +2286,7 @@ class _$_Mem0Reg implements _Mem0Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return mem0Reg(this);
   }
@@ -2231,7 +2303,7 @@ class _$_Mem0Reg implements _Mem0Reg {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2243,55 +2315,82 @@ class _$_Mem0Reg implements _Mem0Reg {
   }
 }
 
-abstract class _Mem0Reg implements OperandType {
-  const factory _Mem0Reg() = _$_Mem0Reg;
+abstract class _Mem0Reg extends Operand {
+  const _Mem0Reg._() : super._();
+  const factory _Mem0Reg(String registerName) = _$_Mem0Reg;
+
+  String get registerName;
+  _$Mem0RegCopyWith<_Mem0Reg> get copyWith;
 }
 
 abstract class _$Mem0Imm16CopyWith<$Res> {
   factory _$Mem0Imm16CopyWith(
           _Mem0Imm16 value, $Res Function(_Mem0Imm16) then) =
       __$Mem0Imm16CopyWithImpl<$Res>;
+  $Res call({int value});
 }
 
-class __$Mem0Imm16CopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Mem0Imm16CopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Mem0Imm16CopyWith<$Res> {
   __$Mem0Imm16CopyWithImpl(_Mem0Imm16 _value, $Res Function(_Mem0Imm16) _then)
       : super(_value, (v) => _then(v as _Mem0Imm16));
 
   @override
   _Mem0Imm16 get _value => super._value as _Mem0Imm16;
+
+  @override
+  $Res call({
+    Object value = freezed,
+  }) {
+    return _then(_Mem0Imm16(
+      value == freezed ? _value.value : value as int,
+    ));
+  }
 }
 
-class _$_Mem0Imm16 implements _Mem0Imm16 {
-  const _$_Mem0Imm16();
+class _$_Mem0Imm16 extends _Mem0Imm16 {
+  const _$_Mem0Imm16(this.value)
+      : assert(value != null),
+        super._();
+
+  @override
+  final int value;
 
   @override
   String toString() {
-    return 'OperandType.mem0Imm16()';
+    return 'Operand.mem0Imm16(value: $value)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Mem0Imm16);
+    return identical(this, other) ||
+        (other is _Mem0Imm16 &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(value);
+
+  @override
+  _$Mem0Imm16CopyWith<_Mem0Imm16> get copyWith =>
+      __$Mem0Imm16CopyWithImpl<_Mem0Imm16>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2302,30 +2401,30 @@ class _$_Mem0Imm16 implements _Mem0Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem0Imm16();
+    return mem0Imm16(value);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (mem0Imm16 != null) {
-      return mem0Imm16();
+      return mem0Imm16(value);
     }
     return orElse();
   }
@@ -2342,7 +2441,7 @@ class _$_Mem0Imm16 implements _Mem0Imm16 {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2354,7 +2453,7 @@ class _$_Mem0Imm16 implements _Mem0Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return mem0Imm16(this);
   }
@@ -2371,7 +2470,7 @@ class _$_Mem0Imm16 implements _Mem0Imm16 {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2383,54 +2482,82 @@ class _$_Mem0Imm16 implements _Mem0Imm16 {
   }
 }
 
-abstract class _Mem0Imm16 implements OperandType {
-  const factory _Mem0Imm16() = _$_Mem0Imm16;
+abstract class _Mem0Imm16 extends Operand {
+  const _Mem0Imm16._() : super._();
+  const factory _Mem0Imm16(int value) = _$_Mem0Imm16;
+
+  int get value;
+  _$Mem0Imm16CopyWith<_Mem0Imm16> get copyWith;
 }
 
 abstract class _$Mem1RegCopyWith<$Res> {
   factory _$Mem1RegCopyWith(_Mem1Reg value, $Res Function(_Mem1Reg) then) =
       __$Mem1RegCopyWithImpl<$Res>;
+  $Res call({String registerName});
 }
 
-class __$Mem1RegCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Mem1RegCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Mem1RegCopyWith<$Res> {
   __$Mem1RegCopyWithImpl(_Mem1Reg _value, $Res Function(_Mem1Reg) _then)
       : super(_value, (v) => _then(v as _Mem1Reg));
 
   @override
   _Mem1Reg get _value => super._value as _Mem1Reg;
+
+  @override
+  $Res call({
+    Object registerName = freezed,
+  }) {
+    return _then(_Mem1Reg(
+      registerName == freezed ? _value.registerName : registerName as String,
+    ));
+  }
 }
 
-class _$_Mem1Reg implements _Mem1Reg {
-  const _$_Mem1Reg();
+class _$_Mem1Reg extends _Mem1Reg {
+  const _$_Mem1Reg(this.registerName)
+      : assert(registerName != null),
+        super._();
+
+  @override
+  final String registerName;
 
   @override
   String toString() {
-    return 'OperandType.mem1Reg()';
+    return 'Operand.mem1Reg(registerName: $registerName)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Mem1Reg);
+    return identical(this, other) ||
+        (other is _Mem1Reg &&
+            (identical(other.registerName, registerName) ||
+                const DeepCollectionEquality()
+                    .equals(other.registerName, registerName)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(registerName);
+
+  @override
+  _$Mem1RegCopyWith<_Mem1Reg> get copyWith =>
+      __$Mem1RegCopyWithImpl<_Mem1Reg>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2441,30 +2568,30 @@ class _$_Mem1Reg implements _Mem1Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem1Reg();
+    return mem1Reg(registerName);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (mem1Reg != null) {
-      return mem1Reg();
+      return mem1Reg(registerName);
     }
     return orElse();
   }
@@ -2481,7 +2608,7 @@ class _$_Mem1Reg implements _Mem1Reg {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2493,7 +2620,7 @@ class _$_Mem1Reg implements _Mem1Reg {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return mem1Reg(this);
   }
@@ -2510,7 +2637,7 @@ class _$_Mem1Reg implements _Mem1Reg {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2522,55 +2649,82 @@ class _$_Mem1Reg implements _Mem1Reg {
   }
 }
 
-abstract class _Mem1Reg implements OperandType {
-  const factory _Mem1Reg() = _$_Mem1Reg;
+abstract class _Mem1Reg extends Operand {
+  const _Mem1Reg._() : super._();
+  const factory _Mem1Reg(String registerName) = _$_Mem1Reg;
+
+  String get registerName;
+  _$Mem1RegCopyWith<_Mem1Reg> get copyWith;
 }
 
 abstract class _$Mem1Imm16CopyWith<$Res> {
   factory _$Mem1Imm16CopyWith(
           _Mem1Imm16 value, $Res Function(_Mem1Imm16) then) =
       __$Mem1Imm16CopyWithImpl<$Res>;
+  $Res call({int value});
 }
 
-class __$Mem1Imm16CopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Mem1Imm16CopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Mem1Imm16CopyWith<$Res> {
   __$Mem1Imm16CopyWithImpl(_Mem1Imm16 _value, $Res Function(_Mem1Imm16) _then)
       : super(_value, (v) => _then(v as _Mem1Imm16));
 
   @override
   _Mem1Imm16 get _value => super._value as _Mem1Imm16;
+
+  @override
+  $Res call({
+    Object value = freezed,
+  }) {
+    return _then(_Mem1Imm16(
+      value == freezed ? _value.value : value as int,
+    ));
+  }
 }
 
-class _$_Mem1Imm16 implements _Mem1Imm16 {
-  const _$_Mem1Imm16();
+class _$_Mem1Imm16 extends _Mem1Imm16 {
+  const _$_Mem1Imm16(this.value)
+      : assert(value != null),
+        super._();
+
+  @override
+  final int value;
 
   @override
   String toString() {
-    return 'OperandType.mem1Imm16()';
+    return 'Operand.mem1Imm16(value: $value)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Mem1Imm16);
+    return identical(this, other) ||
+        (other is _Mem1Imm16 &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(value);
+
+  @override
+  _$Mem1Imm16CopyWith<_Mem1Imm16> get copyWith =>
+      __$Mem1Imm16CopyWithImpl<_Mem1Imm16>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2581,30 +2735,30 @@ class _$_Mem1Imm16 implements _Mem1Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem1Imm16();
+    return mem1Imm16(value);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (mem1Imm16 != null) {
-      return mem1Imm16();
+      return mem1Imm16(value);
     }
     return orElse();
   }
@@ -2621,7 +2775,7 @@ class _$_Mem1Imm16 implements _Mem1Imm16 {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2633,7 +2787,7 @@ class _$_Mem1Imm16 implements _Mem1Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return mem1Imm16(this);
   }
@@ -2650,7 +2804,7 @@ class _$_Mem1Imm16 implements _Mem1Imm16 {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2662,54 +2816,81 @@ class _$_Mem1Imm16 implements _Mem1Imm16 {
   }
 }
 
-abstract class _Mem1Imm16 implements OperandType {
-  const factory _Mem1Imm16() = _$_Mem1Imm16;
+abstract class _Mem1Imm16 extends Operand {
+  const _Mem1Imm16._() : super._();
+  const factory _Mem1Imm16(int value) = _$_Mem1Imm16;
+
+  int get value;
+  _$Mem1Imm16CopyWith<_Mem1Imm16> get copyWith;
 }
 
 abstract class _$Imm8CopyWith<$Res> {
   factory _$Imm8CopyWith(_Imm8 value, $Res Function(_Imm8) then) =
       __$Imm8CopyWithImpl<$Res>;
+  $Res call({int value});
 }
 
-class __$Imm8CopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Imm8CopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Imm8CopyWith<$Res> {
   __$Imm8CopyWithImpl(_Imm8 _value, $Res Function(_Imm8) _then)
       : super(_value, (v) => _then(v as _Imm8));
 
   @override
   _Imm8 get _value => super._value as _Imm8;
+
+  @override
+  $Res call({
+    Object value = freezed,
+  }) {
+    return _then(_Imm8(
+      value == freezed ? _value.value : value as int,
+    ));
+  }
 }
 
-class _$_Imm8 implements _Imm8 {
-  const _$_Imm8();
+class _$_Imm8 extends _Imm8 {
+  const _$_Imm8(this.value)
+      : assert(value != null),
+        super._();
+
+  @override
+  final int value;
 
   @override
   String toString() {
-    return 'OperandType.imm8()';
+    return 'Operand.imm8(value: $value)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Imm8);
+    return identical(this, other) ||
+        (other is _Imm8 &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(value);
+
+  @override
+  _$Imm8CopyWith<_Imm8> get copyWith =>
+      __$Imm8CopyWithImpl<_Imm8>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2720,30 +2901,30 @@ class _$_Imm8 implements _Imm8 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return imm8();
+    return imm8(value);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (imm8 != null) {
-      return imm8();
+      return imm8(value);
     }
     return orElse();
   }
@@ -2760,7 +2941,7 @@ class _$_Imm8 implements _Imm8 {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2772,7 +2953,7 @@ class _$_Imm8 implements _Imm8 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return imm8(this);
   }
@@ -2789,7 +2970,7 @@ class _$_Imm8 implements _Imm8 {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2801,54 +2982,81 @@ class _$_Imm8 implements _Imm8 {
   }
 }
 
-abstract class _Imm8 implements OperandType {
-  const factory _Imm8() = _$_Imm8;
+abstract class _Imm8 extends Operand {
+  const _Imm8._() : super._();
+  const factory _Imm8(int value) = _$_Imm8;
+
+  int get value;
+  _$Imm8CopyWith<_Imm8> get copyWith;
 }
 
 abstract class _$DispPlusCopyWith<$Res> {
   factory _$DispPlusCopyWith(_DispPlus value, $Res Function(_DispPlus) then) =
       __$DispPlusCopyWithImpl<$Res>;
+  $Res call({int offset});
 }
 
-class __$DispPlusCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$DispPlusCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$DispPlusCopyWith<$Res> {
   __$DispPlusCopyWithImpl(_DispPlus _value, $Res Function(_DispPlus) _then)
       : super(_value, (v) => _then(v as _DispPlus));
 
   @override
   _DispPlus get _value => super._value as _DispPlus;
+
+  @override
+  $Res call({
+    Object offset = freezed,
+  }) {
+    return _then(_DispPlus(
+      offset == freezed ? _value.offset : offset as int,
+    ));
+  }
 }
 
-class _$_DispPlus implements _DispPlus {
-  const _$_DispPlus();
+class _$_DispPlus extends _DispPlus {
+  const _$_DispPlus(this.offset)
+      : assert(offset != null),
+        super._();
+
+  @override
+  final int offset;
 
   @override
   String toString() {
-    return 'OperandType.dispPlus()';
+    return 'Operand.dispPlus(offset: $offset)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _DispPlus);
+    return identical(this, other) ||
+        (other is _DispPlus &&
+            (identical(other.offset, offset) ||
+                const DeepCollectionEquality().equals(other.offset, offset)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(offset);
+
+  @override
+  _$DispPlusCopyWith<_DispPlus> get copyWith =>
+      __$DispPlusCopyWithImpl<_DispPlus>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2859,30 +3067,30 @@ class _$_DispPlus implements _DispPlus {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return dispPlus();
+    return dispPlus(offset);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (dispPlus != null) {
-      return dispPlus();
+      return dispPlus(offset);
     }
     return orElse();
   }
@@ -2899,7 +3107,7 @@ class _$_DispPlus implements _DispPlus {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -2911,7 +3119,7 @@ class _$_DispPlus implements _DispPlus {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return dispPlus(this);
   }
@@ -2928,7 +3136,7 @@ class _$_DispPlus implements _DispPlus {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -2940,55 +3148,82 @@ class _$_DispPlus implements _DispPlus {
   }
 }
 
-abstract class _DispPlus implements OperandType {
-  const factory _DispPlus() = _$_DispPlus;
+abstract class _DispPlus extends Operand {
+  const _DispPlus._() : super._();
+  const factory _DispPlus(int offset) = _$_DispPlus;
+
+  int get offset;
+  _$DispPlusCopyWith<_DispPlus> get copyWith;
 }
 
 abstract class _$DispMinusCopyWith<$Res> {
   factory _$DispMinusCopyWith(
           _DispMinus value, $Res Function(_DispMinus) then) =
       __$DispMinusCopyWithImpl<$Res>;
+  $Res call({int offset});
 }
 
-class __$DispMinusCopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$DispMinusCopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$DispMinusCopyWith<$Res> {
   __$DispMinusCopyWithImpl(_DispMinus _value, $Res Function(_DispMinus) _then)
       : super(_value, (v) => _then(v as _DispMinus));
 
   @override
   _DispMinus get _value => super._value as _DispMinus;
+
+  @override
+  $Res call({
+    Object offset = freezed,
+  }) {
+    return _then(_DispMinus(
+      offset == freezed ? _value.offset : offset as int,
+    ));
+  }
 }
 
-class _$_DispMinus implements _DispMinus {
-  const _$_DispMinus();
+class _$_DispMinus extends _DispMinus {
+  const _$_DispMinus(this.offset)
+      : assert(offset != null),
+        super._();
+
+  @override
+  final int offset;
 
   @override
   String toString() {
-    return 'OperandType.dispMinus()';
+    return 'Operand.dispMinus(offset: $offset)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _DispMinus);
+    return identical(this, other) ||
+        (other is _DispMinus &&
+            (identical(other.offset, offset) ||
+                const DeepCollectionEquality().equals(other.offset, offset)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(offset);
+
+  @override
+  _$DispMinusCopyWith<_DispMinus> get copyWith =>
+      __$DispMinusCopyWithImpl<_DispMinus>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -2999,30 +3234,30 @@ class _$_DispMinus implements _DispMinus {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return dispMinus();
+    return dispMinus(offset);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (dispMinus != null) {
-      return dispMinus();
+      return dispMinus(offset);
     }
     return orElse();
   }
@@ -3039,7 +3274,7 @@ class _$_DispMinus implements _DispMinus {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -3051,7 +3286,7 @@ class _$_DispMinus implements _DispMinus {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return dispMinus(this);
   }
@@ -3068,7 +3303,7 @@ class _$_DispMinus implements _DispMinus {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -3080,54 +3315,82 @@ class _$_DispMinus implements _DispMinus {
   }
 }
 
-abstract class _DispMinus implements OperandType {
-  const factory _DispMinus() = _$_DispMinus;
+abstract class _DispMinus extends Operand {
+  const _DispMinus._() : super._();
+  const factory _DispMinus(int offset) = _$_DispMinus;
+
+  int get offset;
+  _$DispMinusCopyWith<_DispMinus> get copyWith;
 }
 
-abstract class _$Mem0Imm8CopyWith<$Res> {
-  factory _$Mem0Imm8CopyWith(_Mem0Imm8 value, $Res Function(_Mem0Imm8) then) =
-      __$Mem0Imm8CopyWithImpl<$Res>;
+abstract class _$Mem0Cst8CopyWith<$Res> {
+  factory _$Mem0Cst8CopyWith(_Mem0Cst8 value, $Res Function(_Mem0Cst8) then) =
+      __$Mem0Cst8CopyWithImpl<$Res>;
+  $Res call({int constant});
 }
 
-class __$Mem0Imm8CopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
-    implements _$Mem0Imm8CopyWith<$Res> {
-  __$Mem0Imm8CopyWithImpl(_Mem0Imm8 _value, $Res Function(_Mem0Imm8) _then)
-      : super(_value, (v) => _then(v as _Mem0Imm8));
+class __$Mem0Cst8CopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
+    implements _$Mem0Cst8CopyWith<$Res> {
+  __$Mem0Cst8CopyWithImpl(_Mem0Cst8 _value, $Res Function(_Mem0Cst8) _then)
+      : super(_value, (v) => _then(v as _Mem0Cst8));
 
   @override
-  _Mem0Imm8 get _value => super._value as _Mem0Imm8;
+  _Mem0Cst8 get _value => super._value as _Mem0Cst8;
+
+  @override
+  $Res call({
+    Object constant = freezed,
+  }) {
+    return _then(_Mem0Cst8(
+      constant == freezed ? _value.constant : constant as int,
+    ));
+  }
 }
 
-class _$_Mem0Imm8 implements _Mem0Imm8 {
-  const _$_Mem0Imm8();
+class _$_Mem0Cst8 extends _Mem0Cst8 {
+  const _$_Mem0Cst8(this.constant)
+      : assert(constant != null),
+        super._();
+
+  @override
+  final int constant;
 
   @override
   String toString() {
-    return 'OperandType.mem0Imm8()';
+    return 'Operand.mem0Cst8(constant: $constant)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Mem0Imm8);
+    return identical(this, other) ||
+        (other is _Mem0Cst8 &&
+            (identical(other.constant, constant) ||
+                const DeepCollectionEquality()
+                    .equals(other.constant, constant)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(constant);
+
+  @override
+  _$Mem0Cst8CopyWith<_Mem0Cst8> get copyWith =>
+      __$Mem0Cst8CopyWithImpl<_Mem0Cst8>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -3138,30 +3401,30 @@ class _$_Mem0Imm8 implements _Mem0Imm8 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem0Imm8();
+    return mem0Cst8(constant);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
-    if (mem0Imm8 != null) {
-      return mem0Imm8();
+    if (mem0Cst8 != null) {
+      return mem0Cst8(constant);
     }
     return orElse();
   }
@@ -3178,7 +3441,7 @@ class _$_Mem0Imm8 implements _Mem0Imm8 {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -3190,9 +3453,9 @@ class _$_Mem0Imm8 implements _Mem0Imm8 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return mem0Imm8(this);
+    return mem0Cst8(this);
   }
 
   @override
@@ -3207,66 +3470,93 @@ class _$_Mem0Imm8 implements _Mem0Imm8 {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
-    if (mem0Imm8 != null) {
-      return mem0Imm8(this);
+    if (mem0Cst8 != null) {
+      return mem0Cst8(this);
     }
     return orElse();
   }
 }
 
-abstract class _Mem0Imm8 implements OperandType {
-  const factory _Mem0Imm8() = _$_Mem0Imm8;
+abstract class _Mem0Cst8 extends Operand {
+  const _Mem0Cst8._() : super._();
+  const factory _Mem0Cst8(int constant) = _$_Mem0Cst8;
+
+  int get constant;
+  _$Mem0Cst8CopyWith<_Mem0Cst8> get copyWith;
 }
 
 abstract class _$Imm16CopyWith<$Res> {
   factory _$Imm16CopyWith(_Imm16 value, $Res Function(_Imm16) then) =
       __$Imm16CopyWithImpl<$Res>;
+  $Res call({int value});
 }
 
-class __$Imm16CopyWithImpl<$Res> extends _$OperandTypeCopyWithImpl<$Res>
+class __$Imm16CopyWithImpl<$Res> extends _$OperandCopyWithImpl<$Res>
     implements _$Imm16CopyWith<$Res> {
   __$Imm16CopyWithImpl(_Imm16 _value, $Res Function(_Imm16) _then)
       : super(_value, (v) => _then(v as _Imm16));
 
   @override
   _Imm16 get _value => super._value as _Imm16;
+
+  @override
+  $Res call({
+    Object value = freezed,
+  }) {
+    return _then(_Imm16(
+      value == freezed ? _value.value : value as int,
+    ));
+  }
 }
 
-class _$_Imm16 implements _Imm16 {
-  const _$_Imm16();
+class _$_Imm16 extends _Imm16 {
+  const _$_Imm16(this.value)
+      : assert(value != null),
+        super._();
+
+  @override
+  final int value;
 
   @override
   String toString() {
-    return 'OperandType.imm16()';
+    return 'Operand.imm16(value: $value)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Imm16);
+    return identical(this, other) ||
+        (other is _Imm16 &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(value);
+
+  @override
+  _$Imm16CopyWith<_Imm16> get copyWith =>
+      __$Imm16CopyWithImpl<_Imm16>(this, _$identity);
 
   @override
   @optionalTypeArgs
   Result when<Result extends Object>({
     @required Result none(),
-    @required Result reg(),
-    @required Result mem0Reg(),
-    @required Result mem0Imm16(),
-    @required Result mem1Reg(),
-    @required Result mem1Imm16(),
-    @required Result imm8(),
-    @required Result dispPlus(),
-    @required Result dispMinus(),
-    @required Result mem0Imm8(),
-    @required Result imm16(),
+    @required Result reg(String registerName),
+    @required Result mem0Reg(String registerName),
+    @required Result mem0Imm16(int value),
+    @required Result mem1Reg(String registerName),
+    @required Result mem1Imm16(int value),
+    @required Result imm8(int value),
+    @required Result dispPlus(int offset),
+    @required Result dispMinus(int offset),
+    @required Result mem0Cst8(int constant),
+    @required Result imm16(int value),
   }) {
     assert(none != null);
     assert(reg != null);
@@ -3277,30 +3567,30 @@ class _$_Imm16 implements _Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
-    return imm16();
+    return imm16(value);
   }
 
   @override
   @optionalTypeArgs
   Result maybeWhen<Result extends Object>({
     Result none(),
-    Result reg(),
-    Result mem0Reg(),
-    Result mem0Imm16(),
-    Result mem1Reg(),
-    Result mem1Imm16(),
-    Result imm8(),
-    Result dispPlus(),
-    Result dispMinus(),
-    Result mem0Imm8(),
-    Result imm16(),
+    Result reg(String registerName),
+    Result mem0Reg(String registerName),
+    Result mem0Imm16(int value),
+    Result mem1Reg(String registerName),
+    Result mem1Imm16(int value),
+    Result imm8(int value),
+    Result dispPlus(int offset),
+    Result dispMinus(int offset),
+    Result mem0Cst8(int constant),
+    Result imm16(int value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
     if (imm16 != null) {
-      return imm16();
+      return imm16(value);
     }
     return orElse();
   }
@@ -3317,7 +3607,7 @@ class _$_Imm16 implements _Imm16 {
     @required Result imm8(_Imm8 value),
     @required Result dispPlus(_DispPlus value),
     @required Result dispMinus(_DispMinus value),
-    @required Result mem0Imm8(_Mem0Imm8 value),
+    @required Result mem0Cst8(_Mem0Cst8 value),
     @required Result imm16(_Imm16 value),
   }) {
     assert(none != null);
@@ -3329,7 +3619,7 @@ class _$_Imm16 implements _Imm16 {
     assert(imm8 != null);
     assert(dispPlus != null);
     assert(dispMinus != null);
-    assert(mem0Imm8 != null);
+    assert(mem0Cst8 != null);
     assert(imm16 != null);
     return imm16(this);
   }
@@ -3346,7 +3636,7 @@ class _$_Imm16 implements _Imm16 {
     Result imm8(_Imm8 value),
     Result dispPlus(_DispPlus value),
     Result dispMinus(_DispMinus value),
-    Result mem0Imm8(_Mem0Imm8 value),
+    Result mem0Cst8(_Mem0Cst8 value),
     Result imm16(_Imm16 value),
     @required Result orElse(),
   }) {
@@ -3358,6 +3648,10 @@ class _$_Imm16 implements _Imm16 {
   }
 }
 
-abstract class _Imm16 implements OperandType {
-  const factory _Imm16() = _$_Imm16;
+abstract class _Imm16 extends Operand {
+  const _Imm16._() : super._();
+  const factory _Imm16(int value) = _$_Imm16;
+
+  int get value;
+  _$Imm16CopyWith<_Imm16> get copyWith;
 }

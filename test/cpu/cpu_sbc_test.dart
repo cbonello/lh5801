@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../tools/lh5801_add_table.dart';
+import '../../tools/lh5801_add_table.dart';
 import 'helpers.dart';
 
 void main() {
@@ -11,9 +11,9 @@ void main() {
       lh5801.resetTestEnv();
     });
 
-    group('ADC [page 25]', () {
+    group('SBC [page 27]', () {
       test('should return the expected results', () {
-        final List<int> opcodes = <int>[0xFD, 0x03];
+        final List<int> opcodes = <int>[0xFD, 0x01];
         memLoad(0x0000, opcodes);
 
         for (final bool carry in <bool>[true, false]) {
@@ -26,7 +26,7 @@ void main() {
               lh5801.step(0x0000);
               expect(lh5801.cpu.p.value, equals(opcodes.length));
 
-              final String key = generateTableKey(op1, op2, carry);
+              final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
               expect(addTable.containsKey(key), isTrue);
               final ALUResult expected = addTable[key];
 

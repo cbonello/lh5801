@@ -441,7 +441,6 @@ class LH5801CPU extends LH5801State {
         _cpi(a.value, memRead(_me1(x.value)));
         break;
       case 0x08: // LDX X
-        //_ldx(x);
         break;
       case 0x09: // AND #(X)
         _andAccumulator(memRead(_me1(x.value)));
@@ -750,7 +749,7 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode FD${hex8(opcode)} at address ${meHex16(startP)}',
+          'illegal opcode FD${HexDump.hex8(opcode)} at address ${HexDump.meHex16(startP)}',
         );
     }
 
@@ -1421,7 +1420,7 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode ${hex8(opcode)} at address ${meHex16(startP)}',
+          'illegal opcode ${HexDump.hex8(opcode)} at address ${HexDump.meHex16(startP)}',
         );
     }
 
