@@ -4,7 +4,7 @@ analyzer:
   exclude:
     - lib/**/*.g.dart
     - lib/**/*.freezed.dart
-    - test/.test_cov.dart
+    - test/.test_coverage.dart
     - tools/*
 
 linter:
