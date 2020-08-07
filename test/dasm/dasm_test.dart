@@ -92,6 +92,17 @@ void main() {
         expect(instruction.descriptor.toString(), equals('LDX X'));
       });
 
+      test('OperandType.mem0Reg()', () {
+        final InstructionDescriptor expectedDescriptor = instructionTable[0x2D];
+        memLoad(0x0000, <int>[0x2D]);
+
+        instruction = dasm.dump(0x0000);
+        expect(instruction.address, equals(0x0000));
+        expect(instruction.length, equals(1));
+        check(instruction.descriptor, expectedDescriptor);
+        expect(instruction.descriptor.toString(), equals('EOR (U)'));
+      });
+
       test('OperandType.mem0Imm16()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xA1];
         memLoad(0x0000, <int>[0xA1, 0x12, 0x34]);
