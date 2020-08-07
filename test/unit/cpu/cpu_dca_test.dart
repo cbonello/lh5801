@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../../tools/lh5801_add_table.dart';
+import '../../../tools/lh5801_add_table.dart';
 import 'helpers.dart';
 
 void main() {
@@ -11,9 +11,9 @@ void main() {
       lh5801.resetTestEnv();
     });
 
-    group('DCS [page 28]', () {
+    group('DCA [page 26]', () {
       test('should return the expected results', () {
-        final List<int> opcodes = <int>[0xFD, 0x0C];
+        final List<int> opcodes = <int>[0xFD, 0x8C];
         memLoad(0x0000, opcodes);
 
         for (final bool carry in <bool>[true, false]) {
@@ -30,12 +30,16 @@ void main() {
                   lh5801.step(0x0000);
                   expect(lh5801.cpu.p.value, equals(opcodes.length));
 
-                  final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
+                  final String key = generateTableKey(
+                    op1 + 0x66,
+                    op2,
+                    carry,
+                  );
                   expect(addTable.containsKey(key), isTrue);
                   final ALUResult expected = addTable[key];
 
                   expect(lh5801.cpu.t.c, equals((expected.flags & 0x01) != 0));
-                  expect(lh5801.cpu.t.h, equals((expected.flags & 0x10) != 0));
+                  expect(lh5801.cpu.t.h, equals(((expected.flags & 0x10) >> 4) != 0));
 
                   int expectedValue = expected.value;
                   if (lh5801.cpu.t.c == false && lh5801.cpu.t.h == false) {
