@@ -6,6 +6,26 @@ import 'helpers.dart';
 
 void main() {
   group('LH5801Emulator', () {
+    test('should raise an exception for invalid arguments', () {
+      expect(
+        () => LH5801Emulator(
+          clockFrequency: 1300000,
+          memRead: null,
+          memWrite: memWrite,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+
+      expect(
+        () => LH5801Emulator(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: null,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+    });
+
     test('should be initialized properly', () {
       final LH5801Emulator emulator = LH5801Emulator(
         clockFrequency: 1300000,
@@ -942,6 +962,18 @@ void main() {
         });
 
         group('LDX [page 35]', () {
+          test('LDX X', () {
+            testLDXReg(emulator, <int>[0xFD, 0x08], emulator.cpu.x);
+          });
+
+          test('LDX Y', () {
+            testLDXReg(emulator, <int>[0xFD, 0x18], emulator.cpu.y);
+          });
+
+          test('LDX U', () {
+            testLDXReg(emulator, <int>[0xFD, 0x28], emulator.cpu.u);
+          });
+
           test('LDX S', () {
             testLDXReg(emulator, <int>[0xFD, 0x48], emulator.cpu.s);
           });
