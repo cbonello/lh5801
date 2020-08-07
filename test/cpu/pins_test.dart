@@ -41,7 +41,7 @@ void main() {
       expect(pins1.miPin, equals(pins2.miPin));
       expect(pins1.miPin.hashCode, equals(pins2.miPin.hashCode));
 
-      expect(pins1 == pins2, isTrue);
+      expect(pins1, equals(pins2));
       expect(pins1.hashCode, equals(pins2.hashCode));
     });
   });

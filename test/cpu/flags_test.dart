@@ -38,5 +38,13 @@ void main() {
       final LH5801Flags flags1 = LH5801Flags(h: true, ie: true)..reset();
       expect(flags1.statusRegister, equals(0x00));
     });
+
+    test('toString() should return the expected value', () {
+      final LH5801Flags flags = LH5801Flags(h: true, ie: true);
+      expect(
+        flags.toString(),
+        equals('LH5801Flags(H: true, V: false, Z: false, IE: true, C: false)'),
+      );
+    });
   });
 }

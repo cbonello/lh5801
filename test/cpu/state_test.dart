@@ -39,6 +39,11 @@ void main() {
         expect(reg1, equals(reg2));
         expect(reg1.hashCode, equals(reg2.hashCode));
       });
+
+      test('toString() should return the expected value', () {
+        final Register8 reg = Register8(128);
+        expect(reg.toString(), equals('Register8(0x80)'));
+      });
     });
 
     group('Register16', () {
@@ -97,6 +102,11 @@ void main() {
         expect(reg1, equals(reg2));
         expect(reg1.hashCode, equals(reg2.hashCode));
       });
+
+      test('toString() should return the expected value', () {
+        final Register16 reg = Register16(964);
+        expect(reg.toString(), equals('Register16(0x03C4)'));
+      });
     });
 
     group('LH5801State', () {
@@ -119,9 +129,13 @@ void main() {
       test('reset() should create an initial state', () {
         final LH5801State state1 = LH5801State(tm: tm);
         final LH5801State state2 = LH5801State(tm: tm)..reset();
-
         expect(state1, equals(state2));
         expect(state1.hashCode, equals(state2.hashCode));
+      });
+
+      test('toString() should return the expected value', () {
+        final LH5801State state = LH5801State(tm: tm);
+        expect(state.toString(), equals('LH5801State(0x0000002A)'));
       });
     });
   });

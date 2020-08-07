@@ -107,7 +107,7 @@ class LH5801Timer implements _SubClock {
 
   @override
   String toString() =>
-      'LH5801Timer(value: $_value, isInterruptRaised: $_interruptRaised)';
+      'LH5801Timer(value: 0x${_value.toUnsigned(9).toRadixString(16).toUpperCase().padLeft(3, '0')}, isInterruptRaised: $_interruptRaised)';
 
   @override
   bool operator ==(Object other) =>

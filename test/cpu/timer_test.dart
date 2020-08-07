@@ -593,5 +593,22 @@ void main() {
 
       expect(timer1 == timer2, isTrue);
     });
+
+    test('toString() should return the expected value', () {
+      final LH5801Timer timer = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      );
+
+      timer.value = 0x1FF;
+      for (int i = 0; i < 511; i++) {
+        timer.incrementClock();
+      }
+
+      expect(
+        timer.toString(),
+        equals('LH5801Timer(value: 0x1FF, isInterruptRaised: true)'),
+      );
+    });
   });
 }

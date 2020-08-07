@@ -25,7 +25,7 @@ class Register8 extends Object {
 
   @override
   String toString() {
-    return 'Register8(0x${value.toRadixString(16).padLeft(2, '0')})';
+    return 'Register8(0x${value.toRadixString(16).toUpperCase().padLeft(2, '0')})';
   }
 
   @override
@@ -72,7 +72,7 @@ class Register16 extends Object {
 
   @override
   String toString() {
-    return 'Register16(0x${value.toRadixString(16).padLeft(4, '0')})';
+    return 'Register16(0x${value.toRadixString(16).toUpperCase().padLeft(4, '0')})';
   }
 
   @override
@@ -154,8 +154,9 @@ class LH5801State {
 
   @override
   String toString() {
-    final String hash = hashCode.toUnsigned(20).toRadixString(16).padLeft(5, '0');
-    return 'LH5801State($hash)';
+    final String hash =
+        hashCode.toUnsigned(32).toRadixString(16).toUpperCase().padLeft(8, '0');
+    return 'LH5801State(0x$hash)';
   }
 
   @override
