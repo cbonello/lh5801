@@ -1,3 +1,2 @@
 ignore:
   - "lib/**/*.freezed.dart"
-  - "test/integration/*"
