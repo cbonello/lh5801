@@ -16,7 +16,7 @@ class LH5801Emulator extends LH5801Pins {
       clockFrequency: clockFrequency,
       memRead: memRead,
       memWrite: memWrite,
-    );
+    )..reset();
   }
 
   LH5801Emulator._();
