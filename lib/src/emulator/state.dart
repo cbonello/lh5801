@@ -152,6 +152,21 @@ class LH5801State {
     hlt = false;
   }
 
+  LH5801State clone() => LH5801State(
+        p: p.clone(),
+        s: s.clone(),
+        a: a.clone(),
+        x: x.clone(),
+        y: y.clone(),
+        u: u.clone(),
+        tm: tm.clone(),
+        t: t.clone(),
+        ir0: ir0 = false,
+        ir1: ir1 = false,
+        ir2: ir2 = false,
+        hlt: hlt = false,
+      );
+
   @override
   String toString() {
     final String hash =

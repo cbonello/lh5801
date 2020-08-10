@@ -133,6 +133,16 @@ void main() {
         expect(state1.hashCode, equals(state2.hashCode));
       });
 
+      test('clone() should return an identical LH5801State instance', () {
+        final LH5801State state1 = LH5801State(tm: tm)
+          ..p.value = 0x1234
+          ..u.low = 0x71
+          ..ir1 = true;
+        final LH5801State state2 = state1.clone();
+
+        expect(state1, equals(state2));
+      });
+
       test('toString() should return the expected value', () {
         final LH5801State state = LH5801State(tm: tm);
         expect(state.toString(), equals('LH5801State(0x0000002A)'));
