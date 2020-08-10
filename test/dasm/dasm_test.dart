@@ -65,7 +65,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(1));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('ILL'));
       });
@@ -76,7 +75,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(2));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('OFF'));
       });
@@ -87,7 +85,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(2));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDX X'));
       });
@@ -98,7 +95,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(1));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('EOR (U)'));
       });
@@ -109,7 +105,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(3));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('SBC (1234H)'));
       });
@@ -120,7 +115,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(2));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('STA #(X)'));
       });
@@ -131,7 +125,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(4));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BIT #(3456H)'));
       });
@@ -142,7 +135,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(4));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('ADI (3456H), 78H'));
       });
@@ -153,7 +145,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(2));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BVS +05H'));
       });
@@ -164,7 +155,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(2));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BZR -26H'));
       });
@@ -175,7 +165,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(1));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('VEJ (F6H)'));
       });
@@ -186,7 +175,6 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
-        expect(instruction.length, equals(3));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDI S, 13H, 57H'));
       });

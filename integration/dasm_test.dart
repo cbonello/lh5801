@@ -76,7 +76,7 @@ void main() {
         do {
           instruction = dasm.dump(emulator.cpu.p.value);
           output.writeln(instruction.descriptor);
-          emulator.cpu.p.value += instruction.length;
+          emulator.cpu.p.value += instruction.descriptor.size;
         } while (instruction.descriptor.opcode != 0xFDB1);
 
         const String expected = 'LDI XH, 76H\n'

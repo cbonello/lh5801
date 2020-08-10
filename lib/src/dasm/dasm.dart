@@ -3,10 +3,9 @@ import 'package:meta/meta.dart';
 import '../../lh5801.dart';
 
 class Instruction {
-  Instruction({@required this.address, @required this.length, @required this.descriptor});
+  Instruction({@required this.address, @required this.descriptor});
 
   final int address;
-  final int length;
   final InstructionDescriptor descriptor;
 }
 
@@ -54,7 +53,6 @@ class LH5801DASM {
 
     return Instruction(
       address: address,
-      length: addr - address,
       descriptor: descriptor.copyWithUpdatedOperands(updatedOperands),
     );
   }

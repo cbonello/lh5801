@@ -76,7 +76,7 @@ void main() {
       '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H    ',
     );
     stdout.writeln(instruction.descriptor);
-    emulator.cpu.p.value += instruction.length;
+    emulator.cpu.p.value += instruction.descriptor.size;
   } while (instruction.descriptor.opcode != 0xFDB1);
   stdout.writeln();
 
