@@ -983,7 +983,7 @@ void main() {
             final int statusRegister = emulator.cpu.t.statusRegister;
 
             memLoad(0x0020, opcodes);
-            final int cycles = emulator.step(0x0020);
+            final int cycles = emulator.step(address: 0x0020);
             expect(cycles, equals(11));
             expect(emulator.cpu.p.value, equals(0x0020 + opcodes.length));
 
@@ -1096,7 +1096,7 @@ void main() {
 
             memLoad(0x0020, opcodes);
             emulator.cpu.x.value = 0x1234;
-            final int cycles = emulator.step(0x0020);
+            final int cycles = emulator.step(address: 0x0020);
             expect(cycles, equals(17));
             expect(emulator.cpu.p.value, equals(0x1234));
 
@@ -1124,7 +1124,7 @@ void main() {
             memLoad(0x0000, opcodes);
             emulator.cpu.s.value = 0x46FF;
             emulator.cpu.a.value = 0x3F;
-            final int cycles = emulator.step(0x0000);
+            final int cycles = emulator.step(address: 0x0000);
             expect(cycles, equals(11));
             expect(emulator.cpu.p.value, equals(opcodes.length));
 

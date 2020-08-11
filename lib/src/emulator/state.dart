@@ -158,17 +158,15 @@ class LH5801State {
         u: u.clone(),
         tm: tm.clone(),
         t: t.clone(),
-        ir0: ir0 = false,
-        ir1: ir1 = false,
-        ir2: ir2 = false,
-        hlt: hlt = false,
+        ir0: ir0,
+        ir1: ir1,
+        ir2: ir2,
+        hlt: hlt,
       );
 
   @override
   String toString() {
-    final String hash =
-        hashCode.toUnsigned(32).toRadixString(16).toUpperCase().padLeft(8, '0');
-    return 'LH5801State(0x$hash)';
+    return 'LH5801State(P: ${OperandDump.op16(p.value)}, S: ${OperandDump.op16(s.value)}, A: ${OperandDump.op8(a.value)}, X: ${OperandDump.op16(x.value)}, Y: ${OperandDump.op16(y.value)}, U: ${OperandDump.op16(u.value)}, TM: $tm, IR0: $tm, IR1: $ir1, IR2: $ir2, HLT: $hlt))';
   }
 
   @override

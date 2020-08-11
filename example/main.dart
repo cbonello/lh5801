@@ -95,7 +95,8 @@ String formatOpcodes(List<int> opcodes) {
 
   for (int i = 0; i < opcodes.length; i++) {
     output.write(
-        '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ');
+      '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
+    );
   }
 
   // An instruction has at most 4 bytes.

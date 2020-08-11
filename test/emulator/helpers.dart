@@ -45,7 +45,7 @@ void testResetPin(LH5801Emulator emulator) {
   memLoad(0xFFFE, <int>[intAddress >> 8, intAddress & 0xFF]);
   memLoad(intAddress, memOpcodes);
   emulator.resetPin = true;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
 
@@ -65,7 +65,7 @@ void testIR0(LH5801Emulator emulator) {
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
-  final int cycles = emulator.step(initialPC);
+  final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
 
@@ -97,7 +97,7 @@ void testIR1(LH5801Emulator emulator) {
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
   expect(emulator.cpu.t.ie, isTrue);
-  final int cycles = emulator.step(initialPC);
+  final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
 
@@ -126,7 +126,7 @@ void testIR2(LH5801Emulator emulator) {
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
-  final int cycles = emulator.step(initialPC);
+  final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
 
@@ -147,7 +147,7 @@ void testSBCReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
   emulator.cpu.a.value = 56;
   register.value = 33;
   emulator.cpu.t.c = true;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -173,7 +173,7 @@ void testSBCRReg(
   memLoad(rregValue, <int>[33]);
   emulator.cpu.a.value = 56;
   emulator.cpu.t.c = true;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -194,7 +194,7 @@ void testSBCab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
   memLoad(ab, <int>[33]);
   emulator.cpu.a.value = 56;
   emulator.cpu.t.c = true;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -211,7 +211,7 @@ void testADCReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
   emulator.cpu.a.value = 2;
   register.value = 51;
   emulator.cpu.t.c = false;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -237,7 +237,7 @@ void testADCRReg(
   memLoad(rregValue, <int>[51]);
   emulator.cpu.a.value = 2;
   emulator.cpu.t.c = false;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -258,7 +258,7 @@ void testADCab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
   memLoad(ab, <int>[33]);
   emulator.cpu.a.value = 2;
   emulator.cpu.t.c = false;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -276,7 +276,7 @@ void testADIAcc(LH5801Emulator emulator) {
 
   memLoad(0x0000, memOpcodes);
   emulator.cpu.a.value = 0x33;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -303,7 +303,7 @@ void testADIRReg(
   memLoad(0x0000, memOpcodes);
   register.value = regValue;
   memLoad(regValue, <int>[0x33]);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -330,7 +330,7 @@ void testADIab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
 
   memLoad(0x0000, memOpcodes);
   memLoad(ab, <int>[0x33]);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -351,7 +351,7 @@ void testLDAReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
     memLoad(0x0000, opcodes);
     emulator.cpu.a.value = 2;
     register.value = initialValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(5));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -384,7 +384,7 @@ void testLDARReg(
     register.value = rregValue;
     memLoad(rregValue, <int>[initialValue]);
     emulator.cpu.a.value = 2;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -412,7 +412,7 @@ void testLDAab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[initialValue]);
     emulator.cpu.a.value = 0;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -435,7 +435,7 @@ void testCPAReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
     memLoad(0x0000, opcodes);
     emulator.cpu.a.value = op1;
     register.value = op2;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -462,7 +462,7 @@ void testCPARReg(
     register.value = rregValue;
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -483,7 +483,7 @@ void testCPAab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
   memLoad(0x0000, memOpcodes);
   memLoad(ab, <int>[80]);
   emulator.cpu.a.value = 84;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -507,7 +507,7 @@ void testANDRReg(
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
     register.value = rregValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -534,7 +534,7 @@ void testANDab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
   memLoad(0x0000, memOpcodes);
   memLoad(ab, <int>[0x0F]);
   emulator.cpu.a.value = 0xFF;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -555,7 +555,7 @@ void testANIAcc(LH5801Emulator emulator) {
 
     memLoad(0x0000, memOpcodes);
     emulator.cpu.a.value = accValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -588,7 +588,7 @@ void testANIRReg(
     memLoad(0x0000, memOpcodes);
     register.value = memAddress;
     memLoad(memAddress, <int>[memValue]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -616,7 +616,7 @@ void testANIab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
 
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[memValue]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -644,7 +644,7 @@ void testPOPRReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
     emulator.cpu.s.value = initialStackValue;
     memLoad(initialStackValue + 1, <int>[intialValue >> 8, intialValue & 0xFF]);
     register.value = 0;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(15));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -668,7 +668,7 @@ void testPOPA(LH5801Emulator emulator) {
     emulator.cpu.s.value = initialStackValue;
     memLoad(initialStackValue + 1, <int>[intialValue]);
     emulator.cpu.a.value = 0;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(12));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -702,7 +702,7 @@ void testORARReg(
     register.value = rregValue;
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -730,7 +730,7 @@ void testORAab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[op2]);
     emulator.cpu.a.value = op1;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -755,7 +755,7 @@ void testORIAcc(LH5801Emulator emulator) {
 
     memLoad(0x0000, memOpcodes);
     emulator.cpu.a.value = accValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -788,7 +788,7 @@ void testORIRReg(
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[memValue]);
     register.value = ab;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -816,7 +816,7 @@ void testORIab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
 
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[memValue]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -857,7 +857,7 @@ void testDCSRReg(
     memLoad(rregValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     emulator.cpu.t.c = initialCarryValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -893,7 +893,7 @@ void testEORRReg(
     register.value = rregValue;
     memLoad(rregValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -926,7 +926,7 @@ void testEORab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -950,7 +950,7 @@ void testSTAReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
   memLoad(0x0000, opcodes);
   emulator.cpu.a.value = 0x33;
   register.value = 0x01;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -972,7 +972,7 @@ void testSTARReg(
   memLoad(0x0000, opcodes);
   emulator.cpu.a.value = 0x33;
   register.value = rregValue;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -990,7 +990,7 @@ void testSTAab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
   memLoad(0x0000, memOpcodes);
   memLoad(ab, <int>[0xFF]);
   emulator.cpu.a.value = 0x51;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1014,7 +1014,7 @@ void testBITRReg(
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = i;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1043,7 +1043,7 @@ void testBITab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[abValue]);
     emulator.cpu.a.value = accValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1069,7 +1069,7 @@ void testBIIAcc(LH5801Emulator emulator) {
 
     memLoad(0x0000, memOpcodes);
     emulator.cpu.a.value = accValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1103,7 +1103,7 @@ void testBIIRReg(
     memLoad(0x0000, memOpcodes);
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1137,7 +1137,7 @@ void testBIIab(LH5801Emulator emulator, int expectedCycles, List<int> opcodes,
 
     memLoad(0x0000, memOpcodes);
     memLoad(ab, <int>[memValue]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1167,7 +1167,7 @@ void testIncReg8(
 
   memLoad(0x0000, opcodes);
   register.value = 0x80; // -128
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1190,7 +1190,7 @@ void testIncReg16(
 
   memLoad(0x0000, opcodes);
   register.value = 0xFFFF;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1209,7 +1209,7 @@ void testDecReg8(
 
   memLoad(0x0000, opcodes);
   register.value = 0x00;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1232,7 +1232,7 @@ void testDecReg16(
 
   memLoad(0x0000, opcodes);
   register.value = 0x0000;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1246,7 +1246,7 @@ void testLDXReg(LH5801Emulator emulator, List<int> opcodes, Register16 register)
 
   memLoad(0x0000, opcodes);
   register.value = 25;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1260,7 +1260,7 @@ void testSTXReg(LH5801Emulator emulator, List<int> opcodes, Register16 register)
 
   memLoad(0x0000, opcodes);
   emulator.cpu.x.value = 25;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1275,7 +1275,7 @@ void testPSHRReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
   memLoad(0x0000, opcodes);
   emulator.cpu.s.value = 0x46FF;
   register.value = 0x2030;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(14));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1309,7 +1309,7 @@ void testDCARReg(
     memLoad(regValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     emulator.cpu.t.c = initialCarryValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1331,7 +1331,7 @@ void testATT(LH5801Emulator emulator) {
   memLoad(0x0000, opcodes);
   emulator.cpu.a.value = 0x1F;
   emulator.cpu.t.statusRegister = 0;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1345,7 +1345,7 @@ void testTTA(LH5801Emulator emulator) {
     memLoad(0x0000, opcodes);
     emulator.cpu.a.value = 83;
     emulator.cpu.t.statusRegister = initialStatusRegisterValue;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1364,7 +1364,7 @@ void testADRRReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
   memLoad(0x0000, opcodes);
   emulator.cpu.a.value = 0xC3;
   register.value = 0x0A88;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1385,7 +1385,7 @@ void testDRRRReg(
   emulator.cpu.x.value = 0x4700;
   memLoad((me1 ? 0x10000 : 0) | emulator.cpu.x.value, <int>[0x42]);
   emulator.cpu.a.value = 0xC1;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1408,7 +1408,7 @@ void testDRLRReg(
   emulator.cpu.x.value = 0x4700;
   memLoad((me1 ? 0x10000 : 0) | emulator.cpu.x.value, <int>[0xB3]);
   emulator.cpu.a.value = 0x6F;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -1428,7 +1428,7 @@ void testSINRReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
     register.value = regValue;
     memLoad(regValue, <int>[0x00]);
     emulator.cpu.a.value = 0x6F;
-    final int cycles = emulator.step(0x1000);
+    final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
 
@@ -1453,7 +1453,7 @@ void testSDERReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
     register.value = regValue;
     memLoad(regValue, <int>[0x00]);
     emulator.cpu.a.value = 0x6F;
-    final int cycles = emulator.step(0x1000);
+    final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
 
@@ -1478,7 +1478,7 @@ void testLINRReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = 0xFF;
-    final int cycles = emulator.step(0x1000);
+    final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
 
@@ -1505,7 +1505,7 @@ void testLDERReg(LH5801Emulator emulator, List<int> opcodes, Register16 register
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = 0xFF;
-    final int cycles = emulator.step(0x1000);
+    final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
 
@@ -1530,7 +1530,7 @@ void testLDIAcc(LH5801Emulator emulator) {
 
     memLoad(0x0000, memOpcodes);
     emulator.cpu.a.value = i ^ 0xFF;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(6));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1553,7 +1553,7 @@ void testLDIReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
 
   memLoad(0x0000, memOpcodes);
   register.value = 0xFF;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1569,7 +1569,7 @@ void testLDISij(LH5801Emulator emulator) {
 
   memLoad(0x0000, memOpcodes);
   emulator.cpu.s.value = ij ^ 0x0FF0;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(12));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1584,7 +1584,7 @@ void testCPIReg(LH5801Emulator emulator, List<int> opcodes, Register8 register) 
 
     memLoad(0x0000, memOpcodes);
     register.value = op1;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1613,7 +1613,7 @@ void _testBranch(
   emulator.cpu.p.value = initialP;
   memLoad(initialP, memOpcodes);
   emulator.cpu.t.statusRegister = flagMask;
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
 
   // Condition is true?
   if (cond(emulator.cpu.t.statusRegister)) {
@@ -1815,7 +1815,7 @@ void testLOP(LH5801Emulator emulator) {
     emulator.cpu.p.value = initialP;
     memLoad(initialP, memOpcodes);
     emulator.cpu.u.low = uValue;
-    final int cycles = emulator.step(emulator.cpu.p.value);
+    final int cycles = emulator.step(address: emulator.cpu.p.value);
 
     final int uLow = _unsignedByteToSignedInt(emulator.cpu.u.low);
     expect(uLow, equals(uValue - 1));
@@ -1848,7 +1848,7 @@ void testSBIAcc(LH5801Emulator emulator) {
   memLoad(0x0000, memOpcodes);
   emulator.cpu.a.value = 36;
   emulator.cpu.t.c = false;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1868,7 +1868,7 @@ void testJMP(LH5801Emulator emulator) {
 
   emulator.cpu.p.value = initialPValue;
   memLoad(emulator.cpu.p.value, memOpcodes);
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(12));
 
   expect(emulator.cpu.p.value, equals(ij));
@@ -1888,7 +1888,7 @@ void testEAI(LH5801Emulator emulator) {
 
     memLoad(0x0000, memOpcodes);
     emulator.cpu.a.value = initialOp1Value;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -1916,7 +1916,7 @@ void testSJP(LH5801Emulator emulator) {
   emulator.cpu.p.value = initialPValue;
   emulator.cpu.s.value = initialSValue;
   memLoad(emulator.cpu.p.value, memOpcodes);
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(19));
 
   expect(emulator.cpu.p.value, equals(ij));
@@ -1950,11 +1950,11 @@ void testRTN(LH5801Emulator emulator) {
   emulator.cpu.s.value = initialSValue;
 
   memLoad(emulator.cpu.p.value, memOpcodes1);
-  int cycles = emulator.step(emulator.cpu.p.value);
+  int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(19));
 
   memLoad(emulator.cpu.p.value, memOpcodes2);
-  cycles = emulator.step(emulator.cpu.p.value);
+  cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(11));
 
   expect(emulator.cpu.p.value, equals(initialPValue + memOpcodes1.length));
@@ -1986,7 +1986,7 @@ void testRTI(LH5801Emulator emulator) {
   emulator.cpu.s.value = initialSValue;
   memLoad(initialSValue + 1, stackOpcodes);
 
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(14));
 
   expect(emulator.cpu.p.value, equals(ij));
@@ -2014,7 +2014,7 @@ void testVSJ(LH5801Emulator emulator, int expectedCycles, List<int> opcodes) {
     );
   }
 
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(expectedCycles));
 
   expect(emulator.cpu.p.value, equals(subroutineAddress));
@@ -2059,7 +2059,7 @@ void _testVSJConditional(
     );
   }
 
-  final int cycles = emulator.step(emulator.cpu.p.value);
+  final int cycles = emulator.step(address: emulator.cpu.p.value);
 
   if (jump) {
     expect(cycles, equals(21));
@@ -2172,7 +2172,7 @@ void testROR(LH5801Emulator emulator) {
     memLoad(0x0000, opcodes);
     emulator.cpu.a.value = initialAccValue;
     emulator.cpu.t.c = carry;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2202,7 +2202,7 @@ void testROL(LH5801Emulator emulator) {
     memLoad(0x0000, opcodes);
     emulator.cpu.a.value = initialAccValue;
     emulator.cpu.t.c = carry;
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(8));
     expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2231,7 +2231,7 @@ void testTIN(LH5801Emulator emulator) {
   memLoad(initialXValue, <int>[memXValue]);
   emulator.cpu.y.value = initialYValue;
   memLoad(initialYValue, <int>[0xFF]);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2251,7 +2251,7 @@ void testCIN(LH5801Emulator emulator) {
     emulator.cpu.a.value = op1;
     emulator.cpu.x.value = initialXValue;
     memLoad(initialXValue, <int>[op2]);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2271,7 +2271,7 @@ void testRECSEC(LH5801Emulator emulator, List<int> opcodes,
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   memLoad(0x0000, opcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2288,7 +2288,7 @@ void testAEX(LH5801Emulator emulator) {
 
   memLoad(0x0000, memOpcodes);
   emulator.cpu.a.value = 0xCA;
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2301,7 +2301,7 @@ void testRPUSPU(LH5801Emulator emulator, List<int> opcodes, {bool expectedPU = f
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2314,7 +2314,7 @@ void testRPVSPV(LH5801Emulator emulator, List<int> opcodes, {bool expectedPV = f
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2327,7 +2327,7 @@ void testSDPRDP(LH5801Emulator emulator, List<int> opcodes, {bool expectedDisp =
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   memLoad(0x0000, opcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2340,7 +2340,7 @@ void testSIERIE(LH5801Emulator emulator, List<int> opcodes, {bool expectedIE = f
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   memLoad(0x0000, opcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
   expect(emulator.cpu.p.value, equals(opcodes.length));
 
@@ -2357,7 +2357,7 @@ void testSHR(LH5801Emulator emulator) {
 
   emulator.cpu.a.value = 0x93;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2376,7 +2376,7 @@ void testSHL(LH5801Emulator emulator) {
 
   emulator.cpu.a.value = 0x9D;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2395,7 +2395,7 @@ void testOFF(LH5801Emulator emulator) {
 
   emulator.bfFlipflop = true;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2411,7 +2411,7 @@ void testATP(LH5801Emulator emulator) {
   emulator.inputPorts = 0x00;
   emulator.cpu.a.value = 0x07;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2427,7 +2427,7 @@ void testITA(LH5801Emulator emulator) {
 
     emulator.inputPorts = inputPortsValue;
     memLoad(0x0000, memOpcodes);
-    final int cycles = emulator.step(0x0000);
+    final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
     expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2449,7 +2449,7 @@ void testNOP(LH5801Emulator emulator) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2462,7 +2462,7 @@ void testHLT(LH5801Emulator emulator) {
 
   emulator.cpu.hlt = false;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 
@@ -2478,7 +2478,7 @@ void testAM(LH5801Emulator emulator, List<int> opcodes, int bit8) {
   emulator.cpu.tm.value = 0x000;
   emulator.cpu.a.value = 0x45;
   memLoad(0x0000, memOpcodes);
-  final int cycles = emulator.step(0x0000);
+  final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(memOpcodes.length));
 

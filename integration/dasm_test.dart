@@ -81,18 +81,18 @@ void main() {
           emulator.cpu.p.value += instruction.descriptor.size;
         } while (emulator.cpu.p.value < program.length);
 
-        const String expected = 'LDI XH, 76H\n'
-            'LDI XL, 00H\n'
+        const String expected = 'LDI XH, 76\n'
+            'LDI XL, 00\n'
             'LDA (X)\n'
-            'EAI FFH\n'
+            'EAI FF\n'
             'SIN X\n'
-            'CPI XL, 4EH\n'
-            'BZR -08H\n'
-            'CPI XH, 77H\n'
-            'BZS +06H\n'
-            'LDI XH, 77H\n'
-            'LDI XL, 00H\n'
-            'BCH -12H\n'
+            'CPI XL, 4E\n'
+            'BZR -08\n'
+            'CPI XH, 77\n'
+            'BZS +06\n'
+            'LDI XH, 77\n'
+            'LDI XL, 00\n'
+            'BCH -12\n'
             'HLT\n';
         expect(output.toString(), equals(expected));
       });

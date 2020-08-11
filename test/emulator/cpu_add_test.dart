@@ -23,7 +23,7 @@ void main() {
               lh5801.cpu.a.value = op1;
               lh5801.cpu.x.value = 0x0001;
               lh5801.cpu.t.c = carry;
-              lh5801.step(0x0000);
+              lh5801.step(address: 0x0000);
               expect(lh5801.cpu.p.value, equals(opcodes.length));
 
               final String key = generateTableKey(op1, op2, carry);

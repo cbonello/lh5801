@@ -43,7 +43,7 @@ void main() {
       final LH5801Flags flags = LH5801Flags(h: true, ie: true);
       expect(
         flags.toString(),
-        equals('LH5801Flags(H: true, V: false, Z: false, IE: true, C: false)'),
+        equals('H: true, V: false, Z: false, IE: true, C: false'),
       );
     });
   });

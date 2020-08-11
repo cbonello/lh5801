@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 
 import '../common/common.dart';
 import 'cpu.dart';
+import 'logger.dart';
 import 'pins.dart';
 
 class LH5801Emulator extends LH5801Pins {
@@ -62,9 +63,9 @@ class LH5801Emulator extends LH5801Pins {
 
   LH5801CPU cpu;
 
-  int step([int address]) {
+  int step({int address, LoggerCallback logger}) {
     cpu.p.value = address ?? cpu.p.value;
-    return cpu.step();
+    return cpu.step(logger);
   }
 
   @override

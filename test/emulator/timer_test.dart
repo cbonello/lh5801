@@ -607,7 +607,7 @@ void main() {
 
       expect(
         timer.toString(),
-        equals('LH5801Timer(value: 0x1FF, isInterruptRaised: true)'),
+        equals('LH5801Timer(value: 1FF, interrupt: true)'),
       );
     });
   });

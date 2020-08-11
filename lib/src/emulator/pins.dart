@@ -88,6 +88,11 @@ class LH5801Pins {
     ..inputPorts = inputPorts;
 
   @override
+  String toString() {
+    return 'LH5801Pins(reset: ${_resetPin.peek}, NMI: ${_nmiPin.peek}, MI: ${_miPin.peek}, PU: $puFlipflop, PV: $pvFlipflop, BF: $bfFlipflop, DISP: $dispFlipflop)';
+  }
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LH5801Pins &&

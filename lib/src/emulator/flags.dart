@@ -70,5 +70,5 @@ class LH5801Flags {
   int get hashCode => h.hashCode ^ v.hashCode ^ z.hashCode ^ ie.hashCode ^ c.hashCode;
 
   @override
-  String toString() => 'LH5801Flags(H: $h, V: $v, Z: $z, IE: $ie, C: $c)';
+  String toString() => 'H: $h, V: $v, Z: $z, IE: $ie, C: $c';
 }

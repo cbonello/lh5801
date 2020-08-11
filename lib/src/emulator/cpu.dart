@@ -1,10 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../common/common.dart';
-import 'flags.dart';
-import 'pins.dart';
-import 'state.dart';
-import 'timer.dart';
+import '../../lh5801.dart';
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({
@@ -71,7 +67,7 @@ class LH5801CPU extends LH5801State {
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
 
-  int step() {
+  int step([LoggerCallback logger]) {
     if (_pins.resetPin) {
       super.reset();
       _pins.reset();
@@ -106,10 +102,31 @@ class LH5801CPU extends LH5801State {
       p.low = memRead(_me0(0xFFF9));
     }
 
+    final int initialPValue = p.value;
+
     int cycles = 2;
     if (hlt == false) {
-      final int opcode = _readOp8();
-      cycles = opcode == 0xFD ? _stepExtendedInstruction() : _stepOpcode(opcode);
+      InstructionDescriptor descriptor;
+      int opcode = _readOp8();
+
+      if (opcode == 0xFD) {
+        opcode = _readOp8();
+        descriptor = instructionTableFD[opcode];
+        cycles = _stepExtendedInstruction(opcode);
+      } else {
+        descriptor = instructionTable[opcode];
+        cycles = _stepOpcode(opcode);
+      }
+
+      if (logger != null) {
+        logger(
+          LoggerData(
+            Instruction(address: initialPValue, descriptor: descriptor),
+            _pins.clone(),
+            clone(),
+          ),
+        );
+      }
     }
 
     tm.incrementClock(cycles);
@@ -420,9 +437,8 @@ class LH5801CPU extends LH5801State {
     return cycles;
   }
 
-  int _stepExtendedInstruction() {
+  int _stepExtendedInstruction(int opcode) {
     final int startP = p.value - 1;
-    final int opcode = _readOp8();
     final CyclesCount cyclesTable = instructionTableFD[opcode].cycles;
     final int cycles = cyclesTable.basic;
     int o8, p8, o16;
