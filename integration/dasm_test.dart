@@ -39,7 +39,7 @@ void main() {
         );
 
         // Invert LCD screen of a Sharp PC-1500 pocket computer.
-        memLoad(emulator.cpu.p.value, <int>[
+        final List<int> program = <int>[
           // LDI XH, 76H
           0x48, 0x76,
           // LDI XL, 00H
@@ -66,7 +66,9 @@ void main() {
           0x9E, 0x12,
           // HLT
           0xFD, 0xB1
-        ]);
+        ];
+
+        memLoad(emulator.cpu.p.value, program);
 
         final LH5801DASM dasm = LH5801DASM(memRead: memRead);
         final StringBuffer output = StringBuffer();
@@ -77,7 +79,7 @@ void main() {
           instruction = dasm.dump(emulator.cpu.p.value);
           output.writeln(instruction.descriptor);
           emulator.cpu.p.value += instruction.descriptor.size;
-        } while (instruction.descriptor.opcode != 0xFDB1);
+        } while (emulator.cpu.p.value < program.length);
 
         const String expected = 'LDI XH, 76H\n'
             'LDI XL, 00H\n'

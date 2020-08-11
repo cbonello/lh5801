@@ -53,7 +53,7 @@ void main() {
 
       void check(InstructionDescriptor actual, InstructionDescriptor expected) {
         expect(actual.category, equals(expected.category));
-        expect(actual.opcode, equals(expected.opcode));
+        expect(actual.opcodes, equals(expected.opcodes));
         expect(actual.size, equals(expected.size));
         expect(actual.mnemonic, equals(expected.mnemonic));
         expect(actual.cycles, equals(expected.cycles));

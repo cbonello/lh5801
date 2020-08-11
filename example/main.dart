@@ -34,10 +34,9 @@ void main() {
     memRead: memRead,
     memWrite: memWrite,
   );
-  int cycles = 0;
 
   // Invert LCD screen of a Sharp PC-1500 pocket computer.
-  memLoad(emulator.cpu.p.value, <int>[
+  final List<int> program = <int>[
     // LDI XH, 76H
     0x48, 0x76,
     // LDI XL, 00H
@@ -64,7 +63,9 @@ void main() {
     0x9E, 0x12,
     // HLT
     0xFD, 0xB1
-  ]);
+  ];
+
+  memLoad(emulator.cpu.p.value, program);
 
   final LH5801DASM dasm = LH5801DASM(memRead: memRead);
   Instruction instruction;
@@ -73,16 +74,30 @@ void main() {
   do {
     instruction = dasm.dump(emulator.cpu.p.value);
     stdout.write(
-      '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H    ',
+      '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H  ',
     );
+    stdout.write(formatOpcodes(instruction.descriptor.opcodes));
     stdout.writeln(instruction.descriptor);
     emulator.cpu.p.value += instruction.descriptor.size;
-  } while (instruction.descriptor.opcode != 0xFDB1);
+  } while (emulator.cpu.p.value < program.length);
   stdout.writeln();
 
+  int cycles = 0;
   emulator.cpu.p.value = 0x0000;
   while (emulator.cpu.hlt == false) {
     cycles += emulator.step();
   }
   stdout.write('#CPU cycles: $cycles');
+}
+
+String formatOpcodes(List<int> opcodes) {
+  final StringBuffer output = StringBuffer();
+
+  for (int i = 0; i < opcodes.length; i++) {
+    output.write(
+        '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ');
+  }
+
+  // An instruction has at most 4 bytes.
+  return output.toString().padRight(12);
 }

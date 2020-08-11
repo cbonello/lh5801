@@ -18,9 +18,14 @@ class LH5801DASM {
   final LH5801MemoryRead _memRead;
 
   Instruction dump(int address) {
+    final List<int> updatedOpcodes = <int>[];
     int addr = address;
 
-    int readOp8() => _memRead(addr++);
+    int readOp8() {
+      final int value = _memRead(addr++);
+      updatedOpcodes.add(value);
+      return value;
+    }
 
     int readOp16() {
       final int high = _memRead(addr++);
@@ -32,6 +37,7 @@ class LH5801DASM {
 
     final InstructionDescriptor descriptor =
         opcode == 0xFD ? instructionTableFD[readOp8()] : instructionTable[opcode];
+
     final List<Operand> updatedOperands = <Operand>[];
 
     for (int i = 0; i < descriptor.operands.length; i++) {
@@ -51,9 +57,14 @@ class LH5801DASM {
       );
     }
 
+    assert(updatedOpcodes.length == descriptor.size);
+
     return Instruction(
       address: address,
-      descriptor: descriptor.copyWithUpdatedOperands(updatedOperands),
+      descriptor: descriptor.copyWith(
+        updatedOpcodes: updatedOpcodes,
+        updatedOperands: updatedOperands,
+      ),
     );
   }
 }

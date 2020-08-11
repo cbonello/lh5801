@@ -92,7 +92,7 @@ class CyclesCount {
 class InstructionDescriptor {
   const InstructionDescriptor(
     this.category,
-    this.opcode,
+    this.opcodes,
     this.size,
     this.mnemonic,
     this.operands,
@@ -100,21 +100,27 @@ class InstructionDescriptor {
   );
 
   final InstructionCategory category;
-  final int opcode;
+  final List<int> opcodes;
   final int size;
   final String mnemonic;
   final List<Operand> operands;
   final CyclesCount cycles;
 
-  InstructionDescriptor copyWithUpdatedOperands(List<Operand> updatedOperands) =>
-      InstructionDescriptor(
-        category,
-        opcode,
-        size,
-        mnemonic,
-        updatedOperands,
-        cycles,
-      );
+  InstructionDescriptor copyWith({
+    List<int> updatedOpcodes,
+    List<Operand> updatedOperands,
+  }) {
+    assert(updatedOpcodes != null || updatedOperands != null);
+
+    return InstructionDescriptor(
+      category,
+      updatedOpcodes ?? opcodes,
+      size,
+      mnemonic,
+      updatedOperands ?? operands,
+      cycles,
+    );
+  }
 
   @override
   String toString() {
@@ -140,9 +146,9 @@ class InstructionDescriptor {
   }
 }
 
-InstructionDescriptor _illegalInstruction(int opcode) => InstructionDescriptor(
+InstructionDescriptor _illegalInstruction(List<int> opcodes) => InstructionDescriptor(
       const InstructionCategory.illegal(),
-      opcode,
+      opcodes,
       1,
       'ILL',
       const <Operand>[
@@ -154,11 +160,11 @@ InstructionDescriptor _illegalInstruction(int opcode) => InstructionDescriptor(
 
 final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   // 0x00
-  _illegalInstruction(0xFD00),
+  _illegalInstruction(<int>[0xFD, 0x00]),
   const InstructionDescriptor(
     // SBC #(X)
     InstructionCategory.logicalOperation(),
-    0xFD01,
+    <int>[0xFD, 0x01],
     2,
     'SBC',
     <Operand>[
@@ -167,11 +173,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD02),
+  _illegalInstruction(<int>[0xFD, 0x02]),
   const InstructionDescriptor(
     // ADC #(X)
     InstructionCategory.logicalOperation(),
-    0xFD03,
+    <int>[0xFD, 0x03],
     2,
     'ADC',
     <Operand>[
@@ -180,11 +186,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD04),
+  _illegalInstruction(<int>[0xFD, 0x04]),
   const InstructionDescriptor(
     // LDA #(X)
     InstructionCategory.loadStore(),
-    0xFD05,
+    <int>[0xFD, 0x05],
     2,
     'LDA',
     <Operand>[
@@ -193,11 +199,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(10, 0),
   ),
-  _illegalInstruction(0xFD06),
+  _illegalInstruction(<int>[0xFD, 0x06]),
   const InstructionDescriptor(
     // CPA #(X)
     InstructionCategory.comparisonBitTest(),
-    0xFD07,
+    <int>[0xFD, 0x07],
     2,
     'CPA',
     <Operand>[
@@ -209,7 +215,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDX X
     InstructionCategory.loadStore(),
-    0xFD08,
+    <int>[0xFD, 0x08],
     2,
     'LDX',
     <Operand>[
@@ -221,7 +227,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND #(X)
     InstructionCategory.logicalOperation(),
-    0xFD09,
+    <int>[0xFD, 0x09],
     2,
     'AND',
     <Operand>[
@@ -233,7 +239,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // POP X
     InstructionCategory.loadStore(),
-    0xFD0A,
+    <int>[0xFD, 0x0A],
     2,
     'POP',
     <Operand>[
@@ -245,7 +251,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA #(X)
     InstructionCategory.logicalOperation(),
-    0xFD0B,
+    <int>[0xFD, 0x0B],
     2,
     'ORA',
     <Operand>[
@@ -257,7 +263,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS #(X)
     InstructionCategory.logicalOperation(),
-    0xFD0C,
+    <int>[0xFD, 0x0C],
     2,
     'DCS',
     <Operand>[
@@ -269,7 +275,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR #(X)
     InstructionCategory.logicalOperation(),
-    0xFD0D,
+    <int>[0xFD, 0x0D],
     2,
     'EOR',
     <Operand>[
@@ -281,7 +287,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA #(X)
     InstructionCategory.loadStore(),
-    0xFD0E,
+    <int>[0xFD, 0x0E],
     2,
     'STA',
     <Operand>[
@@ -293,7 +299,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT #(X)
     InstructionCategory.comparisonBitTest(),
-    0xFD0F,
+    <int>[0xFD, 0x0F],
     2,
     'BIT',
     <Operand>[
@@ -304,11 +310,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0x10
-  _illegalInstruction(0xFD10),
+  _illegalInstruction(<int>[0xFD, 0x10]),
   const InstructionDescriptor(
     // SBC #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD11,
+    <int>[0xFD, 0x11],
     2,
     'SBC',
     <Operand>[
@@ -317,11 +323,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD12),
+  _illegalInstruction(<int>[0xFD, 0x12]),
   const InstructionDescriptor(
     // ADC #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD13,
+    <int>[0xFD, 0x13],
     2,
     'ADC',
     <Operand>[
@@ -330,11 +336,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD14),
+  _illegalInstruction(<int>[0xFD, 0x14]),
   const InstructionDescriptor(
     // LDA #(Y)
     InstructionCategory.loadStore(),
-    0xFD15,
+    <int>[0xFD, 0x15],
     2,
     'LDA',
     <Operand>[
@@ -343,11 +349,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(10, 0),
   ),
-  _illegalInstruction(0xFD16),
+  _illegalInstruction(<int>[0xFD, 0x16]),
   const InstructionDescriptor(
     // CPA #(Y)
     InstructionCategory.comparisonBitTest(),
-    0xFD17,
+    <int>[0xFD, 0x17],
     2,
     'CPA',
     <Operand>[
@@ -359,7 +365,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDX Y
     InstructionCategory.loadStore(),
-    0xFD18,
+    <int>[0xFD, 0x18],
     2,
     'LDX',
     <Operand>[
@@ -371,7 +377,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD19,
+    <int>[0xFD, 0x19],
     2,
     'AND',
     <Operand>[
@@ -383,7 +389,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // POP Y
     InstructionCategory.loadStore(),
-    0xFD1A,
+    <int>[0xFD, 0x1A],
     2,
     'POP',
     <Operand>[
@@ -395,7 +401,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD1B,
+    <int>[0xFD, 0x1B],
     2,
     'ORA',
     <Operand>[
@@ -407,7 +413,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD1C,
+    <int>[0xFD, 0x1C],
     2,
     'DCS',
     <Operand>[
@@ -419,7 +425,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD1D,
+    <int>[0xFD, 0x1D],
     2,
     'EOR',
     <Operand>[
@@ -431,7 +437,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA #(Y)
     InstructionCategory.loadStore(),
-    0xFD1E,
+    <int>[0xFD, 0x1E],
     2,
     'STA',
     <Operand>[
@@ -443,7 +449,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT #(Y)
     InstructionCategory.comparisonBitTest(),
-    0xFD1F,
+    <int>[0xFD, 0x1F],
     2,
     'BIT',
     <Operand>[
@@ -454,11 +460,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0x20
-  _illegalInstruction(0xFD20),
+  _illegalInstruction(<int>[0xFD, 0x20]),
   const InstructionDescriptor(
     // SBC #(U)
     InstructionCategory.logicalOperation(),
-    0xFD21,
+    <int>[0xFD, 0x21],
     2,
     'SBC',
     <Operand>[
@@ -467,11 +473,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD22),
+  _illegalInstruction(<int>[0xFD, 0x22]),
   const InstructionDescriptor(
     // ADC #(U)
     InstructionCategory.logicalOperation(),
-    0xFD23,
+    <int>[0xFD, 0x23],
     2,
     'ADC',
     <Operand>[
@@ -480,11 +486,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFD24),
+  _illegalInstruction(<int>[0xFD, 0x24]),
   const InstructionDescriptor(
     // LDA #(U)
     InstructionCategory.loadStore(),
-    0xFD25,
+    <int>[0xFD, 0x25],
     2,
     'LDA',
     <Operand>[
@@ -493,11 +499,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(10, 0),
   ),
-  _illegalInstruction(0xFD26),
+  _illegalInstruction(<int>[0xFD, 0x26]),
   const InstructionDescriptor(
     // CPA #(U)
     InstructionCategory.comparisonBitTest(),
-    0xFD27,
+    <int>[0xFD, 0x27],
     2,
     'CPA',
     <Operand>[
@@ -509,7 +515,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDX U
     InstructionCategory.loadStore(),
-    0xFD28,
+    <int>[0xFD, 0x28],
     2,
     'LDX',
     <Operand>[
@@ -521,7 +527,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND #(U)
     InstructionCategory.logicalOperation(),
-    0xFD29,
+    <int>[0xFD, 0x29],
     2,
     'AND',
     <Operand>[
@@ -533,7 +539,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // POP U
     InstructionCategory.loadStore(),
-    0xFD2A,
+    <int>[0xFD, 0x2A],
     2,
     'POP',
     <Operand>[
@@ -545,7 +551,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA #(U)
     InstructionCategory.logicalOperation(),
-    0xFD2B,
+    <int>[0xFD, 0x2B],
     2,
     'ORA',
     <Operand>[
@@ -557,7 +563,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS #(U)
     InstructionCategory.logicalOperation(),
-    0xFD2C,
+    <int>[0xFD, 0x2C],
     2,
     'DCS',
     <Operand>[
@@ -569,7 +575,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR #(U)
     InstructionCategory.logicalOperation(),
-    0xFD2D,
+    <int>[0xFD, 0x2D],
     2,
     'EOR',
     <Operand>[
@@ -581,7 +587,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA #(U)
     InstructionCategory.loadStore(),
-    0xFD2E,
+    <int>[0xFD, 0x2E],
     2,
     'STA',
     <Operand>[
@@ -593,7 +599,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT #(U)
     InstructionCategory.comparisonBitTest(),
-    0xFD2F,
+    <int>[0xFD, 0x2F],
     2,
     'BIT',
     <Operand>[
@@ -604,28 +610,28 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0x30
-  _illegalInstruction(0xFD30),
-  _illegalInstruction(0xFD31),
-  _illegalInstruction(0xFD32),
-  _illegalInstruction(0xFD33),
-  _illegalInstruction(0xFD34),
-  _illegalInstruction(0xFD35),
-  _illegalInstruction(0xFD36),
-  _illegalInstruction(0xFD37),
-  _illegalInstruction(0xFD38),
-  _illegalInstruction(0xFD39),
-  _illegalInstruction(0xFD3A),
-  _illegalInstruction(0xFD3B),
-  _illegalInstruction(0xFD3C),
-  _illegalInstruction(0xFD3D),
-  _illegalInstruction(0xFD3E),
-  _illegalInstruction(0xFD3F),
+  _illegalInstruction(<int>[0xFD, 0x30]),
+  _illegalInstruction(<int>[0xFD, 0x31]),
+  _illegalInstruction(<int>[0xFD, 0x32]),
+  _illegalInstruction(<int>[0xFD, 0x33]),
+  _illegalInstruction(<int>[0xFD, 0x34]),
+  _illegalInstruction(<int>[0xFD, 0x35]),
+  _illegalInstruction(<int>[0xFD, 0x36]),
+  _illegalInstruction(<int>[0xFD, 0x37]),
+  _illegalInstruction(<int>[0xFD, 0x38]),
+  _illegalInstruction(<int>[0xFD, 0x39]),
+  _illegalInstruction(<int>[0xFD, 0x3A]),
+  _illegalInstruction(<int>[0xFD, 0x3B]),
+  _illegalInstruction(<int>[0xFD, 0x3C]),
+  _illegalInstruction(<int>[0xFD, 0x3D]),
+  _illegalInstruction(<int>[0xFD, 0x3E]),
+  _illegalInstruction(<int>[0xFD, 0x3F]),
 
   // 0x40
   const InstructionDescriptor(
     // INC XH
     InstructionCategory.logicalOperation(),
-    0xFD40,
+    <int>[0xFD, 0x40],
     2,
     'INC',
     <Operand>[
@@ -634,11 +640,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD41),
+  _illegalInstruction(<int>[0xFD, 0x41]),
   const InstructionDescriptor(
     // DEC XH
     InstructionCategory.logicalOperation(),
-    0xFD42,
+    <int>[0xFD, 0x42],
     2,
     'DEC',
     <Operand>[
@@ -647,15 +653,15 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD43),
-  _illegalInstruction(0xFD44),
-  _illegalInstruction(0xFD45),
-  _illegalInstruction(0xFD46),
-  _illegalInstruction(0xFD47),
+  _illegalInstruction(<int>[0xFD, 0x43]),
+  _illegalInstruction(<int>[0xFD, 0x44]),
+  _illegalInstruction(<int>[0xFD, 0x45]),
+  _illegalInstruction(<int>[0xFD, 0x46]),
+  _illegalInstruction(<int>[0xFD, 0x47]),
   const InstructionDescriptor(
     // LDX S
     InstructionCategory.loadStore(),
-    0xFD48,
+    <int>[0xFD, 0x48],
     2,
     'LDX',
     <Operand>[
@@ -667,7 +673,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI #(X), i
     InstructionCategory.logicalOperation(),
-    0xFD49,
+    <int>[0xFD, 0x49],
     3,
     'ANI',
     <Operand>[
@@ -679,7 +685,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STX X
     InstructionCategory.loadStore(),
-    0xFD4A,
+    <int>[0xFD, 0x4A],
     2,
     'STX',
     <Operand>[
@@ -691,7 +697,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI #(X), i
     InstructionCategory.logicalOperation(),
-    0xFD4B,
+    <int>[0xFD, 0x4B],
     3,
     'ORI',
     <Operand>[
@@ -703,7 +709,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // OFF
     InstructionCategory.inputOutput(),
-    0xFD4C,
+    <int>[0xFD, 0x4C],
     2,
     'OFF',
     <Operand>[
@@ -715,7 +721,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII #(X), i
     InstructionCategory.comparisonBitTest(),
-    0xFD4D,
+    <int>[0xFD, 0x4D],
     3,
     'BII',
     <Operand>[
@@ -727,7 +733,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STX S
     InstructionCategory.loadStore(),
-    0xFD4E,
+    <int>[0xFD, 0x4E],
     2,
     'STX',
     <Operand>[
@@ -739,7 +745,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI #(X), i
     InstructionCategory.logicalOperation(),
-    0xFD4F,
+    <int>[0xFD, 0x4F],
     3,
     'ADI',
     <Operand>[
@@ -753,7 +759,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC YH
     InstructionCategory.logicalOperation(),
-    0xFD50,
+    <int>[0xFD, 0x50],
     2,
     'INC',
     <Operand>[
@@ -762,11 +768,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD51),
+  _illegalInstruction(<int>[0xFD, 0x51]),
   const InstructionDescriptor(
     // DEC YH
     InstructionCategory.logicalOperation(),
-    0xFD52,
+    <int>[0xFD, 0x52],
     2,
     'DEC',
     <Operand>[
@@ -775,15 +781,15 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD53),
-  _illegalInstruction(0xFD54),
-  _illegalInstruction(0xFD55),
-  _illegalInstruction(0xFD56),
-  _illegalInstruction(0xFD57),
+  _illegalInstruction(<int>[0xFD, 0x53]),
+  _illegalInstruction(<int>[0xFD, 0x54]),
+  _illegalInstruction(<int>[0xFD, 0x55]),
+  _illegalInstruction(<int>[0xFD, 0x56]),
+  _illegalInstruction(<int>[0xFD, 0x57]),
   const InstructionDescriptor(
     // LDX P
     InstructionCategory.loadStore(),
-    0xFD58,
+    <int>[0xFD, 0x58],
     2,
     'LDX',
     <Operand>[
@@ -795,7 +801,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI #(Y), i
     InstructionCategory.logicalOperation(),
-    0xFD59,
+    <int>[0xFD, 0x59],
     3,
     'ANI',
     <Operand>[
@@ -807,7 +813,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STX Y
     InstructionCategory.loadStore(),
-    0xFD5A,
+    <int>[0xFD, 0x5A],
     2,
     'STX',
     <Operand>[
@@ -819,7 +825,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI #(Y), i
     InstructionCategory.logicalOperation(),
-    0xFD5B,
+    <int>[0xFD, 0x5B],
     3,
     'ORI',
     <Operand>[
@@ -828,11 +834,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xFD5C),
+  _illegalInstruction(<int>[0xFD, 0x5C]),
   const InstructionDescriptor(
     // BII #(Y), i
     InstructionCategory.comparisonBitTest(),
-    0xFD5D,
+    <int>[0xFD, 0x5D],
     3,
     'BII',
     <Operand>[
@@ -844,7 +850,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STX P
     InstructionCategory.loadStore(),
-    0xFD5E,
+    <int>[0xFD, 0x5E],
     2,
     'STX',
     <Operand>[
@@ -856,7 +862,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI #(Y), i
     InstructionCategory.logicalOperation(),
-    0xFD5F,
+    <int>[0xFD, 0x5F],
     3,
     'ADI',
     <Operand>[
@@ -870,7 +876,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC UH
     InstructionCategory.logicalOperation(),
-    0xFD60,
+    <int>[0xFD, 0x60],
     2,
     'INC',
     <Operand>[
@@ -879,11 +885,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD61),
+  _illegalInstruction(<int>[0xFD, 0x61]),
   const InstructionDescriptor(
     // DEC UH
     InstructionCategory.logicalOperation(),
-    0xFD62,
+    <int>[0xFD, 0x62],
     2,
     'DEC',
     <Operand>[
@@ -892,16 +898,16 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFD63),
-  _illegalInstruction(0xFD64),
-  _illegalInstruction(0xFD65),
-  _illegalInstruction(0xFD66),
-  _illegalInstruction(0xFD67),
-  _illegalInstruction(0xFD68),
+  _illegalInstruction(<int>[0xFD, 0x63]),
+  _illegalInstruction(<int>[0xFD, 0x64]),
+  _illegalInstruction(<int>[0xFD, 0x65]),
+  _illegalInstruction(<int>[0xFD, 0x66]),
+  _illegalInstruction(<int>[0xFD, 0x67]),
+  _illegalInstruction(<int>[0xFD, 0x68]),
   const InstructionDescriptor(
     // ANI #(U), i
     InstructionCategory.logicalOperation(),
-    0xFD69,
+    <int>[0xFD, 0x69],
     3,
     'ANI',
     <Operand>[
@@ -913,7 +919,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STX U
     InstructionCategory.loadStore(),
-    0xFD6A,
+    <int>[0xFD, 0x6A],
     2,
     'STX',
     <Operand>[
@@ -925,7 +931,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI #(U), i
     InstructionCategory.logicalOperation(),
-    0xFD6B,
+    <int>[0xFD, 0x6B],
     3,
     'ORI',
     <Operand>[
@@ -934,11 +940,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xFD6C),
+  _illegalInstruction(<int>[0xFD, 0x6C]),
   const InstructionDescriptor(
     // BII #(U), i
     InstructionCategory.comparisonBitTest(),
-    0xFD6D,
+    <int>[0xFD, 0x6D],
     3,
     'BII',
     <Operand>[
@@ -947,11 +953,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(14, 0),
   ),
-  _illegalInstruction(0xFD6E),
+  _illegalInstruction(<int>[0xFD, 0x6E]),
   const InstructionDescriptor(
     // ADI #(U), i
     InstructionCategory.logicalOperation(),
-    0xFD6F,
+    <int>[0xFD, 0x6F],
     3,
     'ADI',
     <Operand>[
@@ -962,29 +968,29 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0x70
-  _illegalInstruction(0xFD70),
-  _illegalInstruction(0xFD71),
-  _illegalInstruction(0xFD72),
-  _illegalInstruction(0xFD73),
-  _illegalInstruction(0xFD74),
-  _illegalInstruction(0xFD75),
-  _illegalInstruction(0xFD76),
-  _illegalInstruction(0xFD77),
-  _illegalInstruction(0xFD78),
-  _illegalInstruction(0xFD79),
-  _illegalInstruction(0xFD7A),
-  _illegalInstruction(0xFD7B),
-  _illegalInstruction(0xFD7C),
-  _illegalInstruction(0xFD7D),
-  _illegalInstruction(0xFD7E),
-  _illegalInstruction(0xFD7F),
+  _illegalInstruction(<int>[0xFD, 0x70]),
+  _illegalInstruction(<int>[0xFD, 0x71]),
+  _illegalInstruction(<int>[0xFD, 0x72]),
+  _illegalInstruction(<int>[0xFD, 0x73]),
+  _illegalInstruction(<int>[0xFD, 0x74]),
+  _illegalInstruction(<int>[0xFD, 0x75]),
+  _illegalInstruction(<int>[0xFD, 0x76]),
+  _illegalInstruction(<int>[0xFD, 0x77]),
+  _illegalInstruction(<int>[0xFD, 0x78]),
+  _illegalInstruction(<int>[0xFD, 0x79]),
+  _illegalInstruction(<int>[0xFD, 0x7A]),
+  _illegalInstruction(<int>[0xFD, 0x7B]),
+  _illegalInstruction(<int>[0xFD, 0x7C]),
+  _illegalInstruction(<int>[0xFD, 0x7D]),
+  _illegalInstruction(<int>[0xFD, 0x7E]),
+  _illegalInstruction(<int>[0xFD, 0x7F]),
 
   // 0x80
-  _illegalInstruction(0xFD80),
+  _illegalInstruction(<int>[0xFD, 0x80]),
   const InstructionDescriptor(
     // SIE
     InstructionCategory.inputOutput(),
-    0xFD81,
+    <int>[0xFD, 0x81],
     2,
     'SIE',
     <Operand>[
@@ -993,16 +999,16 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(8, 0),
   ),
-  _illegalInstruction(0xFD82),
-  _illegalInstruction(0xFD83),
-  _illegalInstruction(0xFD84),
-  _illegalInstruction(0xFD85),
-  _illegalInstruction(0xFD86),
-  _illegalInstruction(0xFD87),
+  _illegalInstruction(<int>[0xFD, 0x82]),
+  _illegalInstruction(<int>[0xFD, 0x83]),
+  _illegalInstruction(<int>[0xFD, 0x84]),
+  _illegalInstruction(<int>[0xFD, 0x85]),
+  _illegalInstruction(<int>[0xFD, 0x86]),
+  _illegalInstruction(<int>[0xFD, 0x87]),
   const InstructionDescriptor(
     // PSH X
     InstructionCategory.loadStore(),
-    0xFD88,
+    <int>[0xFD, 0x88],
     2,
     'PSH',
     <Operand>[
@@ -1011,11 +1017,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(14, 0),
   ),
-  _illegalInstruction(0xFD89),
+  _illegalInstruction(<int>[0xFD, 0x89]),
   const InstructionDescriptor(
     // POP A
     InstructionCategory.loadStore(),
-    0xFD8A,
+    <int>[0xFD, 0x8A],
     2,
     'POP',
     <Operand>[
@@ -1024,11 +1030,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(12, 0),
   ),
-  _illegalInstruction(0xFD8B),
+  _illegalInstruction(<int>[0xFD, 0x8B]),
   const InstructionDescriptor(
     // DCA #(X)
     InstructionCategory.logicalOperation(),
-    0xFD8C,
+    <int>[0xFD, 0x8C],
     2,
     'DCA',
     <Operand>[
@@ -1037,11 +1043,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(19, 0),
   ),
-  _illegalInstruction(0xFD8D),
+  _illegalInstruction(<int>[0xFD, 0x8D]),
   const InstructionDescriptor(
     // CDV
     InstructionCategory.inputOutput(),
-    0xFD8E,
+    <int>[0xFD, 0x8E],
     2,
     'CDV',
     <Operand>[
@@ -1050,21 +1056,21 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(8, 0),
   ),
-  _illegalInstruction(0xFD8F),
+  _illegalInstruction(<int>[0xFD, 0x8F]),
 
   // 0x90
-  _illegalInstruction(0xFD90),
-  _illegalInstruction(0xFD91),
-  _illegalInstruction(0xFD92),
-  _illegalInstruction(0xFD93),
-  _illegalInstruction(0xFD94),
-  _illegalInstruction(0xFD95),
-  _illegalInstruction(0xFD96),
-  _illegalInstruction(0xFD97),
+  _illegalInstruction(<int>[0xFD, 0x90]),
+  _illegalInstruction(<int>[0xFD, 0x91]),
+  _illegalInstruction(<int>[0xFD, 0x92]),
+  _illegalInstruction(<int>[0xFD, 0x93]),
+  _illegalInstruction(<int>[0xFD, 0x94]),
+  _illegalInstruction(<int>[0xFD, 0x95]),
+  _illegalInstruction(<int>[0xFD, 0x96]),
+  _illegalInstruction(<int>[0xFD, 0x97]),
   const InstructionDescriptor(
     // PSH Y
     InstructionCategory.loadStore(),
-    0xFD98,
+    <int>[0xFD, 0x98],
     2,
     'PSH',
     <Operand>[
@@ -1073,13 +1079,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(14, 0),
   ),
-  _illegalInstruction(0xFD99),
-  _illegalInstruction(0xFD9A),
-  _illegalInstruction(0xFD9B),
+  _illegalInstruction(<int>[0xFD, 0x99]),
+  _illegalInstruction(<int>[0xFD, 0x9A]),
+  _illegalInstruction(<int>[0xFD, 0x9B]),
   const InstructionDescriptor(
     // DCA #(Y)
     InstructionCategory.logicalOperation(),
-    0xFD9C,
+    <int>[0xFD, 0x9C],
     2,
     'DCA',
     <Operand>[
@@ -1088,16 +1094,16 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(19, 0),
   ),
-  _illegalInstruction(0xFD9D),
-  _illegalInstruction(0xFD9E),
-  _illegalInstruction(0xFD9F),
+  _illegalInstruction(<int>[0xFD, 0x9D]),
+  _illegalInstruction(<int>[0xFD, 0x9E]),
+  _illegalInstruction(<int>[0xFD, 0x9F]),
 
   // 0xA0
-  _illegalInstruction(0xFDA0),
+  _illegalInstruction(<int>[0xFD, 0xA0]),
   const InstructionDescriptor(
     // SBC #(ab)
     InstructionCategory.logicalOperation(),
-    0xFDA1,
+    <int>[0xFD, 0xA1],
     4,
     'SBC',
     <Operand>[
@@ -1106,11 +1112,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xFDA2),
+  _illegalInstruction(<int>[0xFD, 0xA2]),
   const InstructionDescriptor(
     // ADC #(ab)
     InstructionCategory.logicalOperation(),
-    0xFDA3,
+    <int>[0xFD, 0xA3],
     4,
     'ADC',
     <Operand>[
@@ -1119,11 +1125,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xFDA4),
+  _illegalInstruction(<int>[0xFD, 0xA4]),
   const InstructionDescriptor(
     // LDA #(ab)
     InstructionCategory.loadStore(),
-    0xFDA5,
+    <int>[0xFD, 0xA5],
     4,
     'LDA',
     <Operand>[
@@ -1132,11 +1138,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(16, 0),
   ),
-  _illegalInstruction(0xFDA6),
+  _illegalInstruction(<int>[0xFD, 0xA6]),
   const InstructionDescriptor(
     // CPA #(ab)
     InstructionCategory.comparisonBitTest(),
-    0xFDA7,
+    <int>[0xFD, 0xA7],
     4,
     'CPA',
     <Operand>[
@@ -1148,7 +1154,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // PSH U
     InstructionCategory.loadStore(),
-    0xFDA8,
+    <int>[0xFD, 0xA8],
     2,
     'PSH',
     <Operand>[
@@ -1160,7 +1166,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND #(ab)
     InstructionCategory.logicalOperation(),
-    0xFDA9,
+    <int>[0xFD, 0xA9],
     4,
     'AND',
     <Operand>[
@@ -1172,7 +1178,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // TTA
     InstructionCategory.loadStore(),
-    0xFDAA,
+    <int>[0xFD, 0xAA],
     2,
     'TTA',
     <Operand>[
@@ -1184,7 +1190,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA #(ab)
     InstructionCategory.logicalOperation(),
-    0xFDAB,
+    <int>[0xFD, 0xAB],
     4,
     'ORA',
     <Operand>[
@@ -1196,7 +1202,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCA #(U)
     InstructionCategory.logicalOperation(),
-    0xFDAC,
+    <int>[0xFD, 0xAC],
     2,
     'DCA',
     <Operand>[
@@ -1208,7 +1214,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR #(ab)
     InstructionCategory.logicalOperation(),
-    0xFDAD,
+    <int>[0xFD, 0xAD],
     4,
     'EOR',
     <Operand>[
@@ -1220,7 +1226,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA #(ab)
     InstructionCategory.loadStore(),
-    0xFDAE,
+    <int>[0xFD, 0xAE],
     4,
     'STA',
     <Operand>[
@@ -1232,7 +1238,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT #(ab)
     InstructionCategory.comparisonBitTest(),
-    0xFDAF,
+    <int>[0xFD, 0xAF],
     4,
     'BIT',
     <Operand>[
@@ -1243,11 +1249,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0xB0
-  _illegalInstruction(0xFDB0),
+  _illegalInstruction(<int>[0xFD, 0xB0]),
   const InstructionDescriptor(
     // HLT
     InstructionCategory.inputOutput(),
-    0xFDB1,
+    <int>[0xFD, 0xB1],
     2,
     'HLT',
     <Operand>[
@@ -1256,18 +1262,18 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFDB2),
-  _illegalInstruction(0xFDB3),
-  _illegalInstruction(0xFDB4),
-  _illegalInstruction(0xFDB5),
-  _illegalInstruction(0xFDB6),
-  _illegalInstruction(0xFDB7),
-  _illegalInstruction(0xFDB8),
-  _illegalInstruction(0xFDB9),
+  _illegalInstruction(<int>[0xFD, 0xB2]),
+  _illegalInstruction(<int>[0xFD, 0xB3]),
+  _illegalInstruction(<int>[0xFD, 0xB4]),
+  _illegalInstruction(<int>[0xFD, 0xB5]),
+  _illegalInstruction(<int>[0xFD, 0xB6]),
+  _illegalInstruction(<int>[0xFD, 0xB7]),
+  _illegalInstruction(<int>[0xFD, 0xB8]),
+  _illegalInstruction(<int>[0xFD, 0xB9]),
   const InstructionDescriptor(
     // ITA
     InstructionCategory.inputOutput(),
-    0xFDBA,
+    <int>[0xFD, 0xBA],
     2,
     'ITA',
     <Operand>[
@@ -1276,13 +1282,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFDBB),
-  _illegalInstruction(0xFDBC),
-  _illegalInstruction(0xFDBD),
+  _illegalInstruction(<int>[0xFD, 0xBB]),
+  _illegalInstruction(<int>[0xFD, 0xBC]),
+  _illegalInstruction(<int>[0xFD, 0xBD]),
   const InstructionDescriptor(
     // RIE
     InstructionCategory.inputOutput(),
-    0xFDBE,
+    <int>[0xFD, 0xBE],
     2,
     'RIE',
     <Operand>[
@@ -1291,13 +1297,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(8, 0),
   ),
-  _illegalInstruction(0xFDBF),
+  _illegalInstruction(<int>[0xFD, 0xBF]),
 
   // 0xC0
   const InstructionDescriptor(
     // RDP
     InstructionCategory.inputOutput(),
-    0xFDC0,
+    <int>[0xFD, 0xC0],
     2,
     'RDP',
     <Operand>[
@@ -1309,7 +1315,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SDP
     InstructionCategory.inputOutput(),
-    0xFDC1,
+    <int>[0xFD, 0xC1],
     2,
     'SDP',
     <Operand>[
@@ -1318,16 +1324,16 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(8, 0),
   ),
-  _illegalInstruction(0xFDC2),
-  _illegalInstruction(0xFDC3),
-  _illegalInstruction(0xFDC4),
-  _illegalInstruction(0xFDC5),
-  _illegalInstruction(0xFDC6),
-  _illegalInstruction(0xFDC7),
+  _illegalInstruction(<int>[0xFD, 0xC2]),
+  _illegalInstruction(<int>[0xFD, 0xC3]),
+  _illegalInstruction(<int>[0xFD, 0xC4]),
+  _illegalInstruction(<int>[0xFD, 0xC5]),
+  _illegalInstruction(<int>[0xFD, 0xC6]),
+  _illegalInstruction(<int>[0xFD, 0xC7]),
   const InstructionDescriptor(
     // PSH A
     InstructionCategory.loadStore(),
-    0xFDC8,
+    <int>[0xFD, 0xC8],
     2,
     'PSH',
     <Operand>[
@@ -1336,11 +1342,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFDC9),
+  _illegalInstruction(<int>[0xFD, 0xC9]),
   const InstructionDescriptor(
     // ADR X
     InstructionCategory.logicalOperation(),
-    0xFDCA,
+    <int>[0xFD, 0xCA],
     2,
     'ADR',
     <Operand>[
@@ -1349,11 +1355,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFDCB),
+  _illegalInstruction(<int>[0xFD, 0xCB]),
   const InstructionDescriptor(
     // ATP
     InstructionCategory.inputOutput(),
-    0xFDCC,
+    <int>[0xFD, 0xCC],
     2,
     'ATP',
     <Operand>[
@@ -1362,11 +1368,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFDCD),
+  _illegalInstruction(<int>[0xFD, 0xCD]),
   const InstructionDescriptor(
     // AM0
     InstructionCategory.inputOutput(),
-    0xFDCE,
+    <int>[0xFD, 0xCE],
     2,
     'AM0',
     <Operand>[
@@ -1375,16 +1381,16 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFDCF),
+  _illegalInstruction(<int>[0xFD, 0xCF]),
 
   // 0xD0
-  _illegalInstruction(0xFDD0),
-  _illegalInstruction(0xFDD1),
-  _illegalInstruction(0xFDD2),
+  _illegalInstruction(<int>[0xFD, 0xD0]),
+  _illegalInstruction(<int>[0xFD, 0xD1]),
+  _illegalInstruction(<int>[0xFD, 0xD2]),
   const InstructionDescriptor(
     // DRR #(X)
     InstructionCategory.blockTransferSearch(),
-    0xFDD3,
+    <int>[0xFD, 0xD3],
     2,
     'DRR',
     <Operand>[
@@ -1393,13 +1399,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(16, 0),
   ),
-  _illegalInstruction(0xFDD4),
-  _illegalInstruction(0xFDD5),
-  _illegalInstruction(0xFDD6),
+  _illegalInstruction(<int>[0xFD, 0xD4]),
+  _illegalInstruction(<int>[0xFD, 0xD5]),
+  _illegalInstruction(<int>[0xFD, 0xD6]),
   const InstructionDescriptor(
     // DRL #(X)
     InstructionCategory.blockTransferSearch(),
-    0xFDD7,
+    <int>[0xFD, 0xD7],
     2,
     'DRL',
     <Operand>[
@@ -1408,12 +1414,12 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(16, 0),
   ),
-  _illegalInstruction(0xFDD8),
-  _illegalInstruction(0xFDD9),
+  _illegalInstruction(<int>[0xFD, 0xD8]),
+  _illegalInstruction(<int>[0xFD, 0xD9]),
   const InstructionDescriptor(
     // ADR Y
     InstructionCategory.logicalOperation(),
-    0xFDDA,
+    <int>[0xFD, 0xDA],
     2,
     'ADR',
     <Operand>[
@@ -1422,13 +1428,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(11, 0),
   ),
-  _illegalInstruction(0xFDDB),
-  _illegalInstruction(0xFDDC),
-  _illegalInstruction(0xFDDD),
+  _illegalInstruction(<int>[0xFD, 0xDB]),
+  _illegalInstruction(<int>[0xFD, 0xDC]),
+  _illegalInstruction(<int>[0xFD, 0xDD]),
   const InstructionDescriptor(
     // AM1
     InstructionCategory.inputOutput(),
-    0xFDDE,
+    <int>[0xFD, 0xDE],
     2,
     'AM1',
     <Operand>[
@@ -1437,22 +1443,22 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(9, 0),
   ),
-  _illegalInstruction(0xFDDF),
+  _illegalInstruction(<int>[0xFD, 0xDF]),
 
   // 0xE0
-  _illegalInstruction(0xFDE0),
-  _illegalInstruction(0xFDE1),
-  _illegalInstruction(0xFDE2),
-  _illegalInstruction(0xFDE3),
-  _illegalInstruction(0xFDE4),
-  _illegalInstruction(0xFDE5),
-  _illegalInstruction(0xFDE6),
-  _illegalInstruction(0xFDE7),
-  _illegalInstruction(0xFDE8),
+  _illegalInstruction(<int>[0xFD, 0xE0]),
+  _illegalInstruction(<int>[0xFD, 0xE1]),
+  _illegalInstruction(<int>[0xFD, 0xE2]),
+  _illegalInstruction(<int>[0xFD, 0xE3]),
+  _illegalInstruction(<int>[0xFD, 0xE4]),
+  _illegalInstruction(<int>[0xFD, 0xE5]),
+  _illegalInstruction(<int>[0xFD, 0xE6]),
+  _illegalInstruction(<int>[0xFD, 0xE7]),
+  _illegalInstruction(<int>[0xFD, 0xE8]),
   const InstructionDescriptor(
     // ANI #(ab), i
     InstructionCategory.logicalOperation(),
-    0xFDE9,
+    <int>[0xFD, 0xE9],
     5,
     'ANI',
     <Operand>[
@@ -1464,7 +1470,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADR U
     InstructionCategory.logicalOperation(),
-    0xFDEA,
+    <int>[0xFD, 0xEA],
     2,
     'ADR',
     <Operand>[
@@ -1476,7 +1482,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI #(ab), i
     InstructionCategory.logicalOperation(),
-    0xFDEB,
+    <int>[0xFD, 0xEB],
     5,
     'ORI',
     <Operand>[
@@ -1488,7 +1494,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ATT
     InstructionCategory.loadStore(),
-    0xFDEC,
+    <int>[0xFD, 0xEC],
     2,
     'ATT',
     <Operand>[
@@ -1500,7 +1506,7 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII #(ab), i
     InstructionCategory.comparisonBitTest(),
-    0xFDED,
+    <int>[0xFD, 0xED],
     5,
     'BII',
     <Operand>[
@@ -1509,11 +1515,11 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
     ],
     CyclesCount(20, 0),
   ),
-  _illegalInstruction(0xFDEE),
+  _illegalInstruction(<int>[0xFD, 0xEE]),
   const InstructionDescriptor(
     // ADI #(ab), i
     InstructionCategory.logicalOperation(),
-    0xFDEF,
+    <int>[0xFD, 0xEF],
     5,
     'ADI',
     <Operand>[
@@ -1524,22 +1530,22 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   ),
 
   // 0xF0
-  _illegalInstruction(0xFDF0),
-  _illegalInstruction(0xFDF1),
-  _illegalInstruction(0xFDF2),
-  _illegalInstruction(0xFDF3),
-  _illegalInstruction(0xFDF4),
-  _illegalInstruction(0xFDF5),
-  _illegalInstruction(0xFDF6),
-  _illegalInstruction(0xFDF7),
-  _illegalInstruction(0xFDF8),
-  _illegalInstruction(0xFDF9),
-  _illegalInstruction(0xFDFA),
-  _illegalInstruction(0xFDFB),
-  _illegalInstruction(0xFDFC),
-  _illegalInstruction(0xFDFD),
-  _illegalInstruction(0xFDFE),
-  _illegalInstruction(0xFDFF),
+  _illegalInstruction(<int>[0xFD, 0xF0]),
+  _illegalInstruction(<int>[0xFD, 0xF1]),
+  _illegalInstruction(<int>[0xFD, 0xF2]),
+  _illegalInstruction(<int>[0xFD, 0xF3]),
+  _illegalInstruction(<int>[0xFD, 0xF4]),
+  _illegalInstruction(<int>[0xFD, 0xF5]),
+  _illegalInstruction(<int>[0xFD, 0xF6]),
+  _illegalInstruction(<int>[0xFD, 0xF7]),
+  _illegalInstruction(<int>[0xFD, 0xF8]),
+  _illegalInstruction(<int>[0xFD, 0xF9]),
+  _illegalInstruction(<int>[0xFD, 0xFA]),
+  _illegalInstruction(<int>[0xFD, 0xFB]),
+  _illegalInstruction(<int>[0xFD, 0xFC]),
+  _illegalInstruction(<int>[0xFD, 0xFD]),
+  _illegalInstruction(<int>[0xFD, 0xFE]),
+  _illegalInstruction(<int>[0xFD, 0xFF]),
 ];
 
 // InstructionTable ...
@@ -1548,7 +1554,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC XL
     InstructionCategory.logicalOperation(),
-    0x00,
+    <int>[0x00],
     1,
     'SBC',
     <Operand>[
@@ -1560,7 +1566,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC (X)
     InstructionCategory.logicalOperation(),
-    0x01,
+    <int>[0x01],
     1,
     'SBC',
     <Operand>[
@@ -1572,7 +1578,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC XL
     InstructionCategory.logicalOperation(),
-    0x02,
+    <int>[0x02],
     1,
     'ADC',
     <Operand>[
@@ -1584,7 +1590,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC (X)
     InstructionCategory.logicalOperation(),
-    0x03,
+    <int>[0x03],
     1,
     'ADC',
     <Operand>[
@@ -1596,7 +1602,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA XL
     InstructionCategory.loadStore(),
-    0x04,
+    <int>[0x04],
     1,
     'LDA',
     <Operand>[
@@ -1608,7 +1614,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA (X)
     InstructionCategory.loadStore(),
-    0x05,
+    <int>[0x05],
     1,
     'LDA',
     <Operand>[
@@ -1620,7 +1626,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA XL
     InstructionCategory.comparisonBitTest(),
-    0x06,
+    <int>[0x06],
     1,
     'CPA',
     <Operand>[
@@ -1632,7 +1638,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA (X)
     InstructionCategory.comparisonBitTest(),
-    0x07,
+    <int>[0x07],
     1,
     'CPA',
     <Operand>[
@@ -1644,7 +1650,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA XH
     InstructionCategory.loadStore(),
-    0x08,
+    <int>[0x08],
     1,
     'STA',
     <Operand>[
@@ -1656,7 +1662,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND (X)
     InstructionCategory.logicalOperation(),
-    0x09,
+    <int>[0x09],
     1,
     'AND',
     <Operand>[
@@ -1668,7 +1674,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA XL
     InstructionCategory.loadStore(),
-    0x0A,
+    <int>[0x0A],
     1,
     'STA',
     <Operand>[
@@ -1680,7 +1686,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA (X)
     InstructionCategory.logicalOperation(),
-    0x0B,
+    <int>[0x0B],
     1,
     'ORA',
     <Operand>[
@@ -1692,7 +1698,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS (X)
     InstructionCategory.logicalOperation(),
-    0x0C,
+    <int>[0x0C],
     1,
     'DCS',
     <Operand>[
@@ -1704,7 +1710,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR (X)
     InstructionCategory.logicalOperation(),
-    0x0D,
+    <int>[0x0D],
     1,
     'EOR',
     <Operand>[
@@ -1716,7 +1722,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA (X)
     InstructionCategory.loadStore(),
-    0x0E,
+    <int>[0x0E],
     1,
     'STA',
     <Operand>[
@@ -1728,7 +1734,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT (X)
     InstructionCategory.comparisonBitTest(),
-    0x0F,
+    <int>[0x0F],
     1,
     'BIT',
     <Operand>[
@@ -1742,7 +1748,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC YL
     InstructionCategory.logicalOperation(),
-    0x10,
+    <int>[0x10],
     1,
     'SBC',
     <Operand>[
@@ -1754,7 +1760,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC (Y)
     InstructionCategory.logicalOperation(),
-    0x11,
+    <int>[0x11],
     1,
     'SBC',
     <Operand>[
@@ -1766,7 +1772,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC YL
     InstructionCategory.logicalOperation(),
-    0x12,
+    <int>[0x12],
     1,
     'ADC',
     <Operand>[
@@ -1778,7 +1784,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC (Y)
     InstructionCategory.logicalOperation(),
-    0x13,
+    <int>[0x13],
     1,
     'ADC',
     <Operand>[
@@ -1790,7 +1796,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA YL
     InstructionCategory.loadStore(),
-    0x14,
+    <int>[0x14],
     1,
     'LDA',
     <Operand>[
@@ -1802,7 +1808,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA (Y)
     InstructionCategory.loadStore(),
-    0x15,
+    <int>[0x15],
     1,
     'LDA',
     <Operand>[
@@ -1814,7 +1820,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA YL
     InstructionCategory.comparisonBitTest(),
-    0x16,
+    <int>[0x16],
     1,
     'CPA',
     <Operand>[
@@ -1826,7 +1832,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA (Y)
     InstructionCategory.comparisonBitTest(),
-    0x17,
+    <int>[0x17],
     1,
     'CPA',
     <Operand>[
@@ -1838,7 +1844,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA YH
     InstructionCategory.loadStore(),
-    0x18,
+    <int>[0x18],
     1,
     'STA',
     <Operand>[
@@ -1850,7 +1856,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND (Y)
     InstructionCategory.logicalOperation(),
-    0x19,
+    <int>[0x19],
     1,
     'AND',
     <Operand>[
@@ -1862,7 +1868,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA YL
     InstructionCategory.loadStore(),
-    0x1A,
+    <int>[0x1A],
     1,
     'STA',
     <Operand>[
@@ -1874,7 +1880,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA (Y)
     InstructionCategory.logicalOperation(),
-    0x1B,
+    <int>[0x1B],
     1,
     'ORA',
     <Operand>[
@@ -1886,7 +1892,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS (Y)
     InstructionCategory.logicalOperation(),
-    0x1C,
+    <int>[0x1C],
     1,
     'DCS',
     <Operand>[
@@ -1898,7 +1904,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR (Y)
     InstructionCategory.logicalOperation(),
-    0x1D,
+    <int>[0x1D],
     1,
     'EOR',
     <Operand>[
@@ -1910,7 +1916,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA (Y)
     InstructionCategory.loadStore(),
-    0x1E,
+    <int>[0x1E],
     1,
     'STA',
     <Operand>[
@@ -1922,7 +1928,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT (Y)
     InstructionCategory.comparisonBitTest(),
-    0x1F,
+    <int>[0x1F],
     1,
     'BIT',
     <Operand>[
@@ -1936,7 +1942,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC UL
     InstructionCategory.logicalOperation(),
-    0x20,
+    <int>[0x20],
     1,
     'SBC',
     <Operand>[
@@ -1948,7 +1954,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC (U)
     InstructionCategory.logicalOperation(),
-    0x21,
+    <int>[0x21],
     1,
     'SBC',
     <Operand>[
@@ -1960,7 +1966,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC UL
     InstructionCategory.logicalOperation(),
-    0x22,
+    <int>[0x22],
     1,
     'ADC',
     <Operand>[
@@ -1972,7 +1978,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC (U)
     InstructionCategory.logicalOperation(),
-    0x23,
+    <int>[0x23],
     1,
     'ADC',
     <Operand>[
@@ -1984,7 +1990,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA UL
     InstructionCategory.loadStore(),
-    0x24,
+    <int>[0x24],
     1,
     'LDA',
     <Operand>[
@@ -1996,7 +2002,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA (U)
     InstructionCategory.loadStore(),
-    0x25,
+    <int>[0x25],
     1,
     'LDA',
     <Operand>[
@@ -2008,7 +2014,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA UL
     InstructionCategory.comparisonBitTest(),
-    0x26,
+    <int>[0x26],
     1,
     'CPA',
     <Operand>[
@@ -2020,7 +2026,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA (U)
     InstructionCategory.comparisonBitTest(),
-    0x27,
+    <int>[0x27],
     1,
     'CPA',
     <Operand>[
@@ -2032,7 +2038,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA UH
     InstructionCategory.loadStore(),
-    0x28,
+    <int>[0x28],
     1,
     'STA',
     <Operand>[
@@ -2044,7 +2050,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND (U)
     InstructionCategory.logicalOperation(),
-    0x29,
+    <int>[0x29],
     1,
     'AND',
     <Operand>[
@@ -2056,7 +2062,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA UL
     InstructionCategory.loadStore(),
-    0x2A,
+    <int>[0x2A],
     1,
     'STA',
     <Operand>[
@@ -2068,7 +2074,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA (U)
     InstructionCategory.logicalOperation(),
-    0x2B,
+    <int>[0x2B],
     1,
     'ORA',
     <Operand>[
@@ -2080,7 +2086,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCS (U)
     InstructionCategory.logicalOperation(),
-    0x2C,
+    <int>[0x2C],
     1,
     'DCS',
     <Operand>[
@@ -2092,7 +2098,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR (U)
     InstructionCategory.logicalOperation(),
-    0x2D,
+    <int>[0x2D],
     1,
     'EOR',
     <Operand>[
@@ -2104,7 +2110,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA (U)
     InstructionCategory.loadStore(),
-    0x2E,
+    <int>[0x2E],
     1,
     'STA',
     <Operand>[
@@ -2116,7 +2122,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT (U)
     InstructionCategory.comparisonBitTest(),
-    0x2F,
+    <int>[0x2F],
     1,
     'BIT',
     <Operand>[
@@ -2127,18 +2133,18 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   ),
 
   // 0x30
-  _illegalInstruction(0x30),
-  _illegalInstruction(0x31),
-  _illegalInstruction(0x32),
-  _illegalInstruction(0x33),
-  _illegalInstruction(0x34),
-  _illegalInstruction(0x35),
-  _illegalInstruction(0x36),
-  _illegalInstruction(0x37),
+  _illegalInstruction(<int>[0x30]),
+  _illegalInstruction(<int>[0x31]),
+  _illegalInstruction(<int>[0x32]),
+  _illegalInstruction(<int>[0x33]),
+  _illegalInstruction(<int>[0x34]),
+  _illegalInstruction(<int>[0x35]),
+  _illegalInstruction(<int>[0x36]),
+  _illegalInstruction(<int>[0x37]),
   const InstructionDescriptor(
     // NOP
     InstructionCategory.inputOutput(),
-    0x38,
+    <int>[0x38],
     1,
     'NOP',
     <Operand>[
@@ -2147,19 +2153,19 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(5, 0),
   ),
-  _illegalInstruction(0x39),
-  _illegalInstruction(0x3A),
-  _illegalInstruction(0x3B),
-  _illegalInstruction(0x3C),
-  _illegalInstruction(0x3D),
-  _illegalInstruction(0x3E),
-  _illegalInstruction(0x3F),
+  _illegalInstruction(<int>[0x39]),
+  _illegalInstruction(<int>[0x3A]),
+  _illegalInstruction(<int>[0x3B]),
+  _illegalInstruction(<int>[0x3C]),
+  _illegalInstruction(<int>[0x3D]),
+  _illegalInstruction(<int>[0x3E]),
+  _illegalInstruction(<int>[0x3F]),
 
   // 0x40
   const InstructionDescriptor(
     // INC XL
     InstructionCategory.logicalOperation(),
-    0x40,
+    <int>[0x40],
     1,
     'INC',
     <Operand>[
@@ -2171,7 +2177,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SIN X
     InstructionCategory.loadStore(),
-    0x41,
+    <int>[0x41],
     1,
     'SIN',
     <Operand>[
@@ -2183,7 +2189,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC XL
     InstructionCategory.logicalOperation(),
-    0x42,
+    <int>[0x42],
     1,
     'DEC',
     <Operand>[
@@ -2195,7 +2201,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SDE X
     InstructionCategory.loadStore(),
-    0x43,
+    <int>[0x43],
     1,
     'SDE',
     <Operand>[
@@ -2207,7 +2213,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC X
     InstructionCategory.logicalOperation(),
-    0x44,
+    <int>[0x44],
     1,
     'INC',
     <Operand>[
@@ -2219,7 +2225,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LIN X
     InstructionCategory.loadStore(),
-    0x45,
+    <int>[0x45],
     1,
     'LIN',
     <Operand>[
@@ -2231,7 +2237,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC X
     InstructionCategory.logicalOperation(),
-    0x46,
+    <int>[0x46],
     1,
     'DEC',
     <Operand>[
@@ -2243,7 +2249,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDE X
     InstructionCategory.loadStore(),
-    0x47,
+    <int>[0x47],
     1,
     'LDE',
     <Operand>[
@@ -2255,7 +2261,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI XH, i
     InstructionCategory.loadStore(),
-    0x48,
+    <int>[0x48],
     2,
     'LDI',
     <Operand>[
@@ -2267,7 +2273,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI (X), i
     InstructionCategory.logicalOperation(),
-    0x49,
+    <int>[0x49],
     2,
     'ANI',
     <Operand>[
@@ -2279,7 +2285,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI XL, i
     InstructionCategory.loadStore(),
-    0x4A,
+    <int>[0x4A],
     2,
     'LDI',
     <Operand>[
@@ -2291,7 +2297,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI (X), i
     InstructionCategory.logicalOperation(),
-    0x4B,
+    <int>[0x4B],
     2,
     'ORI',
     <Operand>[
@@ -2303,7 +2309,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI XH, i
     InstructionCategory.comparisonBitTest(),
-    0x4C,
+    <int>[0x4C],
     2,
     'CPI',
     <Operand>[
@@ -2315,7 +2321,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII (X), i
     InstructionCategory.comparisonBitTest(),
-    0x4D,
+    <int>[0x4D],
     2,
     'BII',
     <Operand>[
@@ -2327,7 +2333,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI XL, i
     InstructionCategory.comparisonBitTest(),
-    0x4E,
+    <int>[0x4E],
     2,
     'CPI',
     <Operand>[
@@ -2339,7 +2345,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI (X), i
     InstructionCategory.logicalOperation(),
-    0x4F,
+    <int>[0x4F],
     2,
     'ADI',
     <Operand>[
@@ -2353,7 +2359,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC YL
     InstructionCategory.logicalOperation(),
-    0x50,
+    <int>[0x50],
     1,
     'INC',
     <Operand>[
@@ -2365,7 +2371,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SIN Y
     InstructionCategory.loadStore(),
-    0x51,
+    <int>[0x51],
     1,
     'SIN',
     <Operand>[
@@ -2377,7 +2383,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC YL
     InstructionCategory.logicalOperation(),
-    0x52,
+    <int>[0x52],
     1,
     'DEC',
     <Operand>[
@@ -2389,7 +2395,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SDE Y
     InstructionCategory.loadStore(),
-    0x53,
+    <int>[0x53],
     1,
     'SDE',
     <Operand>[
@@ -2401,7 +2407,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC Y
     InstructionCategory.logicalOperation(),
-    0x54,
+    <int>[0x54],
     1,
     'INC',
     <Operand>[
@@ -2413,7 +2419,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LIN Y
     InstructionCategory.loadStore(),
-    0x55,
+    <int>[0x55],
     1,
     'LIN',
     <Operand>[
@@ -2425,7 +2431,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC Y
     InstructionCategory.logicalOperation(),
-    0x56,
+    <int>[0x56],
     1,
     'DEC',
     <Operand>[
@@ -2437,7 +2443,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDE Y
     InstructionCategory.loadStore(),
-    0x57,
+    <int>[0x57],
     1,
     'LDE',
     <Operand>[
@@ -2449,7 +2455,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI YH, i
     InstructionCategory.loadStore(),
-    0x58,
+    <int>[0x58],
     2,
     'LDI',
     <Operand>[
@@ -2461,7 +2467,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI (Y), i
     InstructionCategory.logicalOperation(),
-    0x59,
+    <int>[0x59],
     2,
     'ANI',
     <Operand>[
@@ -2473,7 +2479,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI YL, i
     InstructionCategory.loadStore(),
-    0x5A,
+    <int>[0x5A],
     2,
     'LDI',
     <Operand>[
@@ -2485,7 +2491,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI (Y), i
     InstructionCategory.logicalOperation(),
-    0x5B,
+    <int>[0x5B],
     2,
     'ORI',
     <Operand>[
@@ -2497,7 +2503,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI YH, i
     InstructionCategory.comparisonBitTest(),
-    0x5C,
+    <int>[0x5C],
     2,
     'CPI',
     <Operand>[
@@ -2509,7 +2515,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII (Y), i
     InstructionCategory.comparisonBitTest(),
-    0x5D,
+    <int>[0x5D],
     2,
     'BII',
     <Operand>[
@@ -2521,7 +2527,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI YL, i
     InstructionCategory.comparisonBitTest(),
-    0x5E,
+    <int>[0x5E],
     2,
     'CPI',
     <Operand>[
@@ -2533,7 +2539,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI (Y), i
     InstructionCategory.logicalOperation(),
-    0x5F,
+    <int>[0x5F],
     2,
     'ADI',
     <Operand>[
@@ -2547,7 +2553,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC UL
     InstructionCategory.logicalOperation(),
-    0x60,
+    <int>[0x60],
     1,
     'INC',
     <Operand>[
@@ -2559,7 +2565,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SIN U
     InstructionCategory.loadStore(),
-    0x61,
+    <int>[0x61],
     1,
     'SIN',
     <Operand>[
@@ -2571,7 +2577,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC UL
     InstructionCategory.logicalOperation(),
-    0x62,
+    <int>[0x62],
     1,
     'DEC',
     <Operand>[
@@ -2583,7 +2589,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SDE U
     InstructionCategory.loadStore(),
-    0x63,
+    <int>[0x63],
     1,
     'SDE',
     <Operand>[
@@ -2595,7 +2601,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC U
     InstructionCategory.logicalOperation(),
-    0x64,
+    <int>[0x64],
     1,
     'INC',
     <Operand>[
@@ -2607,7 +2613,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LIN U
     InstructionCategory.loadStore(),
-    0x65,
+    <int>[0x65],
     1,
     'LIN',
     <Operand>[
@@ -2619,7 +2625,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC U
     InstructionCategory.logicalOperation(),
-    0x66,
+    <int>[0x66],
     1,
     'DEC',
     <Operand>[
@@ -2631,7 +2637,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDE U
     InstructionCategory.loadStore(),
-    0x67,
+    <int>[0x67],
     1,
     'LDE',
     <Operand>[
@@ -2643,7 +2649,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI UH, i
     InstructionCategory.loadStore(),
-    0x68,
+    <int>[0x68],
     2,
     'LDI',
     <Operand>[
@@ -2655,7 +2661,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI (U), i
     InstructionCategory.logicalOperation(),
-    0x69,
+    <int>[0x69],
     2,
     'ANI',
     <Operand>[
@@ -2667,7 +2673,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI UL, i
     InstructionCategory.loadStore(),
-    0x6A,
+    <int>[0x6A],
     2,
     'LDI',
     <Operand>[
@@ -2679,7 +2685,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI (U), i
     InstructionCategory.logicalOperation(),
-    0x6B,
+    <int>[0x6B],
     2,
     'ORI',
     <Operand>[
@@ -2691,7 +2697,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI UH, i
     InstructionCategory.comparisonBitTest(),
-    0x6C,
+    <int>[0x6C],
     2,
     'CPI',
     <Operand>[
@@ -2703,7 +2709,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII (U), i
     InstructionCategory.comparisonBitTest(),
-    0x6D,
+    <int>[0x6D],
     2,
     'BII',
     <Operand>[
@@ -2715,7 +2721,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPI UL, i
     InstructionCategory.comparisonBitTest(),
-    0x6E,
+    <int>[0x6E],
     2,
     'CPI',
     <Operand>[
@@ -2727,7 +2733,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI (U), i
     InstructionCategory.logicalOperation(),
-    0x6F,
+    <int>[0x6F],
     2,
     'ADI',
     <Operand>[
@@ -2738,28 +2744,28 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   ),
 
   // 0x70
-  _illegalInstruction(0x70),
-  _illegalInstruction(0x71),
-  _illegalInstruction(0x72),
-  _illegalInstruction(0x73),
-  _illegalInstruction(0x74),
-  _illegalInstruction(0x75),
-  _illegalInstruction(0x76),
-  _illegalInstruction(0x77),
-  _illegalInstruction(0x78),
-  _illegalInstruction(0x79),
-  _illegalInstruction(0x7A),
-  _illegalInstruction(0x7B),
-  _illegalInstruction(0x7C),
-  _illegalInstruction(0x7D),
-  _illegalInstruction(0x7E),
-  _illegalInstruction(0x7F),
+  _illegalInstruction(<int>[0x70]),
+  _illegalInstruction(<int>[0x71]),
+  _illegalInstruction(<int>[0x72]),
+  _illegalInstruction(<int>[0x73]),
+  _illegalInstruction(<int>[0x74]),
+  _illegalInstruction(<int>[0x75]),
+  _illegalInstruction(<int>[0x76]),
+  _illegalInstruction(<int>[0x77]),
+  _illegalInstruction(<int>[0x78]),
+  _illegalInstruction(<int>[0x79]),
+  _illegalInstruction(<int>[0x7A]),
+  _illegalInstruction(<int>[0x7B]),
+  _illegalInstruction(<int>[0x7C]),
+  _illegalInstruction(<int>[0x7D]),
+  _illegalInstruction(<int>[0x7E]),
+  _illegalInstruction(<int>[0x7F]),
 
   // 0x80
   const InstructionDescriptor(
     // SBC XH
     InstructionCategory.logicalOperation(),
-    0x80,
+    <int>[0x80],
     1,
     'SBC',
     <Operand>[
@@ -2771,7 +2777,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCR +i
     InstructionCategory.branch(),
-    0x81,
+    <int>[0x81],
     2,
     'BCR',
     <Operand>[
@@ -2783,7 +2789,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC XH
     InstructionCategory.logicalOperation(),
-    0x82,
+    <int>[0x82],
     1,
     'ADC',
     <Operand>[
@@ -2795,7 +2801,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCS +i
     InstructionCategory.branch(),
-    0x83,
+    <int>[0x83],
     2,
     'BCS',
     <Operand>[
@@ -2807,7 +2813,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA XH
     InstructionCategory.loadStore(),
-    0x84,
+    <int>[0x84],
     1,
     'LDA',
     <Operand>[
@@ -2819,7 +2825,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BHR +i
     InstructionCategory.branch(),
-    0x85,
+    <int>[0x85],
     2,
     'BHR',
     <Operand>[
@@ -2831,7 +2837,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA XH
     InstructionCategory.comparisonBitTest(),
-    0x86,
+    <int>[0x86],
     1,
     'CPA',
     <Operand>[
@@ -2843,7 +2849,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BHS +i
     InstructionCategory.branch(),
-    0x87,
+    <int>[0x87],
     2,
     'BHS',
     <Operand>[
@@ -2855,7 +2861,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LOP UL, i
     InstructionCategory.lop(),
-    0x88,
+    <int>[0x88],
     2,
     'LOP',
     <Operand>[
@@ -2867,7 +2873,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BZR +i
     InstructionCategory.branch(),
-    0x89,
+    <int>[0x89],
     2,
     'BZR',
     <Operand>[
@@ -2879,7 +2885,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // RTI
     InstructionCategory.ret(),
-    0x8A,
+    <int>[0x8A],
     1,
     'RTI',
     <Operand>[
@@ -2891,7 +2897,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BZS +i
     InstructionCategory.branch(),
-    0x8B,
+    <int>[0x8B],
     2,
     'BZS',
     <Operand>[
@@ -2903,7 +2909,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCA (X)
     InstructionCategory.logicalOperation(),
-    0x8C,
+    <int>[0x8C],
     1,
     'DCA',
     <Operand>[
@@ -2915,7 +2921,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BVR +i
     InstructionCategory.branch(),
-    0x8D,
+    <int>[0x8D],
     2,
     'BVR',
     <Operand>[
@@ -2927,7 +2933,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCH +i
     InstructionCategory.branch(),
-    0x8E,
+    <int>[0x8E],
     2,
     'BCH',
     <Operand>[
@@ -2939,7 +2945,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BVS +i
     InstructionCategory.branch(),
-    0x8F,
+    <int>[0x8F],
     2,
     'BVS',
     <Operand>[
@@ -2953,7 +2959,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC YH
     InstructionCategory.logicalOperation(),
-    0x90,
+    <int>[0x90],
     1,
     'SBC',
     <Operand>[
@@ -2965,7 +2971,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCR -i
     InstructionCategory.branch(),
-    0x91,
+    <int>[0x91],
     2,
     'BCR',
     <Operand>[
@@ -2977,7 +2983,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC YH
     InstructionCategory.logicalOperation(),
-    0x92,
+    <int>[0x92],
     1,
     'ADC',
     <Operand>[
@@ -2989,7 +2995,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCS -i
     InstructionCategory.branch(),
-    0x93,
+    <int>[0x93],
     2,
     'BCS',
     <Operand>[
@@ -3001,7 +3007,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA YH
     InstructionCategory.loadStore(),
-    0x94,
+    <int>[0x94],
     1,
     'LDA',
     <Operand>[
@@ -3013,7 +3019,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BHR -i
     InstructionCategory.branch(),
-    0x95,
+    <int>[0x95],
     2,
     'BHR',
     <Operand>[
@@ -3025,7 +3031,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA YH
     InstructionCategory.comparisonBitTest(),
-    0x96,
+    <int>[0x96],
     1,
     'CPA',
     <Operand>[
@@ -3037,7 +3043,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BHS -i
     InstructionCategory.branch(),
-    0x97,
+    <int>[0x97],
     2,
     'BHS',
     <Operand>[
@@ -3046,11 +3052,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(9, 2),
   ),
-  _illegalInstruction(0x98),
+  _illegalInstruction(<int>[0x98]),
   const InstructionDescriptor(
     // BZR -i
     InstructionCategory.branch(),
-    0x99,
+    <int>[0x99],
     2,
     'BZR',
     <Operand>[
@@ -3062,7 +3068,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // RTN
     InstructionCategory.ret(),
-    0x9A,
+    <int>[0x9A],
     1,
     'RTN',
     <Operand>[
@@ -3074,7 +3080,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BZS -i
     InstructionCategory.branch(),
-    0x9B,
+    <int>[0x9B],
     2,
     'BZS',
     <Operand>[
@@ -3086,7 +3092,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCA (Y)
     InstructionCategory.logicalOperation(),
-    0x9C,
+    <int>[0x9C],
     1,
     'DCA',
     <Operand>[
@@ -3098,7 +3104,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BVR -i
     InstructionCategory.branch(),
-    0x9D,
+    <int>[0x9D],
     2,
     'BVR',
     <Operand>[
@@ -3110,7 +3116,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BCH -i
     InstructionCategory.branch(),
-    0x9E,
+    <int>[0x9E],
     2,
     'BCH',
     <Operand>[
@@ -3122,7 +3128,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BVS -i
     InstructionCategory.branch(),
-    0x9F,
+    <int>[0x9F],
     2,
     'BVS',
     <Operand>[
@@ -3136,7 +3142,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC UH
     InstructionCategory.logicalOperation(),
-    0xA0,
+    <int>[0xA0],
     1,
     'SBC',
     <Operand>[
@@ -3148,7 +3154,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SBC (ab)
     InstructionCategory.logicalOperation(),
-    0xA1,
+    <int>[0xA1],
     3,
     'SBC',
     <Operand>[
@@ -3160,7 +3166,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC UH
     InstructionCategory.logicalOperation(),
-    0xA2,
+    <int>[0xA2],
     1,
     'ADC',
     <Operand>[
@@ -3172,7 +3178,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADC (ab)
     InstructionCategory.logicalOperation(),
-    0xA3,
+    <int>[0xA3],
     3,
     'ADC',
     <Operand>[
@@ -3184,7 +3190,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA UH
     InstructionCategory.loadStore(),
-    0xA4,
+    <int>[0xA4],
     1,
     'LDA',
     <Operand>[
@@ -3196,7 +3202,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDA (ab)
     InstructionCategory.loadStore(),
-    0xA5,
+    <int>[0xA5],
     3,
     'LDA',
     <Operand>[
@@ -3208,7 +3214,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA UH
     InstructionCategory.comparisonBitTest(),
-    0xA6,
+    <int>[0xA6],
     1,
     'CPA',
     <Operand>[
@@ -3220,7 +3226,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CPA (ab)
     InstructionCategory.comparisonBitTest(),
-    0xA7,
+    <int>[0xA7],
     3,
     'CPA',
     <Operand>[
@@ -3232,7 +3238,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SPV
     InstructionCategory.inputOutput(),
-    0xA8,
+    <int>[0xA8],
     1,
     'SPV',
     <Operand>[
@@ -3244,7 +3250,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AND (ab)
     InstructionCategory.logicalOperation(),
-    0xA9,
+    <int>[0xA9],
     3,
     'AND',
     <Operand>[
@@ -3256,7 +3262,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // LDI S, i, j
     InstructionCategory.loadStore(),
-    0xAA,
+    <int>[0xAA],
     3,
     'LDI',
     <Operand>[
@@ -3268,7 +3274,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORA (ab)
     InstructionCategory.logicalOperation(),
-    0xAB,
+    <int>[0xAB],
     3,
     'ORA',
     <Operand>[
@@ -3280,7 +3286,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DCA (U)
     InstructionCategory.logicalOperation(),
-    0xAC,
+    <int>[0xAC],
     1,
     'DCA',
     <Operand>[
@@ -3292,7 +3298,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // EOR (ab)
     InstructionCategory.logicalOperation(),
-    0xAD,
+    <int>[0xAD],
     3,
     'EOR',
     <Operand>[
@@ -3304,7 +3310,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // STA (ab)
     InstructionCategory.loadStore(),
-    0xAE,
+    <int>[0xAE],
     3,
     'STA',
     <Operand>[
@@ -3316,7 +3322,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BIT (ab)
     InstructionCategory.comparisonBitTest(),
-    0xAF,
+    <int>[0xAF],
     3,
     'BIT',
     <Operand>[
@@ -3327,11 +3333,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   ),
 
   // 0xB0
-  _illegalInstruction(0xB0),
+  _illegalInstruction(<int>[0xB0]),
   const InstructionDescriptor(
     // SBI A, i
     InstructionCategory.logicalOperation(),
-    0xB1,
+    <int>[0xB1],
     2,
     'SBI',
     <Operand>[
@@ -3340,11 +3346,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(7, 0),
   ),
-  _illegalInstruction(0xB2),
+  _illegalInstruction(<int>[0xB2]),
   const InstructionDescriptor(
     // ADI A, i
     InstructionCategory.logicalOperation(),
-    0xB3,
+    <int>[0xB3],
     2,
     'ADI',
     <Operand>[
@@ -3353,11 +3359,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(7, 0),
   ),
-  _illegalInstruction(0xB4),
+  _illegalInstruction(<int>[0xB4]),
   const InstructionDescriptor(
     // LDI A, i
     InstructionCategory.loadStore(),
-    0xB5,
+    <int>[0xB5],
     2,
     'LDI',
     <Operand>[
@@ -3366,11 +3372,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(6, 0),
   ),
-  _illegalInstruction(0xB6),
+  _illegalInstruction(<int>[0xB6]),
   const InstructionDescriptor(
     // CPI A, i
     InstructionCategory.comparisonBitTest(),
-    0xB7,
+    <int>[0xB7],
     2,
     'CPI',
     <Operand>[
@@ -3382,7 +3388,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // RPV
     InstructionCategory.inputOutput(),
-    0xB8,
+    <int>[0xB8],
     1,
     'RPV',
     <Operand>[
@@ -3394,7 +3400,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI A, i
     InstructionCategory.logicalOperation(),
-    0xB9,
+    <int>[0xB9],
     2,
     'ANI',
     <Operand>[
@@ -3406,7 +3412,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // JMP i, j
     InstructionCategory.jump(),
-    0xBA,
+    <int>[0xBA],
     3,
     'JMP',
     <Operand>[
@@ -3418,7 +3424,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI A, i
     InstructionCategory.logicalOperation(),
-    0xBB,
+    <int>[0xBB],
     2,
     'ORI',
     <Operand>[
@@ -3427,11 +3433,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(7, 0),
   ),
-  _illegalInstruction(0xBC),
+  _illegalInstruction(<int>[0xBC]),
   const InstructionDescriptor(
     // EAI i
     InstructionCategory.logicalOperation(),
-    0xBD,
+    <int>[0xBD],
     2,
     'EAI',
     <Operand>[
@@ -3443,7 +3449,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SJP i, j
     InstructionCategory.call(),
-    0xBE,
+    <int>[0xBE],
     3,
     'SJP',
     <Operand>[
@@ -3455,7 +3461,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII i
     InstructionCategory.comparisonBitTest(),
-    0xBF,
+    <int>[0xBF],
     2,
     'BII',
     <Operand>[
@@ -3469,7 +3475,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (C0H)
     InstructionCategory.call(),
-    0xC0,
+    <int>[0xC0],
     1,
     'VEJ',
     <Operand>[
@@ -3481,7 +3487,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VCR i
     InstructionCategory.call(),
-    0xC1,
+    <int>[0xC1],
     2,
     'VCR',
     <Operand>[
@@ -3493,7 +3499,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (C2H)
     InstructionCategory.call(),
-    0xC2,
+    <int>[0xC2],
     1,
     'VEJ',
     <Operand>[
@@ -3505,7 +3511,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VCS i
     InstructionCategory.call(),
-    0xC3,
+    <int>[0xC3],
     2,
     'VCS',
     <Operand>[
@@ -3517,7 +3523,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (C4H)
     InstructionCategory.call(),
-    0xC4,
+    <int>[0xC4],
     1,
     'VEJ',
     <Operand>[
@@ -3529,7 +3535,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VHR i
     InstructionCategory.call(),
-    0xC5,
+    <int>[0xC5],
     2,
     'VHR',
     <Operand>[
@@ -3541,7 +3547,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (C6H)
     InstructionCategory.call(),
-    0xC6,
+    <int>[0xC6],
     1,
     'VEJ',
     <Operand>[
@@ -3553,7 +3559,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VHS i
     InstructionCategory.call(),
-    0xC7,
+    <int>[0xC7],
     2,
     'VHS',
     <Operand>[
@@ -3565,7 +3571,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (C8H)
     InstructionCategory.call(),
-    0xC8,
+    <int>[0xC8],
     1,
     'VEJ',
     <Operand>[
@@ -3577,7 +3583,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VZR i
     InstructionCategory.call(),
-    0xC9,
+    <int>[0xC9],
     2,
     'VZR',
     <Operand>[
@@ -3589,7 +3595,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (CAH)
     InstructionCategory.call(),
-    0xCA,
+    <int>[0xCA],
     1,
     'VEJ',
     <Operand>[
@@ -3601,7 +3607,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VZS i
     InstructionCategory.call(),
-    0xCB,
+    <int>[0xCB],
     2,
     'VZS',
     <Operand>[
@@ -3613,7 +3619,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (CCH)
     InstructionCategory.call(),
-    0xCC,
+    <int>[0xCC],
     1,
     'VEJ',
     <Operand>[
@@ -3625,7 +3631,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VMJ i
     InstructionCategory.call(),
-    0xCD,
+    <int>[0xCD],
     2,
     'VMJ',
     <Operand>[
@@ -3637,7 +3643,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (CEH)
     InstructionCategory.call(),
-    0xCE,
+    <int>[0xCE],
     1,
     'VEJ',
     <Operand>[
@@ -3649,7 +3655,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VVS i
     InstructionCategory.call(),
-    0xCF,
+    <int>[0xCF],
     2,
     'VVS',
     <Operand>[
@@ -3663,7 +3669,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (D0H)
     InstructionCategory.call(),
-    0xD0,
+    <int>[0xD0],
     1,
     'VEJ',
     <Operand>[
@@ -3675,7 +3681,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ROR
     InstructionCategory.blockTransferSearch(),
-    0xD1,
+    <int>[0xD1],
     1,
     'ROR',
     <Operand>[
@@ -3687,7 +3693,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (D2H)
     InstructionCategory.call(),
-    0xD2,
+    <int>[0xD2],
     1,
     'VEJ',
     <Operand>[
@@ -3699,7 +3705,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DRR (X)
     InstructionCategory.blockTransferSearch(),
-    0xD3,
+    <int>[0xD3],
     1,
     'DRR',
     <Operand>[
@@ -3711,7 +3717,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (D4H)
     InstructionCategory.call(),
-    0xD4,
+    <int>[0xD4],
     1,
     'VEJ',
     <Operand>[
@@ -3723,7 +3729,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SHR
     InstructionCategory.blockTransferSearch(),
-    0xD5,
+    <int>[0xD5],
     1,
     'SHR',
     <Operand>[
@@ -3735,7 +3741,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (D6H)
     InstructionCategory.call(),
-    0xD6,
+    <int>[0xD6],
     1,
     'VEJ',
     <Operand>[
@@ -3747,7 +3753,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DRL (X)
     InstructionCategory.blockTransferSearch(),
-    0xD7,
+    <int>[0xD7],
     1,
     'DRL',
     <Operand>[
@@ -3759,7 +3765,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (D8H)
     InstructionCategory.call(),
-    0xD8,
+    <int>[0xD8],
     1,
     'VEJ',
     <Operand>[
@@ -3771,7 +3777,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SHL
     InstructionCategory.blockTransferSearch(),
-    0xD9,
+    <int>[0xD9],
     1,
     'SHL',
     <Operand>[
@@ -3783,7 +3789,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (DAH)
     InstructionCategory.call(),
-    0xDA,
+    <int>[0xDA],
     1,
     'VEJ',
     <Operand>[
@@ -3795,7 +3801,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ROL
     InstructionCategory.blockTransferSearch(),
-    0xDB,
+    <int>[0xDB],
     1,
     'ROL',
     <Operand>[
@@ -3807,7 +3813,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (DCH)
     InstructionCategory.call(),
-    0xDC,
+    <int>[0xDC],
     1,
     'VEJ',
     <Operand>[
@@ -3819,7 +3825,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // INC A
     InstructionCategory.logicalOperation(),
-    0xDD,
+    <int>[0xDD],
     1,
     'INC',
     <Operand>[
@@ -3831,7 +3837,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (DEH)
     InstructionCategory.call(),
-    0xDE,
+    <int>[0xDE],
     1,
     'VEJ',
     <Operand>[
@@ -3843,7 +3849,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // DEC A
     InstructionCategory.logicalOperation(),
-    0xDF,
+    <int>[0xDF],
     1,
     'DEC',
     <Operand>[
@@ -3857,7 +3863,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (E0H)
     InstructionCategory.call(),
-    0xE0,
+    <int>[0xE0],
     1,
     'VEJ',
     <Operand>[
@@ -3869,7 +3875,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // SPU
     InstructionCategory.inputOutput(),
-    0xE1,
+    <int>[0xE1],
     1,
     'SPU',
     <Operand>[
@@ -3881,7 +3887,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (E2H)
     InstructionCategory.call(),
-    0xE2,
+    <int>[0xE2],
     1,
     'VEJ',
     <Operand>[
@@ -3893,7 +3899,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // RPU
     InstructionCategory.inputOutput(),
-    0xE3,
+    <int>[0xE3],
     1,
     'RPU',
     <Operand>[
@@ -3905,7 +3911,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (E4H)
     InstructionCategory.call(),
-    0xE4,
+    <int>[0xE4],
     1,
     'VEJ',
     <Operand>[
@@ -3914,11 +3920,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0x0E5),
+  _illegalInstruction(<int>[0x0E5]),
   const InstructionDescriptor(
     // VEJ (E6H)
     InstructionCategory.call(),
-    0xE6,
+    <int>[0xE6],
     1,
     'VEJ',
     <Operand>[
@@ -3927,11 +3933,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xE7),
+  _illegalInstruction(<int>[0xE7]),
   const InstructionDescriptor(
     // VEJ (E8H)
     InstructionCategory.call(),
-    0xE8,
+    <int>[0xE8],
     1,
     'VEJ',
     <Operand>[
@@ -3943,7 +3949,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ANI (ab), i
     InstructionCategory.logicalOperation(),
-    0xE9,
+    <int>[0xE9],
     4,
     'ANI',
     <Operand>[
@@ -3955,7 +3961,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (EAH)
     InstructionCategory.call(),
-    0xEA,
+    <int>[0xEA],
     1,
     'VEJ',
     <Operand>[
@@ -3967,7 +3973,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ORI (ab), i
     InstructionCategory.logicalOperation(),
-    0xEB,
+    <int>[0xEB],
     4,
     'ORI',
     <Operand>[
@@ -3979,7 +3985,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (ECH)
     InstructionCategory.call(),
-    0xEC,
+    <int>[0xEC],
     1,
     'VEJ',
     <Operand>[
@@ -3991,7 +3997,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // BII (ab), i
     InstructionCategory.comparisonBitTest(),
-    0xED,
+    <int>[0xED],
     4,
     'BII',
     <Operand>[
@@ -4003,7 +4009,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (EEH)
     InstructionCategory.call(),
-    0xEE,
+    <int>[0xEE],
     1,
     'VEJ',
     <Operand>[
@@ -4015,7 +4021,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // ADI (ab), i
     InstructionCategory.logicalOperation(),
-    0xEF,
+    <int>[0xEF],
     4,
     'ADI',
     <Operand>[
@@ -4029,7 +4035,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (F0H)
     InstructionCategory.call(),
-    0xF0,
+    <int>[0xF0],
     1,
     'VEJ',
     <Operand>[
@@ -4041,7 +4047,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // AEX
     InstructionCategory.blockTransferSearch(),
-    0xF1,
+    <int>[0xF1],
     1,
     'AEX',
     <Operand>[
@@ -4053,7 +4059,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (F2H)
     InstructionCategory.call(),
-    0xF2,
+    <int>[0xF2],
     1,
     'VEJ',
     <Operand>[
@@ -4062,11 +4068,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(17, 0),
   ),
-  _illegalInstruction(0xF3),
+  _illegalInstruction(<int>[0xF3]),
   const InstructionDescriptor(
     // VEJ (F4H)
     InstructionCategory.call(),
-    0xF4,
+    <int>[0xF4],
     1,
     'VEJ',
     <Operand>[
@@ -4078,7 +4084,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // TIN
     InstructionCategory.blockTransferSearch(),
-    0xF5,
+    <int>[0xF5],
     1,
     'TIN',
     <Operand>[
@@ -4090,7 +4096,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // VEJ (F6H)
     InstructionCategory.call(),
-    0xF6,
+    <int>[0xF6],
     1,
     'VEJ',
     <Operand>[
@@ -4102,7 +4108,7 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
   const InstructionDescriptor(
     // CIN
     InstructionCategory.blockTransferSearch(),
-    0xF7,
+    <int>[0xF7],
     1,
     'CIN',
     <Operand>[
@@ -4111,11 +4117,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(7, 0),
   ),
-  _illegalInstruction(0xF8),
+  _illegalInstruction(<int>[0xF8]),
   const InstructionDescriptor(
     // REC
     InstructionCategory.inputOutput(),
-    0xF9,
+    <int>[0xF9],
     1,
     'REC',
     <Operand>[
@@ -4124,11 +4130,11 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(4, 0),
   ),
-  _illegalInstruction(0xFA),
+  _illegalInstruction(<int>[0xFA]),
   const InstructionDescriptor(
     // SEC
     InstructionCategory.inputOutput(),
-    0xFB,
+    <int>[0xFB],
     1,
     'SEC',
     <Operand>[
@@ -4137,8 +4143,8 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     ],
     CyclesCount(4, 0),
   ),
-  _illegalInstruction(0xFC),
-  _illegalInstruction(0xFD),
-  _illegalInstruction(0xFE),
-  _illegalInstruction(0xFF),
+  _illegalInstruction(<int>[0xFC]),
+  _illegalInstruction(<int>[0xFD]),
+  _illegalInstruction(<int>[0xFE]),
+  _illegalInstruction(<int>[0xFF]),
 ];
