@@ -110,6 +110,13 @@ void main() {
     });
 
     group('LH5801State', () {
+      test('should raise an exception for invalid arguments', () {
+        expect(
+          () => LH5801State(tm: null),
+          throwsA(const TypeMatcher<AssertionError>()),
+        );
+      });
+
       test('should be initialized properly', () {
         final LH5801State state = LH5801State(tm: tm);
         expect(state.p.value, equals(Register16().value));
