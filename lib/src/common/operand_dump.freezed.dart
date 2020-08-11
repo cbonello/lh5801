@@ -87,8 +87,8 @@ class __$BinaryCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   _Binary get _value => super._value as _Binary;
 }
 
-class _$_Binary extends _Binary {
-  const _$_Binary() : super._();
+class _$_Binary implements _Binary {
+  const _$_Binary();
 
   @override
   String toString() {
@@ -160,8 +160,7 @@ class _$_Binary extends _Binary {
   }
 }
 
-abstract class _Binary extends Radix {
-  const _Binary._() : super._();
+abstract class _Binary implements Radix {
   const factory _Binary() = _$_Binary;
 }
 
@@ -179,8 +178,8 @@ class __$DecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   _Decimal get _value => super._value as _Decimal;
 }
 
-class _$_Decimal extends _Decimal {
-  const _$_Decimal() : super._();
+class _$_Decimal implements _Decimal {
+  const _$_Decimal();
 
   @override
   String toString() {
@@ -252,8 +251,7 @@ class _$_Decimal extends _Decimal {
   }
 }
 
-abstract class _Decimal extends Radix {
-  const _Decimal._() : super._();
+abstract class _Decimal implements Radix {
   const factory _Decimal() = _$_Decimal;
 }
 
@@ -273,8 +271,8 @@ class __$HexadecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   _Hexadecimal get _value => super._value as _Hexadecimal;
 }
 
-class _$_Hexadecimal extends _Hexadecimal {
-  const _$_Hexadecimal() : super._();
+class _$_Hexadecimal implements _Hexadecimal {
+  const _$_Hexadecimal();
 
   @override
   String toString() {
@@ -346,7 +344,6 @@ class _$_Hexadecimal extends _Hexadecimal {
   }
 }
 
-abstract class _Hexadecimal extends Radix {
-  const _Hexadecimal._() : super._();
+abstract class _Hexadecimal implements Radix {
   const factory _Hexadecimal() = _$_Hexadecimal;
 }

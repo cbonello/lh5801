@@ -4,13 +4,9 @@ part 'operand_dump.freezed.dart';
 
 @freezed
 abstract class Radix with _$Radix {
-  const Radix._();
-
   const factory Radix.binary() = _Binary;
   const factory Radix.decimal() = _Decimal;
   const factory Radix.hexadecimal() = _Hexadecimal;
-
-  int toInt() => when<int>(binary: () => 2, decimal: () => 10, hexadecimal: () => 16);
 }
 
 class OperandDump {
