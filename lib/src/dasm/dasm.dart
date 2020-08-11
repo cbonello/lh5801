@@ -10,9 +10,8 @@ class Instruction {
 }
 
 class LH5801DASM {
-  LH5801DASM({
-    @required LH5801MemoryRead memRead,
-  })  : assert(memRead != null),
+  LH5801DASM({@required LH5801MemoryRead memRead})
+      : assert(memRead != null),
         _memRead = memRead;
 
   final LH5801MemoryRead _memRead;

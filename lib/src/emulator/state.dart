@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../../lh5801.dart';
 import 'flags.dart';
 import 'timer.dart';
 
@@ -24,9 +25,7 @@ class Register8 extends Object {
   Register8 clone() => Register8(_value);
 
   @override
-  String toString() {
-    return 'Register8(0x${value.toRadixString(16).toUpperCase().padLeft(2, '0')})';
-  }
+  String toString() => 'Register8(${OperandDump.op8(value)})';
 
   @override
   bool operator ==(Object other) =>
@@ -71,9 +70,7 @@ class Register16 extends Object {
   Register16 clone() => Register16(value);
 
   @override
-  String toString() {
-    return 'Register16(0x${value.toRadixString(16).toUpperCase().padLeft(4, '0')})';
-  }
+  String toString() => 'Register16(${OperandDump.op16(value)})';
 
   @override
   bool operator ==(Object other) =>

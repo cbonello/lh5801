@@ -42,7 +42,7 @@ void main() {
 
       test('toString() should return the expected value', () {
         final Register8 reg = Register8(128);
-        expect(reg.toString(), equals('Register8(0x80)'));
+        expect(reg.toString(), equals('Register8(80)'));
       });
     });
 
@@ -105,7 +105,7 @@ void main() {
 
       test('toString() should return the expected value', () {
         final Register16 reg = Register16(964);
-        expect(reg.toString(), equals('Register16(0x03C4)'));
+        expect(reg.toString(), equals('Register16(03C4)'));
       });
     });
 

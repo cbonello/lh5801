@@ -92,7 +92,7 @@ class LH5801Pins {
       identical(this, other) ||
       other is LH5801Pins &&
           runtimeType == other.runtimeType &&
-          // Using the _CPUPin.pin getter will reset the pin value. And the two
+          // Calling the _CPUPin.pin getter will reset the pin value. And the two
           // objects won't be identical anymore after performing the equality
           // test.
           _resetPin.peek == other._resetPin.peek &&
