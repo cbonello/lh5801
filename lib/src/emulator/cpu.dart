@@ -749,7 +749,7 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode FD${HexDump.hex8(opcode)} at address ${HexDump.meHex16(startP)}',
+          'illegal opcode FD${OperandDump.op8(opcode)} at address ${OperandDump.op16(startP)}',
         );
     }
 
@@ -1420,7 +1420,7 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode ${HexDump.hex8(opcode)} at address ${HexDump.meHex16(startP)}',
+          'illegal opcode ${OperandDump.op8(opcode)} at address ${OperandDump.op16(startP)}',
         );
     }
 

@@ -105,7 +105,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('SBC (1234H)'));
+        expect(instruction.descriptor.toString(), equals('SBC (1234)'));
       });
 
       test('OperandType.mem1Reg()', () {
@@ -125,7 +125,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('BIT #(3456H)'));
+        expect(instruction.descriptor.toString(), equals('BIT #(3456)'));
       });
 
       test('OperandType.imm8()', () {
@@ -135,7 +135,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('ADI (3456H), 78H'));
+        expect(instruction.descriptor.toString(), equals('ADI (3456), 78'));
       });
 
       test('OperandType.dispPlus()', () {
@@ -145,7 +145,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('BVS +05H'));
+        expect(instruction.descriptor.toString(), equals('BVS +05'));
       });
 
       test('OperandType.dispMinus()', () {
@@ -155,7 +155,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('BZR -26H'));
+        expect(instruction.descriptor.toString(), equals('BZR -26'));
       });
 
       test('OperandType.mem0Cst8()', () {
@@ -165,7 +165,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('VEJ (F6H)'));
+        expect(instruction.descriptor.toString(), equals('VEJ (F6)'));
       });
 
       test('OperandType.imm16()', () {
@@ -175,7 +175,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('LDI S, 13H, 57H'));
+        expect(instruction.descriptor.toString(), equals('LDI S, 13, 57'));
       });
     });
   });

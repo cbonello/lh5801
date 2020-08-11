@@ -66,14 +66,15 @@ abstract class Operand with _$Operand {
       none: () => '',
       reg: (String registerName) => registerName,
       mem0Reg: (String registerName) => '($registerName)',
-      mem0Imm16: (int value) => '(${HexDump.meHex16(value)})',
+      mem0Imm16: (int value) => '(${OperandDump.op16(value)})',
       mem1Reg: (String registerName) => '#($registerName)',
-      mem1Imm16: (int value) => '#(${HexDump.meHex16(value)})',
-      imm8: (int value) => HexDump.hex8(value),
-      dispPlus: (int offset) => '+${HexDump.hex8(offset)}',
-      dispMinus: (int offset) => '-${HexDump.hex8(offset)}',
-      mem0Cst8: (int constant) => '(${HexDump.hex8(constant)})',
-      imm16: (int value) => '${HexDump.hex8(value >> 8)}, ${HexDump.hex8(value & 0xFF)}',
+      mem1Imm16: (int value) => '#(${OperandDump.op16(value)})',
+      imm8: (int value) => OperandDump.op8(value),
+      dispPlus: (int offset) => '+${OperandDump.op8(offset)}',
+      dispMinus: (int offset) => '-${OperandDump.op8(offset)}',
+      mem0Cst8: (int constant) => '(${OperandDump.op8(constant)})',
+      imm16: (int value) =>
+          '${OperandDump.op8(value >> 8)}, ${OperandDump.op8(value & 0xFF)}',
     );
   }
 }
