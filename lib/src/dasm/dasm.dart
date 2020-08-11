@@ -28,8 +28,8 @@ class LH5801DASM {
     }
 
     int readOp16() {
-      final int high = _memRead(addr++);
-      final int low = _memRead(addr++);
+      final int high = readOp8();
+      final int low = readOp8();
       return high << 8 | low;
     }
 
@@ -46,12 +46,12 @@ class LH5801DASM {
       // Replaces the generic operand values with their actual value.
       updatedOperands.add(
         operand.maybeWhen(
+          imm8: (_) => Operand.imm8(readOp8()),
+          imm16: (_) => Operand.imm16(readOp16()),
           mem0Imm16: (_) => Operand.mem0Imm16(readOp16()),
           mem1Imm16: (_) => Operand.mem1Imm16(readOp16()),
-          imm8: (_) => Operand.imm8(readOp8()),
           dispPlus: (_) => Operand.dispPlus(readOp8()),
           dispMinus: (_) => Operand.dispMinus(readOp8()),
-          imm16: (_) => Operand.imm16(readOp16()),
           orElse: () => operand,
         ),
       );
