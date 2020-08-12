@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:lh5801/lh5801.dart';
@@ -70,11 +69,9 @@ void main() {
           0xFD, 0xB1
         ]);
 
-        void logger(LoggerData data) => stdout.writeln(data);
-
         emulator.cpu.p.value = 0x0000;
         while (emulator.cpu.hlt == false) {
-          cycles += emulator.step(logger: logger);
+          cycles += emulator.step();
         }
 
         expect(emulator.cpu.p.value, equals(24));

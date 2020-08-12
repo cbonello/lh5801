@@ -7,6 +7,30 @@ class Instruction {
 
   final int address;
   final InstructionDescriptor descriptor;
+
+  @override
+  String toString() {
+    final StringBuffer output = StringBuffer();
+
+    output.write('${OperandDump.op16(address)}  ');
+    output.write('${_formatOpcodes(descriptor.opcodes)}  ');
+    output.writeln(descriptor);
+
+    return output.toString();
+  }
+
+  String _formatOpcodes(List<int> opcodes) {
+    final StringBuffer output = StringBuffer();
+
+    for (int i = 0; i < opcodes.length; i++) {
+      output.write(
+        '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
+      );
+    }
+
+    // An instruction has at most 4 bytes.
+    return output.toString().padRight(4 * 3);
+  }
 }
 
 class LH5801DASM {

@@ -1,3 +1,4 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../../lh5801.dart';
@@ -8,6 +9,7 @@ class LH5801CPU extends LH5801State {
     @required this.clockFrequency,
     @required this.memRead,
     @required this.memWrite,
+    this.debugCallback,
   })  : assert(pins != null),
         _pins = pins,
         assert(memRead != null),
@@ -66,13 +68,15 @@ class LH5801CPU extends LH5801State {
   final int clockFrequency;
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
+  final LH5801EmulatorDebugEvents debugCallback;
 
-  int step([LoggerCallback logger]) {
+  int step() {
     if (_pins.resetPin) {
       super.reset();
       _pins.reset();
       p.high = memRead(_me0(0xFFFE));
       p.low = memRead(_me0(0xFFFF));
+      debugCallback?.resetEvt();
     } else {
       ir0 = _pins.nmiPin;
       ir1 = tm.isInterruptRaised;
@@ -86,6 +90,7 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFFC));
       p.low = memRead(_me0(0xFFFD));
+      debugCallback?.interruptEnterEvt(const InterruptType.ir0());
     } else if (t.ie && ir1) {
       // Timer interrupt
       _push8(t.statusRegister);
@@ -93,6 +98,7 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFFA));
       p.low = memRead(_me0(0xFFFB));
+      debugCallback?.interruptEnterEvt(const InterruptType.ir1());
     } else if (t.ie && ir2) {
       // Maskable interrupt
       _push8(t.statusRegister);
@@ -100,340 +106,23 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFF8));
       p.low = memRead(_me0(0xFFF9));
+      debugCallback?.interruptEnterEvt(const InterruptType.ir2());
     }
-
-    final int initialPValue = p.value;
 
     int cycles = 2;
     if (hlt == false) {
-      InstructionDescriptor descriptor;
       int opcode = _readOp8();
 
       if (opcode == 0xFD) {
         opcode = _readOp8();
-        descriptor = instructionTableFD[opcode];
         cycles = _stepExtendedInstruction(opcode);
       } else {
-        descriptor = instructionTable[opcode];
         cycles = _stepOpcode(opcode);
-      }
-
-      if (logger != null) {
-        logger(
-          LoggerData(
-            Instruction(address: initialPValue, descriptor: descriptor),
-            _pins.clone(),
-            clone(),
-          ),
-        );
       }
     }
 
     tm.incrementClock(cycles);
 
-    return cycles;
-  }
-
-  int _me0(int address) => address & 0xFFFF;
-  int _me1(int address) => 0x10000 | address & 0xFFFF;
-
-  int _readOp8() {
-    final int op8 = memRead(p.value);
-    p.value += 1;
-    return op8;
-  }
-
-  int _readOp16([int address]) {
-    final int op8H = _readOp8();
-    final int op8L = _readOp8();
-    return op8H << 8 | op8L;
-  }
-
-  int _readOp16Ind(int b) {
-    final int ab = _readOp16();
-    return memRead((b << 16) | ab);
-  }
-
-  int unsignedByteToInt(int value) {
-    if (value & 0x80 != 0) {
-      return -((0xff & ~value) + 1);
-    }
-    return value;
-  }
-
-  // See http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt
-  int _binaryAdd(int left, int right, {bool carry = false}) {
-    final int c = LH5801Flags.boolToInt(carry);
-    final int sum = left + right + c;
-
-    t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-    t.v = ((left & 0x80) == ((right + c) & 0x80)) && ((left & 0x80) != (sum & 0x80));
-    t.z = (sum & 0xFF) == 0;
-    t.c = (sum & 0x100) != 0;
-
-    return sum & 0xFF;
-  }
-
-  void _addAccumulator(int value) => a.value = _binaryAdd(a.value, value, carry: t.c);
-
-  void _addMemory(int address, int value) {
-    final int m = memRead(address);
-    final int sum = _binaryAdd(m, value);
-    memWrite(address, sum);
-  }
-
-  void _addRegister(Register16 register) {
-    // Technical reference manual is wrong; flags are not updated.
-    final int savedFlags = t.statusRegister;
-    final int low = register.low;
-    register.low = _binaryAdd(low, a.value);
-    if (t.c) {
-      register.high++;
-    }
-    t.statusRegister = savedFlags;
-  }
-
-  void _aex() => a.value = (a.value << 4) | (a.value >> 4);
-
-  void _am0() => tm.value = a.value;
-
-  void _am1() => tm.value = 0x100 | a.value;
-
-  void _andAccumulator(int value) {
-    a.value &= value;
-    t.z = a.value == 0;
-  }
-
-  void _andMemory(int address, int value) {
-    final int m = memRead(address);
-    final int andValue = m & value;
-    t.z = (andValue & 0xFF) == 0;
-    memWrite(address, andValue);
-  }
-
-  int _branchForward(int addCyclesTable, {bool cond = false}) {
-    final int offset = _readOp8();
-
-    if (cond) {
-      p.value += offset;
-      return addCyclesTable;
-    }
-    return 0;
-  }
-
-  int _branchBackward(int addCyclesTable, {bool cond = false}) {
-    final int offset = _readOp8();
-
-    if (cond) {
-      p.value -= offset;
-      return addCyclesTable;
-    }
-    return 0;
-  }
-
-  void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
-
-  void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
-
-  void _cin() {
-    final int m = memRead(_me0(x.value));
-    _cpi(a.value, m);
-    x.value += 1;
-  }
-
-  int _bcdAdd(int left, int right, {bool carry = false}) {
-    int result = _binaryAdd(left, right, carry: carry);
-
-    // See page 28 of "Sharp PC-1500 Technical Reference Manual"
-    if (t.c == false && t.h == false) {
-      result += 0x9A;
-    } else if (t.c == false && t.h) {
-      result += 0xA0;
-    } else if (t.c && t.h == false) {
-      result += 0xFA;
-    }
-    return result & 0xFF;
-  }
-
-  void _dca(int value) => a.value = _bcdAdd(a.value + 0x66, value, carry: t.c);
-
-  void _dcs(int value) => a.value = _bcdAdd(a.value, value ^ 0xFF, carry: t.c);
-
-  void _decRegister16(Register16 register) => register.value--;
-
-  void _drl(int address) {
-    final int m = memRead(address);
-    final int tmp = (m << 8) | a.value;
-    a.value = m;
-    memWrite(address, (tmp >> 4) & 0xFF);
-  }
-
-  void _drr(int address) {
-    final int m = memRead(address);
-    final int tmp = (a.value << 8) | m;
-    a.value = tmp;
-    memWrite(address, (tmp >> 4) & 0xFF);
-  }
-
-  void _eorAccumulator(int value) {
-    a.value ^= value;
-    t.z = a.value == 0;
-  }
-
-  void _ita() {
-    a.value = _pins.inputPorts;
-    t.z = a.value == 0;
-  }
-
-  void _lda(int value) {
-    a.value = value;
-    t.z = a.value == 0;
-  }
-
-  void _lde(Register16 register) {
-    a.value = memRead(_me0(register.value--));
-    t.z = a.value == 0;
-  }
-
-  void _ldi(int value) {
-    a.value = value;
-    t.z = value == 0;
-  }
-
-  void _ldx(Register16 register) => x.value = register.value;
-
-  void _lin(Register16 register) {
-    a.value = memRead(_me0(register.value++));
-    t.z = a.value == 0;
-  }
-
-  int _lop(int addCyclesTable, int d) {
-    u.low--;
-    if (unsignedByteToInt(u.low) >= 0) {
-      p.value -= d;
-      return addCyclesTable;
-    }
-    return 0;
-  }
-
-  void _orAccumulator(int value) {
-    a.value |= value;
-    t.z = a.value == 0;
-  }
-
-  void _orMemory(int address, int value) {
-    final int m = memRead(address);
-    final int orValue = value | m;
-    memWrite(address, orValue);
-    t.z = orValue == 0;
-  }
-
-  int _pop8() {
-    s.value++;
-    return memRead(_me0(s.value));
-  }
-
-  int _pop16() {
-    final int h = _pop8();
-    final int l = _pop8();
-    return h << 8 | l;
-  }
-
-  void _popAccumulator() {
-    a.value = _pop8();
-    t.z = a.value == 0;
-  }
-
-  void _popRegister(Register16 register) {
-    register.value = _pop16();
-  }
-
-  void _push8(int value) {
-    memWrite(_me0(s.value), value);
-    _decRegister16(s);
-  }
-
-  void _push16(int value) {
-    _push8(value & 0xFF);
-    _push8(value >> 8);
-  }
-
-  void _rol() {
-    final int accumulator = a.value;
-    a.value = accumulator << 1 | LH5801Flags.boolToInt(t.c);
-    t.h = a.value & 0x10 != 0;
-    t.v = (accumulator >= 0x40) && (accumulator < 0xC0);
-    t.z = a.value == 0;
-    t.c = (accumulator & 0x80) != 0;
-  }
-
-  void _ror() {
-    final int accumulator = a.value;
-    a.value = LH5801Flags.boolToInt(t.c) << 7 | (accumulator >> 1);
-    t.h = a.value & 0x08 != 0;
-    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
-        ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
-    t.z = a.value == 0;
-    t.c = (accumulator & 0x01) != 0;
-  }
-
-  void _rti() {
-    _popRegister(p);
-    t.statusRegister = _pop8();
-  }
-
-  void _rtn() => _popRegister(p);
-
-  void _sbc(int value) => a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
-
-  void _sde(Register16 register) => memWrite(_me0(register.value--), a.value);
-
-  void _shl() {
-    final int accumulator = a.value;
-    a.value <<= 1;
-    t.h = (accumulator & 0x08) != 0;
-    t.v = accumulator >= 0x40 && accumulator < 0xC0;
-    t.z = a.value == 0;
-    t.c = (accumulator & 0x80) != 0;
-  }
-
-  void _shr() {
-    final int accumulator = a.value;
-    a.value >>= 1;
-    t.h = (a.value & 0x08) != 0;
-    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
-        ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
-    t.z = a.value == 0;
-    t.c = (accumulator & 0x01) != 0;
-  }
-
-  void _sin(Register16 register) => memWrite(_me0(register.value++), a.value);
-
-  void _sjp(int address) {
-    _push16(p.value);
-    p.value = address;
-  }
-
-  void _tin() {
-    final int m = memRead(_me0(x.value++));
-    memWrite(_me0(y.value++), m);
-  }
-
-  void _tta() {
-    a.value = t.statusRegister;
-    t.z = a.value == 0;
-  }
-
-  int _vector(int addCyclesTable, bool cond, int vectorID) {
-    int cycles = 0;
-    if (cond) {
-      cycles += addCyclesTable;
-      _push16(p.value);
-      final int h = memRead(_me0(0xFF00 + vectorID));
-      final int l = memRead(_me0(0xFF00 + vectorID + 1));
-      p.value = (h << 8) | l;
-    }
-    t.z = false;
     return cycles;
   }
 
@@ -573,6 +262,7 @@ class LH5801CPU extends LH5801State {
         break;
       case 0x4C: // OFF
         _pins.bfFlipflop = false;
+        debugCallback?.bfFlipflopEvt(bf: false);
         break;
       case 0x4D: // BII #(X), i
         _bit(memRead(_me1(x.value)), _readOp8());
@@ -696,6 +386,7 @@ class LH5801CPU extends LH5801State {
 
       case 0xB1: // HLT
         hlt = true;
+        debugCallback?.haltEvt();
         break;
       case 0xBA: // ITA
         _ita();
@@ -706,9 +397,11 @@ class LH5801CPU extends LH5801State {
 
       case 0xC0: // RDP
         _pins.dispFlipflop = false;
+        debugCallback?.dispFlipflopEvt(disp: false);
         break;
       case 0xC1: // SDP
         _pins.dispFlipflop = true;
+        debugCallback?.dispFlipflopEvt(disp: true);
         break;
       case 0xC8: // PSH A
         _push8(a.value);
@@ -1156,6 +849,7 @@ class LH5801CPU extends LH5801State {
         break;
       case 0x9A: // RTN
         _rtn();
+        debugCallback?.subroutineExitEvt();
         break;
       case 0x9B: // BZS -i
         cycles += _branchBackward(cyclesTable.additional, cond: t.z == true);
@@ -1199,6 +893,7 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xA8: // SPV
         _pins.pvFlipflop = true;
+        debugCallback?.pvFlipflopEvt(pv: true);
         break;
       case 0xA9: // AND (ab)
         _andAccumulator(_readOp16Ind(0));
@@ -1237,6 +932,7 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xB8: // RPV
         _pins.pvFlipflop = false;
+        debugCallback?.pvFlipflopEvt(pv: false);
         break;
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
@@ -1360,12 +1056,14 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xE1: // SPU
         _pins.puFlipflop = true;
+        debugCallback?.puFlipflopEvt(pu: true);
         break;
       case 0xE2: // VEJ (E2)
         cycles += _vector(cyclesTable.additional, true, 0xE2);
         break;
       case 0xE3: // RPU
         _pins.puFlipflop = false;
+        debugCallback?.puFlipflopEvt(pu: false);
         break;
       case 0xE4: // VEJ (E4)
         cycles += _vector(cyclesTable.additional, true, 0xE4);
@@ -1440,6 +1138,315 @@ class LH5801CPU extends LH5801State {
         );
     }
 
+    return cycles;
+  }
+
+  int _me0(int address) => address & 0xFFFF;
+  int _me1(int address) => 0x10000 | address & 0xFFFF;
+
+  int _readOp8() {
+    final int op8 = memRead(p.value);
+    p.value += 1;
+    return op8;
+  }
+
+  int _readOp16([int address]) {
+    final int op8H = _readOp8();
+    final int op8L = _readOp8();
+    return op8H << 8 | op8L;
+  }
+
+  int _readOp16Ind(int b) {
+    final int ab = _readOp16();
+    return memRead((b << 16) | ab);
+  }
+
+  int unsignedByteToInt(int value) {
+    if (value & 0x80 != 0) {
+      return -((0xff & ~value) + 1);
+    }
+    return value;
+  }
+
+  // See http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt
+  int _binaryAdd(int left, int right, {bool carry = false}) {
+    final int c = LH5801Flags.boolToInt(carry);
+    final int sum = left + right + c;
+
+    t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
+    t.v = ((left & 0x80) == ((right + c) & 0x80)) && ((left & 0x80) != (sum & 0x80));
+    t.z = (sum & 0xFF) == 0;
+    t.c = (sum & 0x100) != 0;
+
+    return sum & 0xFF;
+  }
+
+  void _addAccumulator(int value) => a.value = _binaryAdd(a.value, value, carry: t.c);
+
+  void _addMemory(int address, int value) {
+    final int m = memRead(address);
+    final int sum = _binaryAdd(m, value);
+    memWrite(address, sum);
+  }
+
+  void _addRegister(Register16 register) {
+    // Technical reference manual is wrong; flags are not updated.
+    final int savedFlags = t.statusRegister;
+    final int low = register.low;
+    register.low = _binaryAdd(low, a.value);
+    if (t.c) {
+      register.high++;
+    }
+    t.statusRegister = savedFlags;
+  }
+
+  void _aex() => a.value = (a.value << 4) | (a.value >> 4);
+
+  void _am0() => tm.value = a.value;
+
+  void _am1() => tm.value = 0x100 | a.value;
+
+  void _andAccumulator(int value) {
+    a.value &= value;
+    t.z = a.value == 0;
+  }
+
+  void _andMemory(int address, int value) {
+    final int m = memRead(address);
+    final int andValue = m & value;
+    t.z = (andValue & 0xFF) == 0;
+    memWrite(address, andValue);
+  }
+
+  int _branchForward(int addCyclesTable, {bool cond = false}) {
+    final int offset = _readOp8();
+
+    if (cond) {
+      p.value += offset;
+      return addCyclesTable;
+    }
+    return 0;
+  }
+
+  int _branchBackward(int addCyclesTable, {bool cond = false}) {
+    final int offset = _readOp8();
+
+    if (cond) {
+      p.value -= offset;
+      return addCyclesTable;
+    }
+    return 0;
+  }
+
+  void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
+
+  void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
+
+  void _cin() {
+    final int m = memRead(_me0(x.value));
+    _cpi(a.value, m);
+    x.value += 1;
+  }
+
+  int _bcdAdd(int left, int right, {bool carry = false}) {
+    int result = _binaryAdd(left, right, carry: carry);
+
+    // See page 28 of "Sharp PC-1500 Technical Reference Manual"
+    if (t.c == false && t.h == false) {
+      result += 0x9A;
+    } else if (t.c == false && t.h) {
+      result += 0xA0;
+    } else if (t.c && t.h == false) {
+      result += 0xFA;
+    }
+    return result & 0xFF;
+  }
+
+  void _dca(int value) => a.value = _bcdAdd(a.value + 0x66, value, carry: t.c);
+
+  void _dcs(int value) => a.value = _bcdAdd(a.value, value ^ 0xFF, carry: t.c);
+
+  void _decRegister16(Register16 register) => register.value--;
+
+  void _drl(int address) {
+    final int m = memRead(address);
+    final int tmp = (m << 8) | a.value;
+    a.value = m;
+    memWrite(address, (tmp >> 4) & 0xFF);
+  }
+
+  void _drr(int address) {
+    final int m = memRead(address);
+    final int tmp = (a.value << 8) | m;
+    a.value = tmp;
+    memWrite(address, (tmp >> 4) & 0xFF);
+  }
+
+  void _eorAccumulator(int value) {
+    a.value ^= value;
+    t.z = a.value == 0;
+  }
+
+  void _ita() {
+    a.value = _pins.inputPorts;
+    t.z = a.value == 0;
+  }
+
+  void _lda(int value) {
+    a.value = value;
+    t.z = a.value == 0;
+  }
+
+  void _lde(Register16 register) {
+    a.value = memRead(_me0(register.value--));
+    t.z = a.value == 0;
+  }
+
+  void _ldi(int value) {
+    a.value = value;
+    t.z = value == 0;
+  }
+
+  void _ldx(Register16 register) => x.value = register.value;
+
+  void _lin(Register16 register) {
+    a.value = memRead(_me0(register.value++));
+    t.z = a.value == 0;
+  }
+
+  int _lop(int addCyclesTable, int d) {
+    u.low--;
+    if (unsignedByteToInt(u.low) >= 0) {
+      p.value -= d;
+      return addCyclesTable;
+    }
+    return 0;
+  }
+
+  void _orAccumulator(int value) {
+    a.value |= value;
+    t.z = a.value == 0;
+  }
+
+  void _orMemory(int address, int value) {
+    final int m = memRead(address);
+    final int orValue = value | m;
+    memWrite(address, orValue);
+    t.z = orValue == 0;
+  }
+
+  int _pop8() {
+    s.value++;
+    return memRead(_me0(s.value));
+  }
+
+  int _pop16() {
+    final int h = _pop8();
+    final int l = _pop8();
+    return h << 8 | l;
+  }
+
+  void _popAccumulator() {
+    a.value = _pop8();
+    t.z = a.value == 0;
+  }
+
+  void _popRegister(Register16 register) {
+    register.value = _pop16();
+  }
+
+  void _push8(int value) {
+    memWrite(_me0(s.value), value);
+    _decRegister16(s);
+  }
+
+  void _push16(int value) {
+    _push8(value & 0xFF);
+    _push8(value >> 8);
+  }
+
+  void _rol() {
+    final int accumulator = a.value;
+    a.value = accumulator << 1 | LH5801Flags.boolToInt(t.c);
+    t.h = a.value & 0x10 != 0;
+    t.v = (accumulator >= 0x40) && (accumulator < 0xC0);
+    t.z = a.value == 0;
+    t.c = (accumulator & 0x80) != 0;
+  }
+
+  void _ror() {
+    final int accumulator = a.value;
+    a.value = LH5801Flags.boolToInt(t.c) << 7 | (accumulator >> 1);
+    t.h = a.value & 0x08 != 0;
+    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
+        ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
+    t.z = a.value == 0;
+    t.c = (accumulator & 0x01) != 0;
+  }
+
+  void _rti() {
+    _popRegister(p);
+    t.statusRegister = _pop8();
+    debugCallback?.interruptExitEvt();
+  }
+
+  void _rtn() {
+    _popRegister(p);
+    debugCallback?.subroutineExitEvt();
+  }
+
+  void _sbc(int value) => a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
+
+  void _sde(Register16 register) => memWrite(_me0(register.value--), a.value);
+
+  void _shl() {
+    final int accumulator = a.value;
+    a.value <<= 1;
+    t.h = (accumulator & 0x08) != 0;
+    t.v = accumulator >= 0x40 && accumulator < 0xC0;
+    t.z = a.value == 0;
+    t.c = (accumulator & 0x80) != 0;
+  }
+
+  void _shr() {
+    final int accumulator = a.value;
+    a.value >>= 1;
+    t.h = (a.value & 0x08) != 0;
+    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
+        ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
+    t.z = a.value == 0;
+    t.c = (accumulator & 0x01) != 0;
+  }
+
+  void _sin(Register16 register) => memWrite(_me0(register.value++), a.value);
+
+  void _sjp(int address) {
+    _push16(p.value);
+    p.value = address;
+    debugCallback?.subroutineEnterEvt();
+  }
+
+  void _tin() {
+    final int m = memRead(_me0(x.value++));
+    memWrite(_me0(y.value++), m);
+  }
+
+  void _tta() {
+    a.value = t.statusRegister;
+    t.z = a.value == 0;
+  }
+
+  int _vector(int addCyclesTable, bool cond, int vectorId) {
+    int cycles = 0;
+    if (cond) {
+      cycles += addCyclesTable;
+      _push16(p.value);
+      final int h = memRead(_me0(0xFF00 + vectorId));
+      final int l = memRead(_me0(0xFF00 + vectorId + 1));
+      p.value = (h << 8) | l;
+      debugCallback?.subroutineEnterEvt();
+    }
+    t.z = false;
     return cycles;
   }
 
