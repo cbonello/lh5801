@@ -53,6 +53,52 @@ void main() {
       expect(emulator1.hashCode, equals(emulator2.hashCode));
     });
 
+    test('pins getter should return the epected data', () {
+      final LH5801Emulator emulator = LH5801Emulator(
+        clockFrequency: 1300000,
+        memRead: memRead,
+        memWrite: memWrite,
+      )
+        ..nmiPin = true
+        ..inputPorts = 0x94;
+
+      final LH5801Pins pins = emulator.pins;
+      expect(pins.resetPin, isFalse);
+      expect(pins.nmiPin, isTrue);
+      expect(pins.miPin, isFalse);
+      expect(pins.puFlipflop, isFalse);
+      expect(pins.pvFlipflop, isFalse);
+      expect(pins.dispFlipflop, isFalse);
+      expect(pins.bfFlipflop, isTrue);
+      expect(pins.inputPorts, equals(0x94));
+    });
+
+    test('state getter should return the epected data', () {
+      final LH5801Emulator emulator = LH5801Emulator(
+        clockFrequency: 1300000,
+        memRead: memRead,
+        memWrite: memWrite,
+      )
+        ..cpu.p.value = 0x1234
+        ..cpu.x.low = 0xFF
+        ..cpu.u.high = 0xFF;
+
+      final LH5801State state = emulator.state;
+      expect(state.p.value, equals(0x1234));
+      expect(state.s.value, equals(0x0000));
+      expect(state.a.value, equals(0x00));
+      expect(state.x.value, equals(0x00FF));
+      expect(state.y.value, equals(0x0000));
+      expect(state.u.value, equals(0xFF00));
+      expect(state.tm.value, equals(0));
+      expect(state.tm.isInterruptRaised, isFalse);
+      expect(state.t.statusRegister, equals(0x00));
+      expect(state.ir0, isFalse);
+      expect(state.ir1, isFalse);
+      expect(state.ir2, isFalse);
+      expect(state.hlt, isFalse);
+    });
+
     group('CPU', () {
       LH5801Emulator emulator;
 
