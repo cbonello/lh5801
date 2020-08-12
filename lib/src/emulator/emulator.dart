@@ -9,17 +9,6 @@ import 'pins.dart';
 part 'emulator.freezed.dart';
 
 @freezed
-abstract class PinType with _$PinType {
-  const factory PinType.reset() = _Reset;
-  const factory PinType.nmi() = _NMI;
-  const factory PinType.mi() = _MI;
-  const factory PinType.pu() = _PU;
-  const factory PinType.pv() = _PV;
-  const factory PinType.bf() = _BF;
-  const factory PinType.disp() = _Disp;
-}
-
-@freezed
 abstract class InterruptType with _$InterruptType {
   const factory InterruptType.ir0() = _IR0;
   const factory InterruptType.ir1() = _IR1;
@@ -27,28 +16,24 @@ abstract class InterruptType with _$InterruptType {
 }
 
 abstract class LH5801EmulatorDebugEvents {
-  void resetEvt();
-  void haltEvt();
+  void resetEvt() => throw UnimplementedError;
+  void haltEvt() => throw UnimplementedError;
 
-  void puFlipflopEvt({bool pu});
-  void pvFlipflopEvt({bool pv});
-  void bfFlipflopEvt({bool bf});
-  void dispFlipflopEvt({bool disp});
+  void puFlipflopEvt({bool pu}) => throw UnimplementedError;
+  void pvFlipflopEvt({bool pv}) => throw UnimplementedError;
+  void bfFlipflopEvt({bool bf}) => throw UnimplementedError;
+  void dispFlipflopEvt({bool disp}) => throw UnimplementedError;
 
-  void interruptEnterEvt(InterruptType type);
-  void interruptExitEvt();
+  void interruptEnterEvt(InterruptType type) => throw UnimplementedError;
+  void interruptExitEvt() => throw UnimplementedError;
 
-  void subroutineEnterEvt();
-  void subroutineExitEvt();
+  void subroutineEnterEvt() => throw UnimplementedError;
+  void subroutineExitEvt() => throw UnimplementedError;
 }
 
 abstract class LH5801EmulatorDebugAPI {
   LH5801State get state;
   LH5801Pins get pins;
-
-  void setPinHigh(PinType pin);
-  void setPinLow(PinType pin);
-  void setInputPorts(int value);
 
   int step({int address});
 
@@ -121,33 +106,6 @@ class LH5801Emulator extends LH5801Pins implements LH5801EmulatorDebugAPI {
 
   @override
   LH5801State get state => cpu.clone();
-
-  @override
-  void setPinHigh(PinType pin) {
-    pin.maybeWhen<void>(
-      reset: () => resetPin = true,
-      nmi: () => nmiPin = true,
-      mi: () => miPin = true,
-      bf: () => bfFlipflop = false,
-      orElse: () => throw LH5801Error('Read-only pin'),
-    );
-  }
-
-  @override
-  void setPinLow(PinType pin) {
-    pin.maybeWhen<void>(
-      reset: () => null,
-      nmi: () => null,
-      mi: () => null,
-      bf: () => bfFlipflop = true,
-      orElse: () => throw LH5801Error('Read-only pin'),
-    );
-  }
-
-  @override
-  void setInputPorts(int value) {
-    inputPorts = value;
-  }
 
   @override
   int step({int address}) {
