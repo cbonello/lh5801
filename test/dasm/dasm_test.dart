@@ -65,6 +65,7 @@ void main() {
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
         check(instruction.descriptor, expectedDescriptor);
+        expect(instruction.toString(), equals('0000  FC            ILL\n'));
         expect(instruction.descriptor.toString(), equals('ILL'));
       });
 
@@ -74,6 +75,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  FD 4C         OFF\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('OFF'));
       });
@@ -84,6 +86,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  FD 08         LDX X\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDX X'));
       });
@@ -94,6 +97,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  2D            EOR (U)\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('EOR (U)'));
       });
@@ -104,6 +108,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  A1 12 34      SBC (1234)\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('SBC (1234)'));
       });
@@ -114,6 +119,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  FD 0E         STA #(X)\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('STA #(X)'));
       });
@@ -124,6 +130,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  FD AF 34 56   BIT #(3456)\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BIT #(3456)'));
       });
@@ -134,6 +141,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  EF 34 56 78   ADI (3456), 78\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('ADI (3456), 78'));
       });
@@ -144,6 +152,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  8F 05         BVS +05\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BVS +05'));
       });
@@ -154,6 +163,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  99 26         BZR -26\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BZR -26'));
       });
@@ -164,6 +174,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  F6            VEJ (F6)\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('VEJ (F6)'));
       });
@@ -174,6 +185,7 @@ void main() {
 
         instruction = dasm.dump(0x0000);
         expect(instruction.address, equals(0x0000));
+        expect(instruction.toString(), equals('0000  AA 13 57      LDI S, 13, 57\n'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDI S, 13, 57'));
       });
