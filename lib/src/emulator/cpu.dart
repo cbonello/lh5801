@@ -68,7 +68,7 @@ class LH5801CPU extends LH5801State {
   final int clockFrequency;
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
-  final LH5801EmulatorDebugEvents debugCallback;
+  final LH5801DebugEvents debugCallback;
 
   int step() {
     if (_pins.resetPin) {

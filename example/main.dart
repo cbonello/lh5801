@@ -29,7 +29,7 @@ void memWrite(int address, int value) {
 }
 
 void main() {
-  final LH5801Emulator emulator = LH5801Emulator(
+  final LH5801 emulator = LH5801(
     clockFrequency: 1300000,
     memRead: memRead,
     memWrite: memWrite,

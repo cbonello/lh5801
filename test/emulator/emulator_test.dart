@@ -8,7 +8,7 @@ void main() {
   group('LH5801Emulator', () {
     test('should raise an exception for invalid arguments', () {
       expect(
-        () => LH5801Emulator(
+        () => LH5801(
           clockFrequency: 1300000,
           memRead: null,
           memWrite: memWrite,
@@ -17,7 +17,7 @@ void main() {
       );
 
       expect(
-        () => LH5801Emulator(
+        () => LH5801(
           clockFrequency: 1300000,
           memRead: memRead,
           memWrite: null,
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('should be initialized properly', () {
-      final LH5801Emulator emulator = LH5801Emulator(
+      final LH5801 emulator = LH5801(
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
@@ -37,12 +37,12 @@ void main() {
     });
 
     test('should be serialized/deserialized successfully', () {
-      final LH5801Emulator emulator1 = LH5801Emulator(
+      final LH5801 emulator1 = LH5801(
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
       );
-      final LH5801Emulator emulator2 = LH5801Emulator.fromJson(
+      final LH5801 emulator2 = LH5801.fromJson(
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
@@ -54,7 +54,7 @@ void main() {
     });
 
     test('pins getter should return the epected data', () {
-      final LH5801Emulator emulator = LH5801Emulator(
+      final LH5801 emulator = LH5801(
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('state getter should return the epected data', () {
-      final LH5801Emulator emulator = LH5801Emulator(
+      final LH5801 emulator = LH5801(
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
@@ -100,10 +100,10 @@ void main() {
     });
 
     group('CPU', () {
-      LH5801Emulator emulator;
+      LH5801 emulator;
 
       setUp(() {
-        emulator = LH5801Emulator(
+        emulator = LH5801(
           clockFrequency: 1300000,
           memRead: memRead,
           memWrite: memWrite,

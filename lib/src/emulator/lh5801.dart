@@ -6,7 +6,7 @@ import '../common/common.dart';
 import 'cpu.dart';
 import 'pins.dart';
 
-part 'emulator.freezed.dart';
+part 'lh5801.freezed.dart';
 
 @freezed
 abstract class InterruptType with _$InterruptType {
@@ -15,7 +15,7 @@ abstract class InterruptType with _$InterruptType {
   const factory InterruptType.ir2() = _IR2;
 }
 
-abstract class LH5801EmulatorDebugEvents {
+abstract class LH5801DebugEvents {
   void resetEvt() => throw UnimplementedError;
   void haltEvt() => throw UnimplementedError;
 
@@ -31,7 +31,7 @@ abstract class LH5801EmulatorDebugEvents {
   void subroutineExitEvt() => throw UnimplementedError;
 }
 
-abstract class LH5801EmulatorDebugAPI {
+abstract class LH5801DebugAPI {
   LH5801State get state;
   LH5801Pins get pins;
 
@@ -40,8 +40,8 @@ abstract class LH5801EmulatorDebugAPI {
   void reset();
 }
 
-class LH5801Emulator extends LH5801Pins implements LH5801EmulatorDebugAPI {
-  LH5801Emulator({
+class LH5801 extends LH5801Pins implements LH5801DebugAPI {
+  LH5801({
     @required int clockFrequency,
     @required LH5801MemoryRead memRead,
     @required LH5801MemoryWrite memWrite,
@@ -57,15 +57,15 @@ class LH5801Emulator extends LH5801Pins implements LH5801EmulatorDebugAPI {
     )..reset();
   }
 
-  LH5801Emulator._();
+  LH5801._();
 
-  factory LH5801Emulator.fromJson({
+  factory LH5801.fromJson({
     @required int clockFrequency,
     @required LH5801MemoryRead memRead,
     @required LH5801MemoryWrite memWrite,
     @required Map<String, dynamic> json,
   }) {
-    final LH5801Emulator lh5801 = LH5801Emulator._()
+    final LH5801 lh5801 = LH5801._()
       ..inputPorts = json['inputPorts'] as int
       ..resetPin = json['resetPin'] as bool
       ..nmiPin = json['nmiPin'] as bool
@@ -99,7 +99,7 @@ class LH5801Emulator extends LH5801Pins implements LH5801EmulatorDebugAPI {
       };
 
   LH5801CPU cpu;
-  LH5801EmulatorDebugEvents debugCallback;
+  LH5801DebugEvents debugCallback;
 
   @override
   LH5801Pins get pins => clone();

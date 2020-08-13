@@ -32,7 +32,7 @@ void main() {
   group('Integration test', () {
     group('LH5801DASM', () {
       test('should disassemble a valid program successfully', () {
-        final LH5801Emulator emulator = LH5801Emulator(
+        final LH5801 emulator = LH5801(
           clockFrequency: 1300000,
           memRead: memRead,
           memWrite: memWrite,
