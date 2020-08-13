@@ -31,16 +31,7 @@ abstract class LH5801DebugEvents {
   void subroutineExitEvt() => throw UnimplementedError;
 }
 
-abstract class LH5801DebugAPI {
-  LH5801State get state;
-  LH5801Pins get pins;
-
-  int step({int address});
-
-  void reset();
-}
-
-class LH5801 extends LH5801Pins implements LH5801DebugAPI {
+class LH5801 extends LH5801Pins {
   LH5801({
     @required int clockFrequency,
     @required LH5801MemoryRead memRead,
@@ -101,13 +92,10 @@ class LH5801 extends LH5801Pins implements LH5801DebugAPI {
   LH5801CPU cpu;
   LH5801DebugEvents debugCallback;
 
-  @override
   LH5801Pins get pins => clone();
 
-  @override
   LH5801State get state => cpu.clone();
 
-  @override
   int step({int address}) {
     cpu.p.value = address ?? cpu.p.value;
     return cpu.step();
@@ -118,4 +106,51 @@ class LH5801 extends LH5801Pins implements LH5801DebugAPI {
     super.reset();
     cpu.reset();
   }
+}
+
+class Trace {
+  Trace(this.instruction, this.pins, this.state);
+
+  final Instruction instruction;
+  final LH5801Pins pins;
+  final LH5801State state;
+
+  @override
+  String toString() {
+    final StringBuffer output = StringBuffer();
+
+    output.writeln(instruction);
+    output.writeln(pins);
+    output.writeln(state);
+
+    return output.toString();
+  }
+}
+
+class LH5801Traced extends LH5801 {
+  LH5801Traced({
+    @required int clockFrequency,
+    @required LH5801MemoryRead memRead,
+    @required LH5801MemoryWrite memWrite,
+    LH5801DebugEvents debugCallback,
+  })  : assert(memRead != null),
+        assert(memWrite != null),
+        traces = <Trace>[],
+        super(
+          clockFrequency: clockFrequency,
+          memRead: memRead,
+          memWrite: memWrite,
+          debugCallback: debugCallback,
+        );
+
+  final List<Trace> traces;
+
+  @override
+  int step({int address}) {
+    cpu.p.value = address ?? cpu.p.value;
+    return cpu.step(_logger);
+  }
+
+  void _logger(Instruction instruction, LH5801Pins pins, LH5801State state) =>
+      traces.add(Trace(instruction, pins, state));
 }

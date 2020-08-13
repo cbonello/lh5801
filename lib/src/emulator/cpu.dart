@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 
 import '../../lh5801.dart';
 
+typedef LH5801CPUInstructionLogger = void Function(Instruction, LH5801Pins, LH5801State);
+
 class LH5801CPU extends LH5801State {
   LH5801CPU({
     @required LH5801Pins pins,
@@ -14,6 +16,7 @@ class LH5801CPU extends LH5801State {
         _pins = pins,
         assert(memRead != null),
         assert(memWrite != null),
+        _dasm = LH5801DASM(memRead: memRead),
         super(
           tm: LH5801Timer(
             cpuClockFrequency: clockFrequency,
@@ -69,8 +72,9 @@ class LH5801CPU extends LH5801State {
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
   final LH5801DebugEvents debugCallback;
+  final LH5801DASM _dasm;
 
-  int step() {
+  int step([LH5801CPUInstructionLogger logger]) {
     if (_pins.resetPin) {
       super.reset();
       _pins.reset();
@@ -111,6 +115,7 @@ class LH5801CPU extends LH5801State {
 
     int cycles = 2;
     if (hlt == false) {
+      final int address = p.value;
       int opcode = _readOp8();
 
       if (opcode == 0xFD) {
@@ -118,6 +123,11 @@ class LH5801CPU extends LH5801State {
         cycles = _stepExtendedInstruction(opcode);
       } else {
         cycles = _stepOpcode(opcode);
+      }
+
+      if (logger != null) {
+        final Instruction instruction = _dasm.dump(address);
+        logger.call(instruction, _pins.clone(), clone());
       }
     }
 

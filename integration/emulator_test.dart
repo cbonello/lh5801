@@ -30,7 +30,7 @@ void memWrite(int address, int value) {
 
 void main() {
   group('Integration test', () {
-    group('LH5801Emulator', () {
+    group('LH5801', () {
       test('should execute a valid program successfully', () {
         final LH5801 emulator = LH5801(
           clockFrequency: 1300000,

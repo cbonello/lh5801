@@ -14,7 +14,7 @@ class Instruction {
 
     output.write('${OperandDump.op16(address)}  ');
     output.write('${_formatOpcodes(descriptor.opcodes)}  ');
-    output.writeln(descriptor);
+    output.write(descriptor);
 
     return output.toString();
   }

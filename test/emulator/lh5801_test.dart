@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:test/test.dart';
 
 import 'package:lh5801/lh5801.dart';
@@ -5,7 +7,7 @@ import 'package:lh5801/lh5801.dart';
 import 'helpers.dart';
 
 void main() {
-  group('LH5801Emulator', () {
+  group('LH5801', () {
     test('should raise an exception for invalid arguments', () {
       expect(
         () => LH5801(
@@ -1568,6 +1570,80 @@ void main() {
           });
         });
       });
+    });
+  });
+
+  group('LH5801Traced', () {
+    test('should raise an exception for invalid arguments', () {
+      expect(
+        () => LH5801Traced(
+          clockFrequency: 1300000,
+          memRead: null,
+          memWrite: memWrite,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+
+      expect(
+        () => LH5801Traced(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: null,
+        ),
+        throwsA(const TypeMatcher<AssertionError>()),
+      );
+    });
+
+    test('should be initialized properly', () {
+      final LH5801Traced emulator = LH5801Traced(
+        clockFrequency: 1300000,
+        memRead: memRead,
+        memWrite: memWrite,
+      );
+
+      expect(emulator.cpu.runtimeType, equals(LH5801CPU));
+    });
+
+    test('should disassemble a valid program successfully', () {
+      final LH5801Traced lh5801 = LH5801Traced(
+        clockFrequency: 1300000,
+        memRead: memRead,
+        memWrite: memWrite,
+      );
+
+      final List<int> program = <int>[
+        // LDI XH, 76H
+        0x48, 0x76,
+        // LDI XL, 00H
+        0x4A, 0x00,
+        // LDA (X)
+        0x05,
+      ];
+
+      lh5801.cpu.p.value = 0x0000;
+      memLoad(lh5801.cpu.p.value, program);
+
+      do {
+        lh5801.step();
+      } while (lh5801.cpu.p.value < program.length);
+
+      final StringBuffer output = StringBuffer();
+      lh5801.traces.forEach(output.writeln);
+
+      const String expected = '0000  48 76         LDI XH, 76\n'
+          'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
+          'LH5801State(P: 0002, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          '\n'
+          '0002  4A 00         LDI XL, 00\n'
+          'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
+          'LH5801State(P: 0004, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          '\n'
+          '0004  05            LDA (X)\n'
+          'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
+          'LH5801State(P: 0005, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          '\n';
+
+      expect(output.toString(), equals(expected));
     });
   });
 }
