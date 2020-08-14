@@ -161,7 +161,8 @@ void main() {
           });
 
           test('ADC #(X)', () {
-            testADCRReg(emulator, 11, <int>[0xFD, 0x03], emulator.cpu.x, me1: true);
+            testADCRReg(emulator, 11, <int>[0xFD, 0x03], emulator.cpu.x,
+                me1: true);
           });
 
           test('ADC (Y)', () {
@@ -169,7 +170,8 @@ void main() {
           });
 
           test('ADC #(Y)', () {
-            testADCRReg(emulator, 11, <int>[0xFD, 0x13], emulator.cpu.y, me1: true);
+            testADCRReg(emulator, 11, <int>[0xFD, 0x13], emulator.cpu.y,
+                me1: true);
           });
 
           test('ADC (U)', () {
@@ -177,7 +179,8 @@ void main() {
           });
 
           test('ADC #(U)', () {
-            testADCRReg(emulator, 11, <int>[0xFD, 0x23], emulator.cpu.u, me1: true);
+            testADCRReg(emulator, 11, <int>[0xFD, 0x23], emulator.cpu.u,
+                me1: true);
           });
 
           test('ADC (ab)', () {
@@ -199,7 +202,8 @@ void main() {
           });
 
           test('ADI #(X), i', () {
-            testADIRReg(emulator, 17, <int>[0xFD, 0x4F], emulator.cpu.x, me1: true);
+            testADIRReg(emulator, 17, <int>[0xFD, 0x4F], emulator.cpu.x,
+                me1: true);
           });
 
           test('ADI (Y), i', () {
@@ -207,7 +211,8 @@ void main() {
           });
 
           test('ADI #(Y), i', () {
-            testADIRReg(emulator, 17, <int>[0xFD, 0x5F], emulator.cpu.y, me1: true);
+            testADIRReg(emulator, 17, <int>[0xFD, 0x5F], emulator.cpu.y,
+                me1: true);
           });
 
           test('ADI (U), i', () {
@@ -215,7 +220,8 @@ void main() {
           });
 
           test('ADI #(U), i', () {
-            testADIRReg(emulator, 17, <int>[0xFD, 0x6F], emulator.cpu.u, me1: true);
+            testADIRReg(emulator, 17, <int>[0xFD, 0x6F], emulator.cpu.u,
+                me1: true);
           });
 
           test('ADI (ab), i', () {
@@ -233,7 +239,8 @@ void main() {
           });
 
           test('DCA #(X)', () {
-            testDCARReg(emulator, 19, <int>[0xFD, 0x8C], emulator.cpu.x, me1: true);
+            testDCARReg(emulator, 19, <int>[0xFD, 0x8C], emulator.cpu.x,
+                me1: true);
           });
 
           test('DCA (Y)', () {
@@ -241,7 +248,8 @@ void main() {
           });
 
           test('DCA #(Y)', () {
-            testDCARReg(emulator, 19, <int>[0xFD, 0x9C], emulator.cpu.y, me1: true);
+            testDCARReg(emulator, 19, <int>[0xFD, 0x9C], emulator.cpu.y,
+                me1: true);
           });
 
           test('DCA (U)', () {
@@ -249,7 +257,8 @@ void main() {
           });
 
           test('DCA #(U)', () {
-            testDCARReg(emulator, 19, <int>[0xFD, 0xAC], emulator.cpu.u, me1: true);
+            testDCARReg(emulator, 19, <int>[0xFD, 0xAC], emulator.cpu.u,
+                me1: true);
           });
         });
 
@@ -297,7 +306,8 @@ void main() {
           });
 
           test('SBC #(X)', () {
-            testSBCRReg(emulator, 11, <int>[0xFD, 0x01], emulator.cpu.x, me1: true);
+            testSBCRReg(emulator, 11, <int>[0xFD, 0x01], emulator.cpu.x,
+                me1: true);
           });
 
           test('SBC (Y)', () {
@@ -305,7 +315,8 @@ void main() {
           });
 
           test('SBC #(Y)', () {
-            testSBCRReg(emulator, 11, <int>[0xFD, 0x11], emulator.cpu.y, me1: true);
+            testSBCRReg(emulator, 11, <int>[0xFD, 0x11], emulator.cpu.y,
+                me1: true);
           });
 
           test('SBC (U)', () {
@@ -313,7 +324,8 @@ void main() {
           });
 
           test('SBC #(U)', () {
-            testSBCRReg(emulator, 11, <int>[0xFD, 0x21], emulator.cpu.u, me1: true);
+            testSBCRReg(emulator, 11, <int>[0xFD, 0x21], emulator.cpu.u,
+                me1: true);
           });
 
           test('SBC (ab)', () {
@@ -337,7 +349,8 @@ void main() {
           });
 
           test('DCS #(X)', () {
-            testDCSRReg(emulator, 17, <int>[0xFD, 0x0C], emulator.cpu.x, me1: true);
+            testDCSRReg(emulator, 17, <int>[0xFD, 0x0C], emulator.cpu.x,
+                me1: true);
           });
 
           test('DCS (Y)', () {
@@ -345,7 +358,8 @@ void main() {
           });
 
           test('DCS #(Y)', () {
-            testDCSRReg(emulator, 17, <int>[0xFD, 0x1C], emulator.cpu.y, me1: true);
+            testDCSRReg(emulator, 17, <int>[0xFD, 0x1C], emulator.cpu.y,
+                me1: true);
           });
 
           test('DCS (U)', () {
@@ -353,7 +367,8 @@ void main() {
           });
 
           test('DCS #(U)', () {
-            testDCSRReg(emulator, 17, <int>[0xFD, 0x2C], emulator.cpu.u, me1: true);
+            testDCSRReg(emulator, 17, <int>[0xFD, 0x2C], emulator.cpu.u,
+                me1: true);
           });
         });
 
@@ -363,7 +378,8 @@ void main() {
           });
 
           test('AND #(X)', () {
-            testANDRReg(emulator, 11, <int>[0xFD, 0x09], emulator.cpu.x, me1: true);
+            testANDRReg(emulator, 11, <int>[0xFD, 0x09], emulator.cpu.x,
+                me1: true);
           });
 
           test('AND (Y)', () {
@@ -371,7 +387,8 @@ void main() {
           });
 
           test('AND #(Y)', () {
-            testANDRReg(emulator, 11, <int>[0xFD, 0x19], emulator.cpu.y, me1: true);
+            testANDRReg(emulator, 11, <int>[0xFD, 0x19], emulator.cpu.y,
+                me1: true);
           });
 
           test('AND (U)', () {
@@ -379,7 +396,8 @@ void main() {
           });
 
           test('AND #(U)', () {
-            testANDRReg(emulator, 11, <int>[0xFD, 0x29], emulator.cpu.u, me1: true);
+            testANDRReg(emulator, 11, <int>[0xFD, 0x29], emulator.cpu.u,
+                me1: true);
           });
 
           test('AND (ab)', () {
@@ -401,7 +419,8 @@ void main() {
           });
 
           test('ANI #(X), i', () {
-            testANIRReg(emulator, 17, <int>[0xFD, 0x49], emulator.cpu.x, me1: true);
+            testANIRReg(emulator, 17, <int>[0xFD, 0x49], emulator.cpu.x,
+                me1: true);
           });
 
           test('ANI (Y), i', () {
@@ -409,7 +428,8 @@ void main() {
           });
 
           test('ANI #(Y), i', () {
-            testANIRReg(emulator, 17, <int>[0xFD, 0x59], emulator.cpu.y, me1: true);
+            testANIRReg(emulator, 17, <int>[0xFD, 0x59], emulator.cpu.y,
+                me1: true);
           });
 
           test('ANI (U), i', () {
@@ -417,7 +437,8 @@ void main() {
           });
 
           test('ANI #(U), i', () {
-            testANIRReg(emulator, 17, <int>[0xFD, 0x69], emulator.cpu.u, me1: true);
+            testANIRReg(emulator, 17, <int>[0xFD, 0x69], emulator.cpu.u,
+                me1: true);
           });
 
           test('ANI (ab), i', () {
@@ -435,7 +456,8 @@ void main() {
           });
 
           test('ORA #(X)', () {
-            testORARReg(emulator, 11, <int>[0xFD, 0x0B], emulator.cpu.x, me1: true);
+            testORARReg(emulator, 11, <int>[0xFD, 0x0B], emulator.cpu.x,
+                me1: true);
           });
 
           test('ORA (Y)', () {
@@ -443,7 +465,8 @@ void main() {
           });
 
           test('ORA #(Y)', () {
-            testORARReg(emulator, 11, <int>[0xFD, 0x1B], emulator.cpu.y, me1: true);
+            testORARReg(emulator, 11, <int>[0xFD, 0x1B], emulator.cpu.y,
+                me1: true);
           });
 
           test('ORA (U)', () {
@@ -451,7 +474,8 @@ void main() {
           });
 
           test('ORA #(U)', () {
-            testORARReg(emulator, 11, <int>[0xFD, 0x2B], emulator.cpu.u, me1: true);
+            testORARReg(emulator, 11, <int>[0xFD, 0x2B], emulator.cpu.u,
+                me1: true);
           });
 
           test('ORA (ab)', () {
@@ -473,7 +497,8 @@ void main() {
           });
 
           test('ORI #(X), i', () {
-            testORIRReg(emulator, 17, <int>[0xFD, 0x4B], emulator.cpu.x, me1: true);
+            testORIRReg(emulator, 17, <int>[0xFD, 0x4B], emulator.cpu.x,
+                me1: true);
           });
 
           test('ORI (Y), i', () {
@@ -481,7 +506,8 @@ void main() {
           });
 
           test('ORI #(Y), i', () {
-            testORIRReg(emulator, 17, <int>[0xFD, 0x5B], emulator.cpu.y, me1: true);
+            testORIRReg(emulator, 17, <int>[0xFD, 0x5B], emulator.cpu.y,
+                me1: true);
           });
 
           test('ORI (U), i', () {
@@ -489,7 +515,8 @@ void main() {
           });
 
           test('ORI #(U), i', () {
-            testORIRReg(emulator, 17, <int>[0xFD, 0x6B], emulator.cpu.u, me1: true);
+            testORIRReg(emulator, 17, <int>[0xFD, 0x6B], emulator.cpu.u,
+                me1: true);
           });
 
           test('ORI (ab), i', () {
@@ -507,7 +534,8 @@ void main() {
           });
 
           test('EOR #(X)', () {
-            testEORRReg(emulator, 11, <int>[0xFD, 0x0D], emulator.cpu.x, me1: true);
+            testEORRReg(emulator, 11, <int>[0xFD, 0x0D], emulator.cpu.x,
+                me1: true);
           });
 
           test('EOR (Y)', () {
@@ -515,7 +543,8 @@ void main() {
           });
 
           test('EOR #(Y)', () {
-            testEORRReg(emulator, 11, <int>[0xFD, 0x1D], emulator.cpu.y, me1: true);
+            testEORRReg(emulator, 11, <int>[0xFD, 0x1D], emulator.cpu.y,
+                me1: true);
           });
 
           test('EOR (U)', () {
@@ -523,7 +552,8 @@ void main() {
           });
 
           test('EOR #(U)', () {
-            testEORRReg(emulator, 11, <int>[0xFD, 0x2D], emulator.cpu.u, me1: true);
+            testEORRReg(emulator, 11, <int>[0xFD, 0x2D], emulator.cpu.u,
+                me1: true);
           });
 
           test('EOR (ab)', () {
@@ -757,7 +787,8 @@ void main() {
           });
 
           test('CPA #(X)', () {
-            testCPARReg(emulator, 11, <int>[0xFD, 0x07], emulator.cpu.x, me1: true);
+            testCPARReg(emulator, 11, <int>[0xFD, 0x07], emulator.cpu.x,
+                me1: true);
           });
 
           test('CPA (Y)', () {
@@ -765,7 +796,8 @@ void main() {
           });
 
           test('CPA #(Y)', () {
-            testCPARReg(emulator, 11, <int>[0xFD, 0x17], emulator.cpu.y, me1: true);
+            testCPARReg(emulator, 11, <int>[0xFD, 0x17], emulator.cpu.y,
+                me1: true);
           });
 
           test('CPA (U)', () {
@@ -773,7 +805,8 @@ void main() {
           });
 
           test('CPA #(U)', () {
-            testCPARReg(emulator, 11, <int>[0xFD, 0x27], emulator.cpu.u, me1: true);
+            testCPARReg(emulator, 11, <int>[0xFD, 0x27], emulator.cpu.u,
+                me1: true);
           });
 
           test('CPA (ab)', () {
@@ -821,7 +854,8 @@ void main() {
           });
 
           test('BIT #(X)', () {
-            testBITRReg(emulator, 11, <int>[0xFD, 0x0F], emulator.cpu.x, me1: true);
+            testBITRReg(emulator, 11, <int>[0xFD, 0x0F], emulator.cpu.x,
+                me1: true);
           });
 
           test('BIT (Y)', () {
@@ -829,7 +863,8 @@ void main() {
           });
 
           test('BIT #(Y)', () {
-            testBITRReg(emulator, 11, <int>[0xFD, 0x1F], emulator.cpu.y, me1: true);
+            testBITRReg(emulator, 11, <int>[0xFD, 0x1F], emulator.cpu.y,
+                me1: true);
           });
 
           test('BIT (U)', () {
@@ -837,7 +872,8 @@ void main() {
           });
 
           test('BIT #(U)', () {
-            testBITRReg(emulator, 11, <int>[0xFD, 0x2F], emulator.cpu.u, me1: true);
+            testBITRReg(emulator, 11, <int>[0xFD, 0x2F], emulator.cpu.u,
+                me1: true);
           });
 
           test('BIT (ab)', () {
@@ -859,7 +895,8 @@ void main() {
           });
 
           test('BII #(X), i', () {
-            testBIIRReg(emulator, 14, <int>[0xFD, 0x4D], emulator.cpu.x, me1: true);
+            testBIIRReg(emulator, 14, <int>[0xFD, 0x4D], emulator.cpu.x,
+                me1: true);
           });
 
           test('BII (Y), i', () {
@@ -867,7 +904,8 @@ void main() {
           });
 
           test('BII #(Y), i', () {
-            testBIIRReg(emulator, 14, <int>[0xFD, 0x5D], emulator.cpu.y, me1: true);
+            testBIIRReg(emulator, 14, <int>[0xFD, 0x5D], emulator.cpu.y,
+                me1: true);
           });
 
           test('BII (U), i', () {
@@ -875,7 +913,8 @@ void main() {
           });
 
           test('BII #(U), i', () {
-            testBIIRReg(emulator, 14, <int>[0xFD, 0x6D], emulator.cpu.u, me1: true);
+            testBIIRReg(emulator, 14, <int>[0xFD, 0x6D], emulator.cpu.u,
+                me1: true);
           });
 
           test('BII (ab), i', () {
@@ -919,7 +958,8 @@ void main() {
           });
 
           test('LDA #(X)', () {
-            testLDARReg(emulator, 10, <int>[0xFD, 0x05], emulator.cpu.x, me1: true);
+            testLDARReg(emulator, 10, <int>[0xFD, 0x05], emulator.cpu.x,
+                me1: true);
           });
 
           test('LDA (Y)', () {
@@ -927,7 +967,8 @@ void main() {
           });
 
           test('LDA #(Y)', () {
-            testLDARReg(emulator, 10, <int>[0xFD, 0x15], emulator.cpu.y, me1: true);
+            testLDARReg(emulator, 10, <int>[0xFD, 0x15], emulator.cpu.y,
+                me1: true);
           });
 
           test('LDA (U)', () {
@@ -935,7 +976,8 @@ void main() {
           });
 
           test('LDA #(U)', () {
-            testLDARReg(emulator, 10, <int>[0xFD, 0x25], emulator.cpu.u, me1: true);
+            testLDARReg(emulator, 10, <int>[0xFD, 0x25], emulator.cpu.u,
+                me1: true);
           });
 
           test('LDA (ab)', () {
@@ -1069,7 +1111,8 @@ void main() {
           });
 
           test('STA #(X)', () {
-            testSTARReg(emulator, 10, <int>[0xFD, 0x0E], emulator.cpu.x, me1: true);
+            testSTARReg(emulator, 10, <int>[0xFD, 0x0E], emulator.cpu.x,
+                me1: true);
           });
 
           test('STA (Y)', () {
@@ -1077,7 +1120,8 @@ void main() {
           });
 
           test('STA #(Y)', () {
-            testSTARReg(emulator, 10, <int>[0xFD, 0x1E], emulator.cpu.y, me1: true);
+            testSTARReg(emulator, 10, <int>[0xFD, 0x1E], emulator.cpu.y,
+                me1: true);
           });
 
           test('STA (U)', () {
@@ -1085,7 +1129,8 @@ void main() {
           });
 
           test('STA #(U)', () {
-            testSTARReg(emulator, 10, <int>[0xFD, 0x2E], emulator.cpu.u, me1: true);
+            testSTARReg(emulator, 10, <int>[0xFD, 0x2E], emulator.cpu.u,
+                me1: true);
           });
 
           test('STA (ab)', () {
@@ -1500,7 +1545,9 @@ void main() {
 
         group('VEJ [page 50]', () {
           for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
-            test('VEJ (${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()})', () {
+            test(
+                'VEJ (${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()})',
+                () {
               testVSJ(emulator, 17, <int>[vectorId]);
             });
           }
@@ -1508,7 +1555,9 @@ void main() {
 
         group('VMJ [page 51]', () {
           for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
-            test('VMJ ${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()}', () {
+            test(
+                'VMJ ${vectorId.toRadixString(16).padLeft(2, '0').toUpperCase()}',
+                () {
               testVSJ(emulator, 20, <int>[0xCD, vectorId]);
             });
           }
@@ -1630,15 +1679,15 @@ void main() {
       final StringBuffer output = StringBuffer();
       lh5801.traces.forEach(output.writeln);
 
-      const String expected = '0000  48 76         LDI XH, 76\n'
+      const String expected = '0000  48 76           LDI XH, 76\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
           'LH5801State(P: 0002, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
           '\n'
-          '0002  4A 00         LDI XL, 00\n'
+          '0002  4A 00           LDI XL, 00\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
           'LH5801State(P: 0004, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
           '\n'
-          '0004  05            LDA (X)\n'
+          '0004  05              LDA (X)\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false)\n'
           'LH5801State(P: 0005, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
           '\n';

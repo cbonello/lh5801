@@ -13,7 +13,7 @@ class Instruction {
     final StringBuffer output = StringBuffer();
 
     output.write('${OperandDump.op16(address)}  ');
-    output.write('${_formatOpcodes(descriptor.opcodes)}  ');
+    output.write('${_formatOpcodes(descriptor.opcodes)} ');
     output.write(descriptor);
 
     return output.toString();
@@ -28,8 +28,8 @@ class Instruction {
       );
     }
 
-    // An instruction has at most 4 bytes.
-    return output.toString().padRight(4 * 3);
+    // An instruction has at most 5 bytes.
+    return output.toString().padRight(5 * 3);
   }
 }
 
@@ -58,8 +58,9 @@ class LH5801DASM {
 
     final int opcode = readOp8();
 
-    final InstructionDescriptor descriptor =
-        opcode == 0xFD ? instructionTableFD[readOp8()] : instructionTable[opcode];
+    final InstructionDescriptor descriptor = opcode == 0xFD
+        ? instructionTableFD[readOp8()]
+        : instructionTable[opcode];
 
     final List<Operand> updatedOperands = <Operand>[];
 
