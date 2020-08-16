@@ -2,7 +2,8 @@ import 'package:test/test.dart';
 
 import 'package:lh5801/lh5801.dart';
 
-final Map<String, InstructionCategory> expectedCategories = <String, InstructionCategory>{
+final Map<String, InstructionCategory> expectedCategories =
+    <String, InstructionCategory>{
   'ILL': const InstructionCategory.illegal(),
   'ADC': const InstructionCategory.logicalOperation(),
   'ADI': const InstructionCategory.logicalOperation(),
@@ -112,17 +113,19 @@ void testTable(int opcode, List<InstructionDescriptor> table) {
 
   for (int i = 0; i < table.length; i++) {
     final InstructionDescriptor descriptor = table[i];
-    expect(descriptor.opcodes.length, greaterThanOrEqualTo(1));
-    expect(descriptor.opcodes.length, lessThanOrEqualTo(2));
-    if (descriptor.opcodes.length == 2) {
-      expect(descriptor.opcodes[0], equals(0xFD));
+    expect(descriptor.bytes.length, greaterThanOrEqualTo(1));
+    expect(descriptor.bytes.length, lessThanOrEqualTo(2));
+    if (descriptor.bytes.length == 2) {
+      expect(descriptor.bytes[0], equals(0xFD));
     }
 
-    expect(descriptor.mnemonic, equals(descriptor.mnemonic.trim().toUpperCase()));
+    expect(
+        descriptor.mnemonic, equals(descriptor.mnemonic.trim().toUpperCase()));
   }
 
   for (final InstructionDescriptor instruction in table) {
-    expect(instruction.category, equals(expectedCategories[instruction.mnemonic]));
+    expect(
+        instruction.category, equals(expectedCategories[instruction.mnemonic]));
     expect(instruction.operands.length, equals(2));
   }
 }

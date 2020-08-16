@@ -16,7 +16,8 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value = address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value =
+      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
   return value;
 }
 
@@ -76,7 +77,7 @@ void main() {
     stdout.write(
       '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H  ',
     );
-    stdout.write(formatOpcodes(instruction.descriptor.opcodes));
+    stdout.write(formatBytes(instruction.descriptor.bytes));
     stdout.writeln(instruction.descriptor);
     emulator.cpu.p.value += instruction.descriptor.size;
   } while (emulator.cpu.p.value < program.length);
@@ -90,12 +91,12 @@ void main() {
   stdout.write('#CPU cycles: $cycles');
 }
 
-String formatOpcodes(List<int> opcodes) {
+String formatBytes(List<int> bytes) {
   final StringBuffer output = StringBuffer();
 
-  for (int i = 0; i < opcodes.length; i++) {
+  for (int i = 0; i < bytes.length; i++) {
     output.write(
-      '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
+      '${bytes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
     );
   }
 

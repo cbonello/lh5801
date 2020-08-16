@@ -8,28 +8,48 @@ class Instruction {
   final int address;
   final InstructionDescriptor descriptor;
 
+  String addressToString({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) =>
+      OperandDump.op16(address, radix: radix, suffix: suffix);
+
+  String bytesToString({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) =>
+      _formatBytes(descriptor.bytes, radix: radix, suffix: suffix);
+
+  String instructionToString({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) =>
+      descriptor.instructionToString(radix: radix, suffix: suffix);
+
   @override
   String toString() {
     final StringBuffer output = StringBuffer();
 
-    output.write('${OperandDump.op16(address)}  ');
-    output.write('${_formatOpcodes(descriptor.opcodes)} ');
+    output.write('${addressToString()}  ');
+    output.write('${_formatBytes(descriptor.bytes)}  ');
     output.write(descriptor);
-
     return output.toString();
   }
 
-  String _formatOpcodes(List<int> opcodes) {
+  String _formatBytes(
+    List<int> bytes, {
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
     final StringBuffer output = StringBuffer();
 
-    for (int i = 0; i < opcodes.length; i++) {
-      output.write(
-        '${opcodes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
-      );
+    for (int i = 0; i < bytes.length; i++) {
+      output.write(OperandDump.op8(bytes[i], radix: radix, suffix: suffix));
+      if (i < bytes.length - 1) output.write(' ');
     }
 
-    // An instruction has at most 5 bytes.
-    return output.toString().padRight(5 * 3);
+    // An instruction has at most 5 bytes. '-1' to remove trailing space.
+    return output.toString().padRight(5 * 3 - 1);
   }
 }
 
@@ -41,12 +61,12 @@ class LH5801DASM {
   final LH5801MemoryRead _memRead;
 
   Instruction dump(int address) {
-    final List<int> updatedOpcodes = <int>[];
+    final List<int> updatedBytes = <int>[];
     int addr = address;
 
     int readOp8() {
       final int value = _memRead(addr++);
-      updatedOpcodes.add(value);
+      updatedBytes.add(value);
       return value;
     }
 
@@ -81,12 +101,12 @@ class LH5801DASM {
       );
     }
 
-    assert(updatedOpcodes.length == descriptor.size);
+    assert(updatedBytes.length == descriptor.size);
 
     return Instruction(
       address: address,
       descriptor: descriptor.copyWith(
-        updatedOpcodes: updatedOpcodes,
+        updatedBytes: updatedBytes,
         updatedOperands: updatedOperands,
       ),
     );

@@ -15,7 +15,8 @@ abstract class InstructionCategory with _$InstructionCategory {
   // A load or store instruction.
   const factory InstructionCategory.loadStore() = _LoadStore;
   // A block transfer or search instruction.
-  const factory InstructionCategory.blockTransferSearch() = _BlockTransferSearch;
+  const factory InstructionCategory.blockTransferSearch() =
+      _BlockTransferSearch;
   // An input/output instruction.
   const factory InstructionCategory.inputOutput() = _InputOutput;
   // A branch.
@@ -58,24 +59,41 @@ abstract class Operand with _$Operand {
   // A 16-bit constant.
   const factory Operand.imm16(int value) = _Imm16;
 
-  // toString() cannot be overridden for now. See https://github.com/rrousselGit/freezed/issues/221
-
   @late
-  String toStr() {
+  String operandToString({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
     return when<String>(
-      none: () => '',
-      reg: (String registerName) => registerName,
-      mem0Reg: (String registerName) => '($registerName)',
-      mem0Imm16: (int value) => '(${OperandDump.op16(value)})',
-      mem1Reg: (String registerName) => '#($registerName)',
-      mem1Imm16: (int value) => '#(${OperandDump.op16(value)})',
-      imm8: (int value) => OperandDump.op8(value),
-      dispPlus: (int offset) => '+${OperandDump.op8(offset)}',
-      dispMinus: (int offset) => '-${OperandDump.op8(offset)}',
-      mem0Cst8: (int constant) => '(${OperandDump.op8(constant)})',
-      imm16: (int value) =>
-          '${OperandDump.op8(value >> 8)}, ${OperandDump.op8(value & 0xFF)}',
-    );
+        none: () => '',
+        reg: (String registerName) => registerName,
+        mem0Reg: (String registerName) => '($registerName)',
+        mem0Imm16: (int value) =>
+            '(${OperandDump.op16(value, radix: radix, suffix: suffix)})',
+        mem1Reg: (String registerName) => '#($registerName)',
+        mem1Imm16: (int value) =>
+            '#(${OperandDump.op16(value, radix: radix, suffix: suffix)})',
+        imm8: (int value) => OperandDump.op8(value),
+        dispPlus: (int offset) =>
+            '+${OperandDump.op8(offset, radix: radix, suffix: suffix)}',
+        dispMinus: (int offset) =>
+            '-${OperandDump.op8(offset, radix: radix, suffix: suffix)}',
+        mem0Cst8: (int constant) =>
+            '(${OperandDump.op8(constant, radix: radix, suffix: suffix)})',
+        imm16: (int value) {
+          final String op1 = OperandDump.op8(
+            value >> 8,
+            radix: radix,
+            suffix: suffix,
+          );
+          final String op2 = OperandDump.op8(
+            value & 0xFF,
+            radix: radix,
+            suffix: suffix,
+          );
+
+          return '$op1, $op2';
+        });
   }
 }
 
@@ -93,7 +111,7 @@ class CyclesCount {
 class InstructionDescriptor {
   const InstructionDescriptor(
     this.category,
-    this.opcodes,
+    this.bytes,
     this.size,
     this.mnemonic,
     this.operands,
@@ -101,21 +119,21 @@ class InstructionDescriptor {
   );
 
   final InstructionCategory category;
-  final List<int> opcodes;
+  final List<int> bytes;
   final int size;
   final String mnemonic;
   final List<Operand> operands;
   final CyclesCount cycles;
 
   InstructionDescriptor copyWith({
-    List<int> updatedOpcodes,
+    List<int> updatedBytes,
     List<Operand> updatedOperands,
   }) {
-    assert(updatedOpcodes != null || updatedOperands != null);
+    assert(updatedBytes != null || updatedOperands != null);
 
     return InstructionDescriptor(
       category,
-      updatedOpcodes ?? opcodes,
+      updatedBytes ?? bytes,
       size,
       mnemonic,
       updatedOperands ?? operands,
@@ -123,8 +141,10 @@ class InstructionDescriptor {
     );
   }
 
-  @override
-  String toString() {
+  String instructionToString({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
     final StringBuffer output = StringBuffer(mnemonic);
 
     if (operands[0] != const Operand.none()) {
@@ -139,17 +159,21 @@ class InstructionDescriptor {
           output.write(', ');
         }
 
-        output.write(operand.toStr());
+        output.write(operand.operandToString(radix: radix, suffix: suffix));
       }
     }
 
     return output.toString();
   }
+
+  @override
+  String toString() => instructionToString();
 }
 
-InstructionDescriptor _illegalInstruction(List<int> opcodes) => InstructionDescriptor(
+InstructionDescriptor _illegalInstruction(List<int> bytes) =>
+    InstructionDescriptor(
       const InstructionCategory.illegal(),
-      opcodes,
+      bytes,
       1,
       'ILL',
       const <Operand>[

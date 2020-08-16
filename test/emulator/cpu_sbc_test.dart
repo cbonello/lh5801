@@ -13,8 +13,8 @@ void main() {
 
     group('SBC [page 27]', () {
       test('should return the expected results', () {
-        final List<int> opcodes = <int>[0xFD, 0x01];
-        memLoad(0x0000, opcodes);
+        final List<int> bytes = <int>[0xFD, 0x01];
+        memLoad(0x0000, bytes);
 
         for (final bool carry in <bool>[true, false]) {
           for (int op1 = 0; op1 < 256; op1++) {
@@ -24,7 +24,7 @@ void main() {
               lh5801.cpu.x.value = 0x0001;
               lh5801.cpu.t.c = carry;
               lh5801.step(address: 0x0000);
-              expect(lh5801.cpu.p.value, equals(opcodes.length));
+              expect(lh5801.cpu.p.value, equals(bytes.length));
 
               final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
               expect(addTable.containsKey(key), isTrue);

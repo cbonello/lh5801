@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:test/test.dart';
 
 import 'package:lh5801/lh5801.dart';
@@ -1069,13 +1067,13 @@ void main() {
           });
 
           test('LDX P', () {
-            final List<int> opcodes = <int>[0xFD, 0x58];
+            final List<int> bytes = <int>[0xFD, 0x58];
             final int statusRegister = emulator.cpu.t.statusRegister;
 
-            memLoad(0x0020, opcodes);
+            memLoad(0x0020, bytes);
             final int cycles = emulator.step(address: 0x0020);
             expect(cycles, equals(11));
-            expect(emulator.cpu.p.value, equals(0x0020 + opcodes.length));
+            expect(emulator.cpu.p.value, equals(0x0020 + bytes.length));
 
             expect(emulator.cpu.t.statusRegister, statusRegister);
           });
@@ -1184,10 +1182,10 @@ void main() {
           });
 
           test('STX P', () {
-            final List<int> opcodes = <int>[0xFD, 0x5E];
+            final List<int> bytes = <int>[0xFD, 0x5E];
             final int statusRegister = emulator.cpu.t.statusRegister;
 
-            memLoad(0x0020, opcodes);
+            memLoad(0x0020, bytes);
             emulator.cpu.x.value = 0x1234;
             final int cycles = emulator.step(address: 0x0020);
             expect(cycles, equals(17));
@@ -1211,15 +1209,15 @@ void main() {
           });
 
           test('PSH A', () {
-            final List<int> opcodes = <int>[0xFD, 0xC8];
+            final List<int> bytes = <int>[0xFD, 0xC8];
             final int statusRegister = emulator.cpu.t.statusRegister;
 
-            memLoad(0x0000, opcodes);
+            memLoad(0x0000, bytes);
             emulator.cpu.s.value = 0x46FF;
             emulator.cpu.a.value = 0x3F;
             final int cycles = emulator.step(address: 0x0000);
             expect(cycles, equals(11));
-            expect(emulator.cpu.p.value, equals(opcodes.length));
+            expect(emulator.cpu.p.value, equals(bytes.length));
 
             expect(emulator.cpu.s.value, equals(0x46FF - 1));
             expect(emulator.cpu.memRead(0x46FF), equals(0x3F));

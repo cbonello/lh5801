@@ -16,7 +16,8 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value = address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value =
+      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
   return value;
 }
 
@@ -29,7 +30,8 @@ void memWrite(int address, int value) {
 }
 
 class LH5801Test extends LH5801 {
-  LH5801Test() : super(clockFrequency: 1300000, memRead: memRead, memWrite: memWrite);
+  LH5801Test()
+      : super(clockFrequency: 1300000, memRead: memRead, memWrite: memWrite);
 
   void resetTestEnv() {
     me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
@@ -40,14 +42,14 @@ class LH5801Test extends LH5801 {
 
 void testResetPin(LH5801 emulator) {
   const int intAddress = 0x4000;
-  const List<int> memOpcodes = <int>[0x38]; // NOP
+  const List<int> memBytes = <int>[0x38]; // NOP
 
   memLoad(0xFFFE, <int>[intAddress >> 8, intAddress & 0xFF]);
-  memLoad(intAddress, memOpcodes);
+  memLoad(intAddress, memBytes);
   emulator.resetPin = true;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
   expect(emulator.resetPin, isFalse);
 }
@@ -57,17 +59,17 @@ void testIR0(LH5801 emulator) {
   const int stackAddress = 0x2000;
   const int intAddress = 0x4000;
   const int statusRegister = LH5801Flags.H | LH5801Flags.C;
-  const List<int> memOpcodes = <int>[0x38]; // NOP
+  const List<int> memBytes = <int>[0x38]; // NOP
 
   memLoad(0xFFFC, <int>[intAddress >> 8, intAddress & 0xFF]);
-  memLoad(intAddress, memOpcodes);
+  memLoad(intAddress, memBytes);
   emulator.nmiPin = true;
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
   final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
   expect(emulator.nmiPin, isFalse);
   expect(emulator.cpu.t.ie, isFalse);
@@ -86,20 +88,20 @@ void testIR1(LH5801 emulator) {
   const int stackAddress = 0x2000;
   const int intAddress = 0x4000;
   const int statusRegister = 0x02 | LH5801Flags.C; // IE
-  const List<int> memOpcodes = <int>[0x38]; // NOP
+  const List<int> memBytes = <int>[0x38]; // NOP
 
   // Raise timer interrupt.
   emulator.cpu.tm.value = 0x1FF;
 
   memLoad(0xFFFA, <int>[intAddress >> 8, intAddress & 0xFF]);
-  memLoad(intAddress, memOpcodes);
+  memLoad(intAddress, memBytes);
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
   expect(emulator.cpu.t.ie, isTrue);
   final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
   expect(emulator.cpu.tm.isInterruptRaised, isFalse);
   expect(emulator.cpu.t.ie, isFalse);
@@ -118,17 +120,17 @@ void testIR2(LH5801 emulator) {
   const int stackAddress = 0x2000;
   const int intAddress = 0x4000;
   const int statusRegister = 0x02 | LH5801Flags.C; // IE
-  const List<int> memOpcodes = <int>[0x38]; // NOP
+  const List<int> memBytes = <int>[0x38]; // NOP
 
   memLoad(0xFFF8, <int>[intAddress >> 8, intAddress & 0xFF]);
-  memLoad(intAddress, memOpcodes);
+  memLoad(intAddress, memBytes);
   emulator.miPin = true;
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
   final int cycles = emulator.step(address: initialPC);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(intAddress + memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
   expect(emulator.miPin, isFalse);
   expect(emulator.cpu.t.ie, isFalse);
@@ -142,14 +144,14 @@ void testIR2(LH5801 emulator) {
   expect(emulator.cpu.memRead(stackAddress - 2), equals(initialPC >> 8));
 }
 
-void testSBCReg(LH5801 emulator, List<int> opcodes, Register8 register) {
-  memLoad(0x0000, opcodes);
+void testSBCReg(LH5801 emulator, List<int> bytes, Register8 register) {
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 56;
   register.value = 33;
   emulator.cpu.t.c = true;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(23));
 
@@ -162,20 +164,20 @@ void testSBCReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void testSBCRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   final int rregValue = me1 ? 0x10100 : 0x0100;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = rregValue;
   memLoad(rregValue, <int>[33]);
   emulator.cpu.a.value = 56;
   emulator.cpu.t.c = true;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(23));
 
@@ -185,18 +187,18 @@ void testSBCRReg(
   expect(emulator.cpu.t.h, isTrue);
 }
 
-void testSBCab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testSBCab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[33]);
   emulator.cpu.a.value = 56;
   emulator.cpu.t.c = true;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(23));
 
@@ -206,14 +208,14 @@ void testSBCab(LH5801 emulator, int expectedCycles, List<int> opcodes,
   expect(emulator.cpu.t.h, isTrue);
 }
 
-void testADCReg(LH5801 emulator, List<int> opcodes, Register8 register) {
-  memLoad(0x0000, opcodes);
+void testADCReg(LH5801 emulator, List<int> bytes, Register8 register) {
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 2;
   register.value = 51;
   emulator.cpu.t.c = false;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(53));
 
@@ -226,20 +228,20 @@ void testADCReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void testADCRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   final int rregValue = me1 ? 0x10100 : 0x0100;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = rregValue;
   memLoad(rregValue, <int>[51]);
   emulator.cpu.a.value = 2;
   emulator.cpu.t.c = false;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(53));
 
@@ -249,18 +251,18 @@ void testADCRReg(
   expect(emulator.cpu.t.h, isFalse);
 }
 
-void testADCab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testADCab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[33]);
   emulator.cpu.a.value = 2;
   emulator.cpu.t.c = false;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(35));
 
@@ -271,14 +273,14 @@ void testADCab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 }
 
 void testADIAcc(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xB3, 0x20];
+  final List<int> memBytes = <int>[0xB3, 0x20];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   emulator.cpu.a.value = 0x33;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(0x53));
 
@@ -292,20 +294,20 @@ void testADIAcc(LH5801 emulator) {
 void testADIRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   final int regValue = me1 ? 0x10100 : 0x0100;
-  final List<int> memOpcodes = <int>[...opcodes, 0x20];
+  final List<int> memBytes = <int>[...bytes, 0x20];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   register.value = regValue;
   memLoad(regValue, <int>[0x33]);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   final int result = emulator.cpu.memRead(regValue);
   expect(result, equals(0x53));
@@ -317,22 +319,22 @@ void testADIRReg(
   expect(emulator.cpu.t.c, isFalse);
 }
 
-void testADIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testADIab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[
-    ...opcodes,
+  final List<int> memBytes = <int>[
+    ...bytes,
     (ab >> 8) & 0xFF,
     ab & 0xFF,
     0x20,
   ];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[0x33]);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   final int result = emulator.cpu.memRead(ab);
   expect(result, equals(0x53));
@@ -344,16 +346,16 @@ void testADIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
   expect(emulator.cpu.t.c, isFalse);
 }
 
-void testLDAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
+void testLDAReg(LH5801 emulator, List<int> bytes, Register8 register) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.a.value = 2;
     register.value = initialValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(5));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals(initialValue));
 
@@ -372,7 +374,7 @@ void testLDAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void testLDARReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -380,13 +382,13 @@ void testLDARReg(
     final int rregValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[initialValue]);
     emulator.cpu.a.value = 2;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals(initialValue));
 
@@ -402,19 +404,19 @@ void testLDARReg(
   _test(0xFD, isFalse);
 }
 
-void testLDAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testLDAab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
-    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+    final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[initialValue]);
     emulator.cpu.a.value = 0;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals(initialValue));
 
@@ -430,14 +432,14 @@ void testLDAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
   _test(0xFD, isFalse);
 }
 
-void testCPAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
+void testCPAReg(LH5801 emulator, List<int> bytes, Register8 register) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.a.value = op1;
     register.value = op2;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.t.c, cFlagMatcher);
     expect(emulator.cpu.t.z, zFlagMatcher);
@@ -451,20 +453,20 @@ void testCPAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void testCPARReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     final int rregValue = me1 ? 0x10100 : 0x0100;
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.t.c, cFlagMatcher);
     expect(emulator.cpu.t.z, zFlagMatcher);
@@ -475,17 +477,17 @@ void testCPARReg(
   _test(84, 110, isFalse, isFalse);
 }
 
-void testCPAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testCPAab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[80]);
   emulator.cpu.a.value = 84;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.t.c, isTrue);
   expect(emulator.cpu.t.z, isFalse);
@@ -494,7 +496,7 @@ void testCPAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 void testANDRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -502,14 +504,14 @@ void testANDRReg(
     final int rregValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
     register.value = rregValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals((op1 & op2) & 0xFF));
 
@@ -525,18 +527,18 @@ void testANDRReg(
   _test(0xFF, 0x0F, isFalse);
 }
 
-void testANDab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testANDab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x11234 : 0x1234;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[0x0F]);
   emulator.cpu.a.value = 0xFF;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(0x0F));
 
@@ -550,14 +552,14 @@ void testANDab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 
 void testANIAcc(LH5801 emulator) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[0xB9, i & 0xFF];
+    final List<int> memBytes = <int>[0xB9, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = accValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals((accValue & i) & 0xFF));
 
@@ -576,21 +578,21 @@ void testANIAcc(LH5801 emulator) {
 void testANIRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
+    final List<int> memBytes = <int>[...bytes, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
     final int memAddress = me1 ? 0x10100 : 0x0100;
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     register.value = memAddress;
     memLoad(memAddress, <int>[memValue]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     final int result = emulator.cpu.memRead(memAddress);
     expect(result, equals((memValue & i) & 0xFF));
@@ -607,18 +609,23 @@ void testANIRReg(
   _test(0x12, 0x36, isFalse);
 }
 
-void testANIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testANIab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x16001 : 0x6001;
-    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final List<int> memBytes = <int>[
+      ...bytes,
+      (ab >> 8) & 0xFF,
+      ab & 0xFF,
+      i & 0xFF
+    ];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[memValue]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     final int result = emulator.cpu.memRead(ab);
     expect(result, equals((memValue & i) & 0xFF));
@@ -635,18 +642,18 @@ void testANIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
   _test(0x12, 0x36, isFalse);
 }
 
-void testPOPRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testPOPRReg(LH5801 emulator, List<int> bytes, Register16 register) {
   void _test(int intialValue) {
     final int statusRegister = emulator.cpu.t.statusRegister;
     const int initialStackValue = 0x46FD;
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.s.value = initialStackValue;
     memLoad(initialStackValue + 1, <int>[intialValue >> 8, intialValue & 0xFF]);
     register.value = 0;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(15));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(register.value, equals(intialValue));
     expect(emulator.cpu.s.value, equals(initialStackValue + 2));
@@ -660,17 +667,17 @@ void testPOPRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
 
 void testPOPA(LH5801 emulator) {
   void _test(int intialValue, Matcher zFlagMatcher) {
-    final List<int> opcodes = <int>[0xFD, 0x8A];
+    final List<int> bytes = <int>[0xFD, 0x8A];
     final LH5801Flags flags = emulator.cpu.t.clone();
     const int initialStackValue = 0x46FF;
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.s.value = initialStackValue;
     memLoad(initialStackValue + 1, <int>[intialValue]);
     emulator.cpu.a.value = 0;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(12));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals(intialValue));
     expect(emulator.cpu.s.value, equals(initialStackValue + 1));
@@ -690,7 +697,7 @@ void testPOPA(LH5801 emulator) {
 void testORARReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -698,13 +705,13 @@ void testORARReg(
     final int rregValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[op2]);
     emulator.cpu.a.value = op1;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals((op1 | op2) & 0xFF));
 
@@ -720,19 +727,19 @@ void testORARReg(
   _test(0x00, 0x00, isTrue);
 }
 
-void testORAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testORAab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int op1, int op2, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
-    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+    final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[op2]);
     emulator.cpu.a.value = op1;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals((op1 | op2) & 0xFF));
 
@@ -750,14 +757,14 @@ void testORAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 
 void testORIAcc(LH5801 emulator) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[0xBB, i & 0xFF];
+    final List<int> memBytes = <int>[0xBB, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = accValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals((accValue | i) & 0xFF));
 
@@ -776,21 +783,21 @@ void testORIAcc(LH5801 emulator) {
 void testORIRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
-    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
+    final List<int> memBytes = <int>[...bytes, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[memValue]);
     register.value = ab;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     final int result = emulator.cpu.memRead(ab);
     expect(result, equals((memValue | i) & 0xFF));
@@ -807,18 +814,23 @@ void testORIRReg(
   _test(0x10, 0x01, isFalse);
 }
 
-void testORIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testORIab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
-    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF, i & 0xFF];
+    final List<int> memBytes = <int>[
+      ...bytes,
+      (ab >> 8) & 0xFF,
+      ab & 0xFF,
+      i & 0xFF
+    ];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[memValue]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     final int result = emulator.cpu.memRead(ab);
     expect(result, equals((memValue | i) & 0xFF));
@@ -838,7 +850,7 @@ void testORIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 void testDCSRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -852,14 +864,14 @@ void testDCSRReg(
   ) {
     final int rregValue = me1 ? 0x10100 : 0x0100;
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     emulator.cpu.t.c = initialCarryValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, expectedAccValue);
 
@@ -876,7 +888,7 @@ void testDCSRReg(
 void testEORRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -889,13 +901,13 @@ void testEORRReg(
     final int rregValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = rregValue;
     memLoad(rregValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, equals(expectedAccValue));
 
@@ -911,7 +923,7 @@ void testEORRReg(
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testEORab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testEORab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(
     int initialOp1Value,
@@ -920,15 +932,15 @@ void testEORab(LH5801 emulator, int expectedCycles, List<int> opcodes,
     Matcher zFlagMatcher,
   ) {
     final int ab = me1 ? 0x11234 : 0x1234;
-    final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+    final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals(expectedAccValue));
 
@@ -944,15 +956,15 @@ void testEORab(LH5801 emulator, int expectedCycles, List<int> opcodes,
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testSTAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
+void testSTAReg(LH5801 emulator, List<int> bytes, Register8 register) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 0x33;
   register.value = 0x01;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(emulator.cpu.a.value));
 
@@ -962,37 +974,37 @@ void testSTAReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void testSTARReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   final int rregValue = me1 ? 0x10100 : 0x0100;
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 0x33;
   register.value = rregValue;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.memRead(rregValue), equals(emulator.cpu.a.value));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testSTAab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   final int ab = me1 ? 0x1CB00 : 0xCB00;
-  final List<int> memOpcodes = <int>[...opcodes, (ab >> 8) & 0xFF, ab & 0xFF];
+  final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   memLoad(ab, <int>[0xFF]);
   emulator.cpu.a.value = 0x51;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(emulator.cpu.memRead(ab)));
 
@@ -1002,7 +1014,7 @@ void testSTAab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 void testBITRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -1010,13 +1022,13 @@ void testBITRReg(
     final int regValue = me1 ? 0x10100 : 0x0100;
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = i;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     // Accumulator should not be updated.
     expect(emulator.cpu.a.value, equals(i));
@@ -1033,19 +1045,23 @@ void testBITRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBITab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testBITab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int accValue, int abValue, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
-    final List<int> memOpcodes = <int>[...opcodes, (abValue >> 8) & 0xFF, abValue & 0xFF];
+    final List<int> memBytes = <int>[
+      ...bytes,
+      (abValue >> 8) & 0xFF,
+      abValue & 0xFF
+    ];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[abValue]);
     emulator.cpu.a.value = accValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     // Accumulator should not be updated.
     expect(emulator.cpu.a.value, equals(accValue));
@@ -1064,14 +1080,14 @@ void testBITab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 
 void testBIIAcc(LH5801 emulator) {
   void _test(int accValue, int i, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[0xBF, i & 0xFF];
+    final List<int> memBytes = <int>[0xBF, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = accValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     // Accumulator should not be updated.
     expect(emulator.cpu.a.value, accValue);
@@ -1091,21 +1107,21 @@ void testBIIAcc(LH5801 emulator) {
 void testBIIRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int regValue = me1 ? 0x10100 : 0x0100;
-    final List<int> memOpcodes = <int>[...opcodes, i & 0xFF];
+    final List<int> memBytes = <int>[...bytes, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     // Memory should not be updated.
     final int newMemValue = emulator.cpu.memRead(regValue);
@@ -1123,23 +1139,23 @@ void testBIIRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
+void testBIIab(LH5801 emulator, int expectedCycles, List<int> bytes,
     {bool me1 = false}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
-    final List<int> memOpcodes = <int>[
-      ...opcodes,
+    final List<int> memBytes = <int>[
+      ...bytes,
       (ab >> 8) & 0xFF,
       ab & 0xFF,
       i & 0xFF,
     ];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     memLoad(ab, <int>[memValue]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     // Memory should not be updated.
     final int newABValue = emulator.cpu.memRead(ab);
@@ -1160,16 +1176,16 @@ void testBIIab(LH5801 emulator, int expectedCycles, List<int> opcodes,
 void testIncReg8(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register8 register,
 ) {
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = 0x80; // -128
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(0x81)); // -127
 
@@ -1183,16 +1199,16 @@ void testIncReg8(
 void testIncReg16(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register,
 ) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = 0xFFFF;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(0x0000));
 
@@ -1202,16 +1218,16 @@ void testIncReg16(
 void testDecReg8(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register8 register,
 ) {
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = 0x00;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(0xFF));
 
@@ -1225,59 +1241,59 @@ void testDecReg8(
 void testDecReg16(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register,
 ) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = 0x0000;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(0xFFFF));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testLDXReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testLDXReg(LH5801 emulator, List<int> bytes, Register16 register) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   register.value = 25;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.x.value, equals(25));
 
   expect(emulator.cpu.t.statusRegister, statusRegister);
 }
 
-void testSTXReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testSTXReg(LH5801 emulator, List<int> bytes, Register16 register) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.x.value = 25;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(25));
 
   expect(emulator.cpu.t.statusRegister, statusRegister);
 }
 
-void testPSHRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testPSHRReg(LH5801 emulator, List<int> bytes, Register16 register) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.s.value = 0x46FF;
   register.value = 0x2030;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(14));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.s.value, equals(0x46FF - 2));
   expect(emulator.cpu.memRead(0x46FF), equals(0x30));
@@ -1290,7 +1306,7 @@ void testPSHRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
 void testDCARReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes,
+  List<int> bytes,
   Register16 register, {
   bool me1 = false,
 }) {
@@ -1304,14 +1320,14 @@ void testDCARReg(
   ) {
     final int regValue = me1 ? 0x10200 : 0x0200;
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[initialOp2Value]);
     emulator.cpu.a.value = initialOp1Value;
     emulator.cpu.t.c = initialCarryValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, expectedAccValue);
 
@@ -1326,28 +1342,28 @@ void testDCARReg(
 }
 
 void testATT(LH5801 emulator) {
-  final List<int> opcodes = <int>[0xFD, 0xEC];
+  final List<int> bytes = <int>[0xFD, 0xEC];
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 0x1F;
   emulator.cpu.t.statusRegister = 0;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.t.statusRegister, 0x1F);
 }
 
 void testTTA(LH5801 emulator) {
   void _test(int initialStatusRegisterValue, Matcher zFlagMatcher) {
-    final List<int> opcodes = <int>[0xFD, 0xAA];
+    final List<int> bytes = <int>[0xFD, 0xAA];
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.a.value = 83;
     emulator.cpu.t.statusRegister = initialStatusRegisterValue;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, initialStatusRegisterValue);
 
@@ -1358,15 +1374,15 @@ void testTTA(LH5801 emulator) {
   _test(0x00, isTrue);
 }
 
-void testADRRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testADRRReg(LH5801 emulator, List<int> bytes, Register16 register) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.a.value = 0xC3;
   register.value = 0x0A88;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(11));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(register.value, equals(0x0B4B));
 
@@ -1376,21 +1392,22 @@ void testADRRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
 void testDRRRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes, {
+  List<int> bytes, {
   bool me1 = false,
 }) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.x.value = 0x4700;
   memLoad((me1 ? 0x10000 : 0) | emulator.cpu.x.value, <int>[0x42]);
   emulator.cpu.a.value = 0xC1;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(0x42));
-  final int x = emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
+  final int x =
+      emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
   expect(x, equals(0x14));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
@@ -1399,38 +1416,39 @@ void testDRRRReg(
 void testDRLRReg(
   LH5801 emulator,
   int expectedCycles,
-  List<int> opcodes, {
+  List<int> bytes, {
   bool me1 = false,
 }) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   emulator.cpu.x.value = 0x4700;
   memLoad((me1 ? 0x10000 : 0) | emulator.cpu.x.value, <int>[0xB3]);
   emulator.cpu.a.value = 0x6F;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(expectedCycles));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(0xB3));
-  final int x = emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
+  final int x =
+      emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
   expect(x, equals(0x36));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSINRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testSINRReg(LH5801 emulator, List<int> bytes, Register16 register) {
   void _test(int regValue) {
     final int statusRegister = emulator.cpu.t.statusRegister;
 
     emulator.cpu.p.value = 0x1000;
-    memLoad(0x1000, opcodes);
+    memLoad(0x1000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[0x00]);
     emulator.cpu.a.value = 0x6F;
     final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
+    expect(emulator.cpu.p.value, equals(0x1000 + bytes.length));
 
     expect(emulator.cpu.a.value, equals(0x6F));
     final int x = emulator.cpu.memRead(regValue);
@@ -1444,18 +1462,18 @@ void testSINRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
   _test(0xFFFF);
 }
 
-void testSDERReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testSDERReg(LH5801 emulator, List<int> bytes, Register16 register) {
   void _test(int regValue) {
     final int statusRegister = emulator.cpu.t.statusRegister;
 
     emulator.cpu.p.value = 0x1000;
-    memLoad(0x1000, opcodes);
+    memLoad(0x1000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[0x00]);
     emulator.cpu.a.value = 0x6F;
     final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
+    expect(emulator.cpu.p.value, equals(0x1000 + bytes.length));
 
     expect(emulator.cpu.a.value, equals(0x6F));
     final int x = emulator.cpu.memRead(regValue);
@@ -1469,18 +1487,18 @@ void testSDERReg(LH5801 emulator, List<int> opcodes, Register16 register) {
   _test(0x0000);
 }
 
-void testLINRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testLINRReg(LH5801 emulator, List<int> bytes, Register16 register) {
   void _test(int regValue, int memValue, Matcher zFlagMatcher) {
     final LH5801Flags flags = emulator.cpu.t.clone();
 
     emulator.cpu.p.value = 0x1000;
-    memLoad(0x1000, opcodes);
+    memLoad(0x1000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = 0xFF;
     final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
+    expect(emulator.cpu.p.value, equals(0x1000 + bytes.length));
 
     expect(emulator.cpu.a.value, equals(memValue));
     expect(register.value, equals((regValue + 1) & 0xFFFF));
@@ -1496,18 +1514,18 @@ void testLINRReg(LH5801 emulator, List<int> opcodes, Register16 register) {
   _test(0xFFFF, 0x00, isTrue);
 }
 
-void testLDERReg(LH5801 emulator, List<int> opcodes, Register16 register) {
+void testLDERReg(LH5801 emulator, List<int> bytes, Register16 register) {
   void _test(int regValue, int memValue, Matcher zFlagMatcher) {
     final LH5801Flags flags = emulator.cpu.t.clone();
 
     emulator.cpu.p.value = 0x1000;
-    memLoad(0x1000, opcodes);
+    memLoad(0x1000, bytes);
     register.value = regValue;
     memLoad(regValue, <int>[memValue]);
     emulator.cpu.a.value = 0xFF;
     final int cycles = emulator.step(address: 0x1000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(0x1000 + opcodes.length));
+    expect(emulator.cpu.p.value, equals(0x1000 + bytes.length));
 
     expect(emulator.cpu.a.value, equals(memValue));
     expect(register.value, equals((regValue - 1) & 0xFFFF));
@@ -1525,14 +1543,14 @@ void testLDERReg(LH5801 emulator, List<int> opcodes, Register16 register) {
 
 void testLDIAcc(LH5801 emulator) {
   void _test(int i, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[0xB5, i & 0xFF];
+    final List<int> memBytes = <int>[0xB5, i & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = i ^ 0xFF;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(6));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals(i));
 
@@ -1547,15 +1565,15 @@ void testLDIAcc(LH5801 emulator) {
   _test(0xAA, isFalse);
 }
 
-void testLDIReg(LH5801 emulator, List<int> opcodes, Register8 register) {
-  final List<int> memOpcodes = <int>[...opcodes, 0x5A];
+void testLDIReg(LH5801 emulator, List<int> bytes, Register8 register) {
+  final List<int> memBytes = <int>[...bytes, 0x5A];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   register.value = 0xFF;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(register.value, equals(0x5A));
 
@@ -1564,29 +1582,29 @@ void testLDIReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 
 void testLDISij(LH5801 emulator) {
   const int ij = 0x1234;
-  final List<int> memOpcodes = <int>[0xAA, ij >> 8, ij & 0xFF];
+  final List<int> memBytes = <int>[0xAA, ij >> 8, ij & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   emulator.cpu.s.value = ij ^ 0x0FF0;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(12));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.s.value, equals(ij));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testCPIReg(LH5801 emulator, List<int> opcodes, Register8 register) {
+void testCPIReg(LH5801 emulator, List<int> bytes, Register8 register) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[...opcodes, op2 & 0xFF];
+    final List<int> memBytes = <int>[...bytes, op2 & 0xFF];
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     register.value = op1;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.t.c, cFlagMatcher);
     expect(emulator.cpu.t.z, zFlagMatcher);
@@ -1600,18 +1618,18 @@ void testCPIReg(LH5801 emulator, List<int> opcodes, Register8 register) {
 void _testBranch(
   LH5801 emulator,
   int additionalCycles,
-  List<int> opcodes,
+  List<int> bytes,
   int flagMask,
   bool Function(int) cond, {
   bool forward = true,
 }) {
   const int initialP = 0x4002;
   const int offset = 0x05;
-  final List<int> memOpcodes = <int>[...opcodes, 0x05];
+  final List<int> memBytes = <int>[...bytes, 0x05];
   final int expectedCycles = 8 + (forward ? 0 : 1);
 
   emulator.cpu.p.value = initialP;
-  memLoad(initialP, memOpcodes);
+  memLoad(initialP, memBytes);
   emulator.cpu.t.statusRegister = flagMask;
   final int cycles = emulator.step(address: emulator.cpu.p.value);
 
@@ -1621,180 +1639,196 @@ void _testBranch(
     expect(
       emulator.cpu.p.value,
       equals(
-        initialP + memOpcodes.length + (forward ? offset : -offset),
+        initialP + memBytes.length + (forward ? offset : -offset),
       ),
     );
   } else {
     expect(cycles, equals(expectedCycles));
-    expect(emulator.cpu.p.value, equals(initialP + memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(initialP + memBytes.length));
   }
 }
 
-void testBCR(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBCR(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.C) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.C) == 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.C,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.C) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.C) == 0,
     forward: forward,
   );
 }
 
-void testBCS(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBCS(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.C,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.C) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.C) != 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.C) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.C) != 0,
     forward: forward,
   );
 }
 
-void testBHR(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBHR(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.H) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.H) == 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.H,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.H) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.H) == 0,
     forward: forward,
   );
 }
 
-void testBHS(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBHS(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.H,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.H) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.H) != 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.H) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.H) != 0,
     forward: forward,
   );
 }
 
-void testBZR(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBZR(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.Z) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.Z) == 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.Z,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.Z) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.Z) == 0,
     forward: forward,
   );
 }
 
-void testBZS(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBZS(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.Z,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.Z) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.Z) != 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.Z) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.Z) != 0,
     forward: forward,
   );
 }
 
-void testBVR(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBVR(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.V) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.V) == 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.V,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.V) == 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.V) == 0,
     forward: forward,
   );
 }
 
-void testBVS(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBVS(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     LH5801Flags.V,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.V) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.V) != 0,
     forward: forward,
   );
 
   _testBranch(
     emulator,
     2,
-    opcodes,
+    bytes,
     0,
-    (int statusRegister) => (emulator.cpu.t.statusRegister & LH5801Flags.V) != 0,
+    (int statusRegister) =>
+        (emulator.cpu.t.statusRegister & LH5801Flags.V) != 0,
     forward: forward,
   );
 }
 
-void testBCH(LH5801 emulator, List<int> opcodes, {bool forward = true}) {
+void testBCH(LH5801 emulator, List<int> bytes, {bool forward = true}) {
   _testBranch(
     emulator,
     0,
-    opcodes,
+    bytes,
     0,
     (int statusRegister) => true,
     forward: forward,
@@ -1808,12 +1842,12 @@ void testLOP(LH5801 emulator) {
   void _test(int uValue) {
     const int initialP = 0x4003;
     const int offset = 0x05;
-    final List<int> memOpcodes = <int>[0x88, 0x05];
+    final List<int> memBytes = <int>[0x88, 0x05];
     const int expectedCycles = 8;
     final int statusRegister = emulator.cpu.t.statusRegister;
 
     emulator.cpu.p.value = initialP;
-    memLoad(initialP, memOpcodes);
+    memLoad(initialP, memBytes);
     emulator.cpu.u.low = uValue;
     final int cycles = emulator.step(address: emulator.cpu.p.value);
 
@@ -1826,12 +1860,12 @@ void testLOP(LH5801 emulator) {
       expect(
         emulator.cpu.p.value,
         equals(
-          initialP + memOpcodes.length + -offset,
+          initialP + memBytes.length + -offset,
         ),
       );
     } else {
       expect(cycles, equals(expectedCycles));
-      expect(emulator.cpu.p.value, equals(initialP + memOpcodes.length));
+      expect(emulator.cpu.p.value, equals(initialP + memBytes.length));
     }
 
     expect(emulator.cpu.t.statusRegister, equals(statusRegister));
@@ -1843,14 +1877,14 @@ void testLOP(LH5801 emulator) {
 }
 
 void testSBIAcc(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xB1, 7];
+  final List<int> memBytes = <int>[0xB1, 7];
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   emulator.cpu.a.value = 36;
   emulator.cpu.t.c = false;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(28));
 
@@ -1863,11 +1897,11 @@ void testSBIAcc(LH5801 emulator) {
 void testJMP(LH5801 emulator) {
   const int initialPValue = 0x4000;
   const int ij = 0x4100;
-  final List<int> memOpcodes = <int>[0xBA, ij >> 8, ij & 0xFF];
+  final List<int> memBytes = <int>[0xBA, ij >> 8, ij & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.cpu.p.value = initialPValue;
-  memLoad(emulator.cpu.p.value, memOpcodes);
+  memLoad(emulator.cpu.p.value, memBytes);
   final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(12));
 
@@ -1883,14 +1917,14 @@ void testEAI(LH5801 emulator) {
     int expectedAccValue,
     Matcher zFlagMatcher,
   ) {
-    final List<int> memOpcodes = <int>[0xBD, initialOp2Value & 0xFF];
+    final List<int> memBytes = <int>[0xBD, initialOp2Value & 0xFF];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = initialOp1Value;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, equals(expectedAccValue));
 
@@ -1910,21 +1944,21 @@ void testSJP(LH5801 emulator) {
   const int initialPValue = 0x4000;
   const int initialSValue = 0x6000;
   const int ij = 0xE000;
-  final List<int> memOpcodes = <int>[0xBE, ij >> 8, ij & 0xFF];
+  final List<int> memBytes = <int>[0xBE, ij >> 8, ij & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.cpu.p.value = initialPValue;
   emulator.cpu.s.value = initialSValue;
-  memLoad(emulator.cpu.p.value, memOpcodes);
+  memLoad(emulator.cpu.p.value, memBytes);
   final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(19));
 
   expect(emulator.cpu.p.value, equals(ij));
   expect(emulator.cpu.s.value, equals(initialSValue - 2));
-  expect(
-      (initialPValue + memOpcodes.length) & 0xFF, equals(emulator.cpu.memRead(0x6000)));
-  expect(
-      (initialPValue + memOpcodes.length) >> 8, equals(emulator.cpu.memRead(0x6000 - 1)));
+  expect((initialPValue + memBytes.length) & 0xFF,
+      equals(emulator.cpu.memRead(0x6000)));
+  expect((initialPValue + memBytes.length) >> 8,
+      equals(emulator.cpu.memRead(0x6000 - 1)));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -1934,13 +1968,13 @@ void testRTN(LH5801 emulator) {
   const int initialSValue = 0x6000;
   const int ij = 0xE000;
 
-  final List<int> memOpcodes1 = <int>[
+  final List<int> memBytes1 = <int>[
     // SJP 0xE0, 0x00
     0xBE,
     ij >> 8,
     ij & 0xFF,
   ];
-  final List<int> memOpcodes2 = <int>[
+  final List<int> memBytes2 = <int>[
     // RTN
     0x9A,
   ];
@@ -1949,15 +1983,15 @@ void testRTN(LH5801 emulator) {
   emulator.cpu.p.value = initialPValue;
   emulator.cpu.s.value = initialSValue;
 
-  memLoad(emulator.cpu.p.value, memOpcodes1);
+  memLoad(emulator.cpu.p.value, memBytes1);
   int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(19));
 
-  memLoad(emulator.cpu.p.value, memOpcodes2);
+  memLoad(emulator.cpu.p.value, memBytes2);
   cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(11));
 
-  expect(emulator.cpu.p.value, equals(initialPValue + memOpcodes1.length));
+  expect(emulator.cpu.p.value, equals(initialPValue + memBytes1.length));
   expect(emulator.cpu.s.value, equals(initialSValue));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
@@ -1970,21 +2004,21 @@ void testRTI(LH5801 emulator) {
       LH5801Flags.H | LH5801Flags.V | LH5801Flags.Z | LH5801Flags.C;
   const int ij = 0xE000;
 
-  final List<int> memOpcodes = <int>[
+  final List<int> memBytes = <int>[
     // RTI
     0x8A,
   ];
-  final List<int> stackOpcodes = <int>[
+  final List<int> stackbytes = <int>[
     ij >> 8,
     ij & 0xFF,
     statusRegister,
   ];
 
   emulator.cpu.p.value = initialPValue;
-  memLoad(emulator.cpu.p.value, memOpcodes);
+  memLoad(emulator.cpu.p.value, memBytes);
 
   emulator.cpu.s.value = initialSValue;
-  memLoad(initialSValue + 1, stackOpcodes);
+  memLoad(initialSValue + 1, stackbytes);
 
   final int cycles = emulator.step(address: emulator.cpu.p.value);
   expect(cycles, equals(14));
@@ -1994,18 +2028,18 @@ void testRTI(LH5801 emulator) {
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testVSJ(LH5801 emulator, int expectedCycles, List<int> opcodes) {
+void testVSJ(LH5801 emulator, int expectedCycles, List<int> bytes) {
   const int initialSValue = 0x6000;
   const int initialPValue = 0x4000;
   const int subroutineAddress = 0x4500;
 
-  final List<int> memOpcodes = <int>[...opcodes];
+  final List<int> memBytes = <int>[...bytes];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   emulator.cpu.s.value = initialSValue;
 
   emulator.cpu.p.value = initialPValue;
-  memLoad(emulator.cpu.p.value, memOpcodes);
+  memLoad(emulator.cpu.p.value, memBytes);
 
   for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
     memLoad(
@@ -2019,10 +2053,10 @@ void testVSJ(LH5801 emulator, int expectedCycles, List<int> opcodes) {
 
   expect(emulator.cpu.p.value, equals(subroutineAddress));
   expect(emulator.cpu.s.value, equals(initialSValue - 2));
-  expect(
-      (initialPValue + memOpcodes.length) & 0xFF, equals(emulator.cpu.memRead(0x6000)));
-  expect(
-      (initialPValue + memOpcodes.length) >> 8, equals(emulator.cpu.memRead(0x6000 - 1)));
+  expect((initialPValue + memBytes.length) & 0xFF,
+      equals(emulator.cpu.memRead(0x6000)));
+  expect((initialPValue + memBytes.length) >> 8,
+      equals(emulator.cpu.memRead(0x6000 - 1)));
 
   // Z is reset.
   expect(emulator.cpu.t.h, equals(flags.h));
@@ -2034,7 +2068,7 @@ void testVSJ(LH5801 emulator, int expectedCycles, List<int> opcodes) {
 
 void _testVSJConditional(
   LH5801 emulator,
-  List<int> opcodes,
+  List<int> bytes,
   int statusRegister, {
   bool jump = false,
 }) {
@@ -2042,7 +2076,7 @@ void _testVSJConditional(
   const int initialPValue = 0x4000;
   const int subroutineAddress = 0x4500;
 
-  final List<int> memOpcodes = <int>[...opcodes];
+  final List<int> memBytes = <int>[...bytes];
 
   emulator.cpu.t.statusRegister = statusRegister;
   final LH5801Flags flags = emulator.cpu.t.clone();
@@ -2050,7 +2084,7 @@ void _testVSJConditional(
   emulator.cpu.s.value = initialSValue;
 
   emulator.cpu.p.value = initialPValue;
-  memLoad(emulator.cpu.p.value, memOpcodes);
+  memLoad(emulator.cpu.p.value, memBytes);
 
   for (int vectorId = 0xC0; vectorId <= 0xF6; vectorId += 2) {
     memLoad(
@@ -2065,13 +2099,13 @@ void _testVSJConditional(
     expect(cycles, equals(21));
     expect(emulator.cpu.p.value, equals(subroutineAddress));
     expect(emulator.cpu.s.value, equals(initialSValue - 2));
-    expect(
-        (initialPValue + memOpcodes.length) & 0xFF, equals(emulator.cpu.memRead(0x6000)));
-    expect((initialPValue + memOpcodes.length) >> 8,
+    expect((initialPValue + memBytes.length) & 0xFF,
+        equals(emulator.cpu.memRead(0x6000)));
+    expect((initialPValue + memBytes.length) >> 8,
         equals(emulator.cpu.memRead(0x6000 - 1)));
   } else {
     expect(cycles, equals(8));
-    expect(emulator.cpu.p.value, equals(initialPValue + memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(initialPValue + memBytes.length));
     expect(emulator.cpu.s.value, equals(initialSValue));
   }
 
@@ -2083,81 +2117,81 @@ void _testVSJConditional(
   expect(emulator.cpu.t.c, equals(flags.c));
 }
 
-void testVCS(LH5801 emulator, List<int> opcodes) {
+void testVCS(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     LH5801Flags.C,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, 0);
+  _testVSJConditional(emulator, bytes, 0);
 }
 
-void testVCR(LH5801 emulator, List<int> opcodes) {
+void testVCR(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     0,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, LH5801Flags.C);
+  _testVSJConditional(emulator, bytes, LH5801Flags.C);
 }
 
-void testVHS(LH5801 emulator, List<int> opcodes) {
+void testVHS(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     LH5801Flags.H,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, 0);
+  _testVSJConditional(emulator, bytes, 0);
 }
 
-void testVHR(LH5801 emulator, List<int> opcodes) {
+void testVHR(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     0,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, LH5801Flags.H);
+  _testVSJConditional(emulator, bytes, LH5801Flags.H);
 }
 
-void testVZS(LH5801 emulator, List<int> opcodes) {
+void testVZS(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     LH5801Flags.Z,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, 0);
+  _testVSJConditional(emulator, bytes, 0);
 }
 
-void testVZR(LH5801 emulator, List<int> opcodes) {
+void testVZR(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     0,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, LH5801Flags.Z);
+  _testVSJConditional(emulator, bytes, LH5801Flags.Z);
 }
 
-void testVVS(LH5801 emulator, List<int> opcodes) {
+void testVVS(LH5801 emulator, List<int> bytes) {
   _testVSJConditional(
     emulator,
-    opcodes,
+    bytes,
     LH5801Flags.V,
     jump: true,
   );
 
-  _testVSJConditional(emulator, opcodes, 0);
+  _testVSJConditional(emulator, bytes, 0);
 }
 
 void testROR(LH5801 emulator) {
@@ -2167,14 +2201,14 @@ void testROR(LH5801 emulator) {
     int expectedStatusRegister, {
     bool carry = false,
   }) {
-    final List<int> opcodes = <int>[0xD1];
+    final List<int> bytes = <int>[0xD1];
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.a.value = initialAccValue;
     emulator.cpu.t.c = carry;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, expectedAccValue);
 
@@ -2197,14 +2231,14 @@ void testROL(LH5801 emulator) {
     int expectedStatusRegister, {
     bool carry = false,
   }) {
-    final List<int> opcodes = <int>[0xDB];
+    final List<int> bytes = <int>[0xDB];
 
-    memLoad(0x0000, opcodes);
+    memLoad(0x0000, bytes);
     emulator.cpu.a.value = initialAccValue;
     emulator.cpu.t.c = carry;
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(8));
-    expect(emulator.cpu.p.value, equals(opcodes.length));
+    expect(emulator.cpu.p.value, equals(bytes.length));
 
     expect(emulator.cpu.a.value, expectedAccValue);
 
@@ -2223,17 +2257,17 @@ void testTIN(LH5801 emulator) {
   const int initialXValue = 0x4700;
   const int memXValue = 0x33;
   const int initialYValue = 0x4800;
-  final List<int> memOpcodes = <int>[0xF5];
+  final List<int> memBytes = <int>[0xF5];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   emulator.cpu.x.value = initialXValue;
   memLoad(initialXValue, <int>[memXValue]);
   emulator.cpu.y.value = initialYValue;
   memLoad(initialYValue, <int>[0xFF]);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(7));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.x.value, equals(initialXValue + 1));
   expect(emulator.cpu.y.value, equals(initialYValue + 1));
@@ -2245,15 +2279,15 @@ void testTIN(LH5801 emulator) {
 void testCIN(LH5801 emulator) {
   void _test(int op1, int op2, Matcher cFlagMatcher, Matcher zFlagMatcher) {
     const int initialXValue = 0x4700;
-    final List<int> memOpcodes = <int>[0xF7];
+    final List<int> memBytes = <int>[0xF7];
 
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     emulator.cpu.a.value = op1;
     emulator.cpu.x.value = initialXValue;
     memLoad(initialXValue, <int>[op2]);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(7));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.x.value, equals(initialXValue + 1));
 
@@ -2266,13 +2300,14 @@ void testCIN(LH5801 emulator) {
   _test(84, 110, isFalse, isFalse);
 }
 
-void testRECSEC(LH5801 emulator, List<int> opcodes, {bool expectedCarry = false}) {
+void testRECSEC(LH5801 emulator, List<int> bytes,
+    {bool expectedCarry = false}) {
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.t.h, equals(flags.h));
   expect(emulator.cpu.t.v, equals(flags.v));
@@ -2282,66 +2317,66 @@ void testRECSEC(LH5801 emulator, List<int> opcodes, {bool expectedCarry = false}
 }
 
 void testAEX(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xF1];
+  final List<int> memBytes = <int>[0xF1];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   emulator.cpu.a.value = 0xCA;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(0xAC));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRPUSPU(LH5801 emulator, List<int> opcodes, {bool expectedPU = false}) {
+void testRPUSPU(LH5801 emulator, List<int> bytes, {bool expectedPU = false}) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.puFlipflop, equals(expectedPU));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testRPVSPV(LH5801 emulator, List<int> opcodes, {bool expectedPV = false}) {
+void testRPVSPV(LH5801 emulator, List<int> bytes, {bool expectedPV = false}) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(4));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.pvFlipflop, equals(expectedPV));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSDPRDP(LH5801 emulator, List<int> opcodes, {bool expectedDisp = false}) {
+void testSDPRDP(LH5801 emulator, List<int> bytes, {bool expectedDisp = false}) {
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.dispFlipflop, equals(expectedDisp));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSIERIE(LH5801 emulator, List<int> opcodes, {bool expectedIE = false}) {
+void testSIERIE(LH5801 emulator, List<int> bytes, {bool expectedIE = false}) {
   final LH5801Flags flags = emulator.cpu.t.clone();
 
-  memLoad(0x0000, opcodes);
+  memLoad(0x0000, bytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
-  expect(emulator.cpu.p.value, equals(opcodes.length));
+  expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.t.h, equals(flags.h));
   expect(emulator.cpu.t.v, equals(flags.v));
@@ -2351,14 +2386,14 @@ void testSIERIE(LH5801 emulator, List<int> opcodes, {bool expectedIE = false}) {
 }
 
 void testSHR(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xD5];
+  final List<int> memBytes = <int>[0xD5];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   emulator.cpu.a.value = 0x93;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals(0x93 >> 1));
 
@@ -2370,14 +2405,14 @@ void testSHR(LH5801 emulator) {
 }
 
 void testSHL(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xD9];
+  final List<int> memBytes = <int>[0xD9];
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   emulator.cpu.a.value = 0x9D;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(6));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.a.value, equals((0x9D << 1) & 0xFF));
 
@@ -2389,14 +2424,14 @@ void testSHL(LH5801 emulator) {
 }
 
 void testOFF(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xFD, 0x4C];
+  final List<int> memBytes = <int>[0xFD, 0x4C];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.bfFlipflop = true;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.bfFlipflop, isFalse);
 
@@ -2404,15 +2439,15 @@ void testOFF(LH5801 emulator) {
 }
 
 void testATP(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xFD, 0xCC];
+  final List<int> memBytes = <int>[0xFD, 0xCC];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.inputPorts = 0x00;
   emulator.cpu.a.value = 0x07;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.inputPorts, emulator.cpu.a.value);
 
@@ -2421,14 +2456,14 @@ void testATP(LH5801 emulator) {
 
 void testITA(LH5801 emulator) {
   void _test(int inputPortsValue, Matcher zFlagMatcher) {
-    final List<int> memOpcodes = <int>[0xFD, 0xBA];
+    final List<int> memBytes = <int>[0xFD, 0xBA];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
     emulator.inputPorts = inputPortsValue;
-    memLoad(0x0000, memOpcodes);
+    memLoad(0x0000, memBytes);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));
-    expect(emulator.cpu.p.value, equals(memOpcodes.length));
+    expect(emulator.cpu.p.value, equals(memBytes.length));
 
     expect(emulator.cpu.a.value, inputPortsValue);
 
@@ -2444,42 +2479,42 @@ void testITA(LH5801 emulator) {
 }
 
 void testNOP(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0x38];
+  final List<int> memBytes = <int>[0x38];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
 void testHLT(LH5801 emulator) {
-  final List<int> memOpcodes = <int>[0xFD, 0xB1];
+  final List<int> memBytes = <int>[0xFD, 0xB1];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.cpu.hlt = false;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.hlt, isTrue);
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testAM(LH5801 emulator, List<int> opcodes, int bit8) {
-  final List<int> memOpcodes = <int>[...opcodes];
+void testAM(LH5801 emulator, List<int> bytes, int bit8) {
+  final List<int> memBytes = <int>[...bytes];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.cpu.tm.value = 0x000;
   emulator.cpu.a.value = 0x45;
-  memLoad(0x0000, memOpcodes);
+  memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
-  expect(emulator.cpu.p.value, equals(memOpcodes.length));
+  expect(emulator.cpu.p.value, equals(memBytes.length));
 
   expect(emulator.cpu.tm.value, (bit8 << 8) | emulator.cpu.a.value);
 

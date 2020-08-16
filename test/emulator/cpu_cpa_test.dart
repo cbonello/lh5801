@@ -13,8 +13,8 @@ void main() {
 
     group('CPA [page 31]', () {
       test('should return the expected results', () {
-        final List<int> opcodes = <int>[0xFD, 0x07];
-        memLoad(0x0000, opcodes);
+        final List<int> bytes = <int>[0xFD, 0x07];
+        memLoad(0x0000, bytes);
 
         for (int op1 = 0; op1 < 256; op1++) {
           for (int op2 = 0; op2 < 256; op2++) {
@@ -22,7 +22,7 @@ void main() {
             lh5801.cpu.a.value = op1;
             lh5801.cpu.x.value = 0x0001;
             lh5801.step(address: 0x0000);
-            expect(lh5801.cpu.p.value, equals(opcodes.length));
+            expect(lh5801.cpu.p.value, equals(bytes.length));
 
             final String key = generateTableKey(op1, op2 ^ 0xFF, true);
             expect(addTable.containsKey(key), isTrue);

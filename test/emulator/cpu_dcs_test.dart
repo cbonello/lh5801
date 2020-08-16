@@ -13,8 +13,8 @@ void main() {
 
     group('DCS [page 28]', () {
       test('should return the expected results', () {
-        final List<int> opcodes = <int>[0xFD, 0x0C];
-        memLoad(0x0000, opcodes);
+        final List<int> bytes = <int>[0xFD, 0x0C];
+        memLoad(0x0000, bytes);
 
         for (final bool carry in <bool>[true, false]) {
           for (int op1Digit1 = 0; op1Digit1 < 10; op1Digit1++) {
@@ -28,7 +28,7 @@ void main() {
                   lh5801.cpu.x.value = 0x0001;
                   lh5801.cpu.t.c = carry;
                   lh5801.step(address: 0x0000);
-                  expect(lh5801.cpu.p.value, equals(opcodes.length));
+                  expect(lh5801.cpu.p.value, equals(bytes.length));
 
                   final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
                   expect(addTable.containsKey(key), isTrue);

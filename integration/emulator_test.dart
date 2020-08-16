@@ -16,7 +16,8 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value = address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value =
+      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
   return value;
 }
 
