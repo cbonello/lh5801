@@ -42,14 +42,23 @@ class Instruction {
     bool suffix = false,
   }) {
     final StringBuffer output = StringBuffer();
+    final int byteStringSize = radix.when<int>(
+      // 8 bits, one optional suffix and one space.
+      binary: () => 8 + (suffix ? 1 : 0) + 1,
+      // 3 digits, no suffix and one space.
+      decimal: () => 3 + 1,
+      // 8 hex digits, one optional suffix and one space.
+      hexadecimal: () => 2 + (suffix ? 1 : 0) + 1,
+    );
+    final int outputSize = 5 * byteStringSize - 1;
 
     for (int i = 0; i < bytes.length; i++) {
-      output.write(OperandDump.op8(bytes[i], radix: radix, suffix: suffix));
-      if (i < bytes.length - 1) output.write(' ');
+      output.write(
+        '${OperandDump.op8(bytes[i], radix: radix, suffix: suffix)} ',
+      );
     }
 
-    // An instruction has at most 5 bytes. '-1' to remove trailing space.
-    return output.toString().padRight(5 * 3 - 1);
+    return output.toString().padRight(outputSize).substring(0, outputSize);
   }
 }
 

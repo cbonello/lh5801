@@ -61,159 +61,1283 @@ void main() {
 
       test('should detect illegal instructions', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xFC];
-        memLoad(0x0000, <int>[0xFC]);
+        memLoad(0x1234, <int>[0xFC]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.toString(), equals('0000  FC              ILL'));
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11111100                                    '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11111100B                                        '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('252                '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('252                '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('FC            '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('FCH                '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('ILL'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('ILL'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('ILL'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('ILL'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('ILL'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('ILL'),
+        );
+        expect(instruction.toString(), equals('1234  FC              ILL'));
         expect(instruction.descriptor.toString(), equals('ILL'));
       });
 
-      test('OperandType.none()', () {
+      test('Operand.none()', () {
         final InstructionDescriptor expectedDescriptor =
             instructionTableFD[0x4C];
-        memLoad(0x0000, <int>[0xFD, 0x4C]);
+        memLoad(0x1234, <int>[0xFD, 0x4C]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
-        expect(instruction.toString(), equals('0000  FD 4C           OFF'));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.none()),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11111101 01001100                           '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11111101B 01001100B                              '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('253  76            '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('253  76            '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('FD 4C         '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('FDH 4CH            '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('OFF'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('OFF'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('OFF'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('OFF'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('OFF'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('OFF'),
+        );
+        expect(instruction.toString(), equals('1234  FD 4C           OFF'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('OFF'));
       });
 
-      test('OperandType.reg()', () {
+      test('Operand.reg()', () {
         final InstructionDescriptor expectedDescriptor =
             instructionTableFD[0x08];
-        memLoad(0x0000, <int>[0xFD, 0x08]);
+        memLoad(0x1234, <int>[0xFD, 0x08]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
-        expect(instruction.toString(), equals('0000  FD 08           LDX X'));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.reg('X')),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11111101 00001000                           '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11111101B 00001000B                              '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('253   8            '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('253   8            '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('FD 08         '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('FDH 08H            '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('LDX X'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('LDX X'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('LDX X'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('LDX X'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('LDX X'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('LDX X'),
+        );
+        expect(instruction.toString(), equals('1234  FD 08           LDX X'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDX X'));
       });
 
-      test('OperandType.mem0Reg()', () {
+      test('Operand.mem0Reg()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0x2D];
-        memLoad(0x0000, <int>[0x2D]);
+        memLoad(0x1234, <int>[0x2D]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
-        expect(instruction.toString(), equals('0000  2D              EOR (U)'));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.mem0Reg('U')),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('00101101                                    '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('00101101B                                        '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals(' 45                '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 45                '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('2D            '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('2DH                '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('EOR (U)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('EOR (U)'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('EOR (U)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('EOR (U)'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('EOR (U)'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('EOR (U)'),
+        );
+        expect(instruction.toString(), equals('1234  2D              EOR (U)'));
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('EOR (U)'));
       });
 
-      test('OperandType.mem0Imm16()', () {
+      test('Operand.mem0Imm16()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xA1];
-        memLoad(0x0000, <int>[0xA1, 0x12, 0x34]);
+        memLoad(0x1234, <int>[0xA1, 0x13, 0x57]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.mem0Imm16(0x1357)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('10100001 00010011 01010111                  '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('10100001B 00010011B 01010111B                    '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('161  19  87        '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('161  19  87        '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('A1 13 57      '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('A1H 13H 57H        '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('SBC (0001001101010111)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('SBC (0001001101010111B)'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('SBC (4951)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('SBC (4951)'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('SBC (1357)'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('SBC (1357H)'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  A1 12 34        SBC (1234)'),
+          equals('1234  A1 13 57        SBC (1357)'),
         );
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('SBC (1234)'));
+        expect(instruction.descriptor.toString(), equals('SBC (1357)'));
       });
 
-      test('OperandType.mem1Reg()', () {
+      test('Operand.mem1Reg()', () {
         final InstructionDescriptor expectedDescriptor =
             instructionTableFD[0x0E];
-        memLoad(0x0000, <int>[0xFD, 0x0E]);
+        memLoad(0x1234, <int>[0xFD, 0x0E]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.mem1Reg('X')),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11111101 00001110                           '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11111101B 00001110B                              '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('253  14            '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('253  14            '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('FD 0E         '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('FDH 0EH            '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('STA #(X)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('STA #(X)'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('STA #(X)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('STA #(X)'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('STA #(X)'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('STA #(X)'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  FD 0E           STA #(X)'),
+          equals('1234  FD 0E           STA #(X)'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('STA #(X)'));
       });
 
-      test('OperandType.mem1Imm16()', () {
+      test('Operand.mem1Imm16()', () {
         final InstructionDescriptor expectedDescriptor =
             instructionTableFD[0xAF];
-        memLoad(0x0000, <int>[0xFD, 0xAF, 0x34, 0x56]);
+        memLoad(0x1234, <int>[0xFD, 0xAF, 0x34, 0x56]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.mem1Imm16(0x3456)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11111101 10101111 00110100 01010110         '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11111101B 10101111B 00110100B 01010110B          '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('253 175  52  86    '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('253 175  52  86    '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('FD AF 34 56   '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('FDH AFH 34H 56H    '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('BIT #(0011010001010110)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('BIT #(0011010001010110B)'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('BIT #(13398)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('BIT #(13398)'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('BIT #(3456)'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('BIT #(3456H)'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  FD AF 34 56     BIT #(3456)'),
+          equals('1234  FD AF 34 56     BIT #(3456)'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BIT #(3456)'));
       });
 
-      test('OperandType.imm8()', () {
+      test('Operand.imm8()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xEF];
-        memLoad(0x0000, <int>[0xEF, 0x34, 0x56, 0x78]);
+        memLoad(0x1234, <int>[0xEF, 0x34, 0x56, 0x78]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[1],
+          equals(const Operand.imm8(0x78)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11101111 00110100 01010110 01111000         '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11101111B 00110100B 01010110B 01111000B          '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('239  52  86 120    '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('239  52  86 120    '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('EF 34 56 78   '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('EFH 34H 56H 78H    '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('ADI (0011010001010110), 01111000'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('ADI (0011010001010110B), 01111000B'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('ADI (13398), 120'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('ADI (13398), 120'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('ADI (3456), 78'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('ADI (3456H), 78H'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  EF 34 56 78     ADI (3456), 78'),
+          equals('1234  EF 34 56 78     ADI (3456), 78'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('ADI (3456), 78'));
       });
 
-      test('OperandType.dispPlus()', () {
+      test('Operand.dispPlus()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0x8F];
-        memLoad(0x0000, <int>[0x8F, 0x05]);
+        memLoad(0x1234, <int>[0x8F, 0x05]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.dispPlus(0x05)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('10001111 00000101                           '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('10001111B 00000101B                              '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('143   5            '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('143   5            '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('8F 05         '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('8FH 05H            '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('BVS +00000101'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('BVS +00000101B'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('BVS +5'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('BVS +5'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('BVS +05'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('BVS +05H'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  8F 05           BVS +05'),
+          equals('1234  8F 05           BVS +05'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BVS +05'));
       });
 
-      test('OperandType.dispMinus()', () {
+      test('Operand.dispMinus()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0x99];
-        memLoad(0x0000, <int>[0x99, 0x26]);
+        memLoad(0x1234, <int>[0x99, 0x26]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.dispMinus(0x26)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('10011001 00100110                           '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('10011001B 00100110B                              '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('153  38            '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('153  38            '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('99 26         '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('99H 26H            '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('BZR -00100110'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('BZR -00100110B'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('BZR -38'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('BZR -38'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('BZR -26'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('BZR -26H'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  99 26           BZR -26'),
+          equals('1234  99 26           BZR -26'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('BZR -26'));
       });
 
-      test('OperandType.mem0Cst8()', () {
+      test('Operand.mem0Cst8()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xF6];
-        memLoad(0x0000, <int>[0xF6]);
+        memLoad(0x1234, <int>[0xF6]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[0],
+          equals(const Operand.mem0Cst8(0xF6)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('11110110                                    '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('11110110B                                        '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('246                '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('246                '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('F6            '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('F6H                '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('VEJ (11110110)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('VEJ (11110110B)'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('VEJ (246)'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('VEJ (246)'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('VEJ (F6)'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('VEJ (F6H)'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  F6              VEJ (F6)'),
+          equals('1234  F6              VEJ (F6)'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('VEJ (F6)'));
       });
 
-      test('OperandType.imm16()', () {
+      test('Operand.imm16()', () {
         final InstructionDescriptor expectedDescriptor = instructionTable[0xAA];
-        memLoad(0x0000, <int>[0xAA, 0x13, 0x57]);
+        memLoad(0x1234, <int>[0xAA, 0x13, 0x57]);
 
-        instruction = dasm.dump(0x0000);
-        expect(instruction.address, equals(0x0000));
+        instruction = dasm.dump(0x1234);
+        expect(instruction.address, equals(0x1234));
+        expect(
+          instruction.descriptor.operands[1],
+          equals(const Operand.imm16(0x1357)),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.binary()),
+          equals('0001001000110100'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('0001001000110100B'),
+        );
+        expect(
+          instruction.addressToString(radix: const Radix.decimal()),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(' 4660'),
+        );
+        expect(
+          instruction.addressToString(),
+          equals('1234'),
+        );
+        expect(
+          instruction.addressToString(suffix: true),
+          equals('1234H'),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.binary()),
+          equals('10101010 00010011 01010111                  '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('10101010B 00010011B 01010111B                    '),
+        );
+        expect(
+          instruction.bytesToString(radix: const Radix.decimal()),
+          equals('170  19  87        '),
+        );
+        expect(
+          instruction.bytesToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('170  19  87        '),
+        );
+        expect(
+          instruction.bytesToString(),
+          equals('AA 13 57      '),
+        );
+        expect(
+          instruction.bytesToString(suffix: true),
+          equals('AAH 13H 57H        '),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.binary()),
+          equals('LDI S, 00010011, 01010111'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals('LDI S, 00010011B, 01010111B'),
+        );
+        expect(
+          instruction.instructionToString(radix: const Radix.decimal()),
+          equals('LDI S, 19, 87'),
+        );
+        expect(
+          instruction.instructionToString(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals('LDI S, 19, 87'),
+        );
+        expect(
+          instruction.instructionToString(),
+          equals('LDI S, 13, 57'),
+        );
+        expect(
+          instruction.instructionToString(suffix: true),
+          equals('LDI S, 13H, 57H'),
+        );
         expect(
           instruction.toString(),
-          equals('0000  AA 13 57        LDI S, 13, 57'),
+          equals('1234  AA 13 57        LDI S, 13, 57'),
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDI S, 13, 57'));
