@@ -9,5 +9,12 @@ void main() {
 
       expect(error.message, equals(message));
     });
+
+    test('toString() should display the expected error message', () {
+      const String message = "It's not working";
+      final LH5801Error error = LH5801Error(message);
+
+      expect(error.toString(), equals('LH5801 error: $message'));
+    });
   });
 }

@@ -4,7 +4,7 @@ class LH5801Error extends Error {
   final String message;
 
   @override
-  String toString() => 'LH5801: $message';
+  String toString() => 'LH5801 error: $message';
 }
 
 /// Return the byte at the given memory address.
