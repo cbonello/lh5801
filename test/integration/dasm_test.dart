@@ -16,7 +16,8 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value = address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value =
+      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
   return value;
 }
 
@@ -77,23 +78,23 @@ void main() {
         emulator.cpu.p.value = 0x0000;
         do {
           instruction = dasm.dump(emulator.cpu.p.value);
-          output.write(instruction);
+          output.writeln(instruction);
           emulator.cpu.p.value += instruction.descriptor.size;
         } while (emulator.cpu.p.value < program.length);
 
-        const String expected = '0000  48 76         LDI XH, 76\n'
-            '0002  4A 00         LDI XL, 00\n'
-            '0004  05            LDA (X)\n'
-            '0005  BD FF         EAI FF\n'
-            '0007  41            SIN X\n'
-            '0008  4E 4E         CPI XL, 4E\n'
-            '000A  99 08         BZR -08\n'
-            '000C  4C 77         CPI XH, 77\n'
-            '000E  8B 06         BZS +06\n'
-            '0010  48 77         LDI XH, 77\n'
-            '0012  4A 00         LDI XL, 00\n'
-            '0014  9E 12         BCH -12\n'
-            '0016  FD B1         HLT\n';
+        const String expected = '0000  48 76           LDI XH, 76\n'
+            '0002  4A 00           LDI XL, 00\n'
+            '0004  05              LDA (X)\n'
+            '0005  BD FF           EAI FF\n'
+            '0007  41              SIN X\n'
+            '0008  4E 4E           CPI XL, 4E\n'
+            '000A  99 08           BZR -08\n'
+            '000C  4C 77           CPI XH, 77\n'
+            '000E  8B 06           BZS +06\n'
+            '0010  48 77           LDI XH, 77\n'
+            '0012  4A 00           LDI XL, 00\n'
+            '0014  9E 12           BCH -12\n'
+            '0016  FD B1           HLT\n';
         expect(output.toString(), equals(expected));
       });
     });
