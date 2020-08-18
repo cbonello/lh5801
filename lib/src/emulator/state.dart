@@ -7,18 +7,16 @@ import 'timer.dart';
 class Register8 extends Object {
   Register8([int value = 0x00]) : _value = value & 0xFF;
 
-  factory Register8.fromJson(Map<String, dynamic> json) {
-    return Register8(json['value'] as int);
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'value': value,
-      };
-
   int _value;
 
   int get value => _value;
   set value(int newValue) => _value = newValue & 0xFF;
+
+  void restoreState(Map<String, dynamic> state) {
+    value = state['value'] as int;
+  }
+
+  Map<String, dynamic> saveState() => <String, dynamic>{'value': value};
 
   void reset() => _value = 0x00;
 
@@ -30,7 +28,9 @@ class Register8 extends Object {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Register8 && runtimeType == other.runtimeType && value == other.value;
+      other is Register8 &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -40,14 +40,6 @@ class Register16 extends Object {
   Register16([int value = 0x0000]) {
     this.value = value;
   }
-
-  factory Register16.fromJson(Map<String, dynamic> json) {
-    return Register16(json['value'] as int);
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'value': value,
-      };
 
   final List<Register8> _bytes = <Register8>[Register8(), Register8()];
 
@@ -65,6 +57,12 @@ class Register16 extends Object {
   int get low => _bytes[0].value;
   set low(int l) => _bytes[0].value = l & 0xFF;
 
+  void restoreState(Map<String, dynamic> state) {
+    value = state['value'] as int;
+  }
+
+  Map<String, dynamic> saveState() => <String, dynamic>{'value': value};
+
   void reset() => high = low = 0x00;
 
   Register16 clone() => Register16(value);
@@ -75,7 +73,9 @@ class Register16 extends Object {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Register16 && runtimeType == other.runtimeType && value == other.value;
+      other is Register16 &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
 
   @override
   int get hashCode => value.hashCode;

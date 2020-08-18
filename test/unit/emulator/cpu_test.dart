@@ -60,14 +60,13 @@ void main() {
         ..a.value = 0x79
         ..u.low = 0x12
         ..ir0 = true;
-
-      final LH5801CPU cpu2 = LH5801CPU.fromJson(
+      final Map<String, dynamic> state = cpu1.saveState();
+      final LH5801CPU cpu2 = LH5801CPU(
         pins: LH5801Pins(),
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
-        json: cpu1.toJson(),
-      );
+      )..restoreState(state);
 
       expect(cpu1, equals(cpu2));
       expect(cpu1.hashCode, equals(cpu2.hashCode));

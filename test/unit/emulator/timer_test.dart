@@ -530,17 +530,6 @@ void main() {
       expect(timer.isInterruptRaised, isFalse);
     });
 
-    test('should be serialized/deserialized successfully', () {
-      final LH5801Timer timer1 = LH5801Timer(
-        cpuClockFrequency: 1300000,
-        timerClockFrequency: 31250,
-      );
-      final LH5801Timer timer2 = LH5801Timer.fromJson(timer1.toJson());
-
-      expect(timer1 == timer2, isTrue);
-      expect(timer1.hashCode, equals(timer2.hashCode));
-    });
-
     test('should generate the expected values', () {
       final LH5801Timer timer = LH5801Timer(
         cpuClockFrequency: 1300000,
@@ -555,7 +544,8 @@ void main() {
       }
     });
 
-    test('should raise an interrupt whenever a new timer value is generated', () {
+    test('should raise an interrupt whenever a new timer value is generated',
+        () {
       final LH5801Timer timer = LH5801Timer(
         cpuClockFrequency: 1300000,
         timerClockFrequency: 31250,
@@ -592,6 +582,23 @@ void main() {
       final LH5801Timer timer2 = timer1.clone();
 
       expect(timer1 == timer2, isTrue);
+    });
+
+    test('should be serialized/deserialized successfully', () {
+      final LH5801Timer timer1 = LH5801Timer(
+        cpuClockFrequency: 1300000,
+        timerClockFrequency: 31250,
+      )..incrementClock(10000);
+
+      final Map<String, dynamic> state = timer1.saveState();
+      final LH5801Timer timer2 = timer1.clone();
+
+      timer1.reset();
+      expect(timer1 == timer2, isFalse);
+
+      timer1.restoreState(state);
+      expect(timer1 == timer2, isTrue);
+      expect(timer1.hashCode, equals(timer2.hashCode));
     });
 
     test('toString() should return the expected value', () {

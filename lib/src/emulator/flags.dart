@@ -7,17 +7,15 @@ class LH5801Flags {
     this.c = false,
   });
 
-  factory LH5801Flags.fromJson(Map<String, dynamic> json) {
-    return LH5801Flags(
-      h: json['h'] as bool,
-      v: json['v'] as bool,
-      z: json['z'] as bool,
-      ie: json['ie'] as bool,
-      c: json['c'] as bool,
-    );
+  void restoreState(Map<String, dynamic> state) {
+    h = state['h'] as bool;
+    v = state['v'] as bool;
+    z = state['z'] as bool;
+    ie = state['ie'] as bool;
+    c = state['c'] as bool;
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<String, dynamic> saveState() => <String, dynamic>{
         'h': h,
         'v': v,
         'z': z,
@@ -67,7 +65,8 @@ class LH5801Flags {
           c == other.c;
 
   @override
-  int get hashCode => h.hashCode ^ v.hashCode ^ z.hashCode ^ ie.hashCode ^ c.hashCode;
+  int get hashCode =>
+      h.hashCode ^ v.hashCode ^ z.hashCode ^ ie.hashCode ^ c.hashCode;
 
   @override
   String toString() => 'H: $h, V: $v, Z: $z, IE: $ie, C: $c';

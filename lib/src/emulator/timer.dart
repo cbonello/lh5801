@@ -31,33 +31,34 @@ abstract class _SubClock {
 }
 
 class LH5801Timer implements _SubClock {
-  LH5801Timer({@required int cpuClockFrequency, @required int timerClockFrequency})
-      : _cpuCyclesPerTick = (cpuClockFrequency / timerClockFrequency).round() {
+  LH5801Timer({
+    @required int cpuClockFrequency,
+    @required int timerClockFrequency,
+  }) : _cpuCyclesPerTick = (cpuClockFrequency / timerClockFrequency).round() {
     _value = 0;
     _cpuCycles = 0;
     _interruptRaised = false;
   }
 
-  LH5801Timer._(
-    this._value,
-    this._cpuCycles,
-    this._cpuCyclesPerTick,
-    this._interruptRaised,
-  );
+  LH5801Timer._({
+    @required int cpuCyclesPerTick,
+    @required int value,
+    @required int cpuCycles,
+    @required bool interruptRaised,
+  })  : _cpuCyclesPerTick = cpuCyclesPerTick,
+        _value = value,
+        _cpuCycles = cpuCycles,
+        _interruptRaised = interruptRaised;
 
-  factory LH5801Timer.fromJson(Map<String, dynamic> json) {
-    return LH5801Timer._(
-      json['value'] as int,
-      json['cpuCycles'] as int,
-      json['cpuCyclesPerTick'] as int,
-      json['interruptRaised'] as bool,
-    );
+  void restoreState(Map<String, dynamic> json) {
+    _value = json['value'] as int;
+    _cpuCycles = json['cpuCycles'] as int;
+    _interruptRaised = json['interruptRaised'] as bool;
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<String, dynamic> saveState() => <String, dynamic>{
         'value': _value,
         'cpuCycles': _cpuCycles,
-        'cpuCyclesPerTick': _cpuCyclesPerTick,
         'interruptRaised': _interruptRaised,
       };
 
@@ -82,7 +83,12 @@ class LH5801Timer implements _SubClock {
     _interruptRaised = false;
   }
 
-  LH5801Timer clone() => LH5801Timer.fromJson(toJson());
+  LH5801Timer clone() => LH5801Timer._(
+        cpuCyclesPerTick: _cpuCyclesPerTick,
+        value: _value,
+        cpuCycles: _cpuCycles,
+        interruptRaised: _interruptRaised,
+      );
 
   @override
   bool incrementClock([int cpuCycles]) {

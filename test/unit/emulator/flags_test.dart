@@ -22,7 +22,8 @@ void main() {
 
     test('should be serialized/deserialized successfully', () {
       final LH5801Flags flags1 = LH5801Flags(h: true, ie: true);
-      final LH5801Flags flags2 = LH5801Flags.fromJson(flags1.toJson());
+      final Map<String, dynamic> state = flags1.saveState();
+      final LH5801Flags flags2 = LH5801Flags()..restoreState(state);
       expect(flags1, equals(flags2));
     });
 

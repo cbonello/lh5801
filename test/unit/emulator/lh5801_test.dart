@@ -36,21 +36,46 @@ void main() {
       expect(emulator.cpu.runtimeType, equals(LH5801CPU));
     });
 
-    test('should be serialized/deserialized successfully', () {
-      final LH5801 emulator1 = LH5801(
-        clockFrequency: 1300000,
-        memRead: memRead,
-        memWrite: memWrite,
-      );
-      final LH5801 emulator2 = LH5801.fromJson(
-        clockFrequency: 1300000,
-        memRead: memRead,
-        memWrite: memWrite,
-        json: emulator1.toJson(),
-      );
+    group('saveState()/restoreState()', () {
+      test('should detect hardware inconsistency', () {
+        final LH5801 emulator1 = LH5801(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: memWrite,
+        )
+          ..resetPin = true
+          ..inputPorts = 0x45;
+        final Map<String, dynamic> state = emulator1.saveState();
+        final LH5801 emulator2 = LH5801(
+          clockFrequency: 1300,
+          memRead: memRead,
+          memWrite: memWrite,
+        );
 
-      expect(emulator1, equals(emulator2));
-      expect(emulator1.hashCode, equals(emulator2.hashCode));
+        expect(
+          () => emulator2.restoreState(state),
+          throwsA(const TypeMatcher<Exception>()),
+        );
+      });
+
+      test('should be serialized/deserialized successfully', () {
+        final LH5801 emulator1 = LH5801(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: memWrite,
+        )
+          ..resetPin = true
+          ..inputPorts = 0x45;
+        final Map<String, dynamic> state = emulator1.saveState();
+        final LH5801 emulator2 = LH5801(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: memWrite,
+        )..restoreState(state);
+
+        expect(emulator1, equals(emulator2));
+        expect(emulator1.hashCode, equals(emulator2.hashCode));
+      });
     });
 
     test('pins getter should return the epected data', () {

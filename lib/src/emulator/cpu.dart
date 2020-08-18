@@ -15,7 +15,12 @@ class LH5801CPU extends LH5801State {
     @required this.clockFrequency,
     @required this.memRead,
     @required this.memWrite,
-    this.debugCallback,
+    this.ir0Enter,
+    this.ir1Enter,
+    this.ir2Enter,
+    this.irExit,
+    this.subroutineEnter,
+    this.subroutineExit,
   })  : assert(pins != null),
         _pins = pins,
         assert(memRead != null),
@@ -28,42 +33,30 @@ class LH5801CPU extends LH5801State {
           ),
         );
 
-  factory LH5801CPU.fromJson({
-    @required LH5801Pins pins,
-    @required int clockFrequency,
-    @required LH5801MemoryRead memRead,
-    @required LH5801MemoryWrite memWrite,
-    @required Map<String, dynamic> json,
-  }) {
-    return LH5801CPU(
-      pins: pins,
-      clockFrequency: clockFrequency,
-      memRead: memRead,
-      memWrite: memWrite,
-    )
-      ..p = Register16.fromJson(json['p'] as Map<String, dynamic>)
-      ..s = Register16.fromJson(json['s'] as Map<String, dynamic>)
-      ..a = Register8.fromJson(json['a'] as Map<String, dynamic>)
-      ..x = Register16.fromJson(json['x'] as Map<String, dynamic>)
-      ..y = Register16.fromJson(json['y'] as Map<String, dynamic>)
-      ..u = Register16.fromJson(json['u'] as Map<String, dynamic>)
-      ..tm = LH5801Timer.fromJson(json['tm'] as Map<String, dynamic>)
-      ..t = LH5801Flags.fromJson(json['t'] as Map<String, dynamic>)
-      ..ir0 = json['ir0'] as bool
-      ..ir1 = json['ir1'] as bool
-      ..ir2 = json['ir2'] as bool
-      ..hlt = json['hlt'] as bool;
+  void restoreState(Map<String, dynamic> state) {
+    p.restoreState(state['p'] as Map<String, dynamic>);
+    s.restoreState(state['s'] as Map<String, dynamic>);
+    a.restoreState(state['a'] as Map<String, dynamic>);
+    x.restoreState(state['x'] as Map<String, dynamic>);
+    y.restoreState(state['y'] as Map<String, dynamic>);
+    u.restoreState(state['u'] as Map<String, dynamic>);
+    tm.restoreState(state['tm'] as Map<String, dynamic>);
+    t.restoreState(state['t'] as Map<String, dynamic>);
+    ir0 = state['ir0'] as bool;
+    ir1 = state['ir1'] as bool;
+    ir2 = state['ir2'] as bool;
+    hlt = state['hlt'] as bool;
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'p': p.toJson(),
-        's': s.toJson(),
-        'a': a.toJson(),
-        'x': x.toJson(),
-        'y': y.toJson(),
-        'u': u.toJson(),
-        'tm': tm.toJson(),
-        't': t.toJson(),
+  Map<String, dynamic> saveState() => <String, dynamic>{
+        'p': p.saveState(),
+        's': s.saveState(),
+        'a': a.saveState(),
+        'x': x.saveState(),
+        'y': y.saveState(),
+        'u': u.saveState(),
+        'tm': tm.saveState(),
+        't': t.saveState(),
         'ir0': ir0,
         'ir1': ir1,
         'ir2': ir2,
@@ -75,7 +68,12 @@ class LH5801CPU extends LH5801State {
   final int clockFrequency;
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
-  final LH5801DebugEvents debugCallback;
+  final LH5801Command ir0Enter;
+  final LH5801Command ir1Enter;
+  final LH5801Command ir2Enter;
+  final LH5801Command irExit;
+  final LH5801Command subroutineEnter;
+  final LH5801Command subroutineExit;
   final LH5801DASM _dasm;
 
   int step([LH5801CPUInstructionLogger logger]) {
@@ -84,7 +82,6 @@ class LH5801CPU extends LH5801State {
       _pins.reset();
       p.high = memRead(_me0(0xFFFE));
       p.low = memRead(_me0(0xFFFF));
-      debugCallback?.resetEvt();
     } else {
       ir0 = _pins.nmiPin;
       ir1 = tm.isInterruptRaised;
@@ -99,7 +96,7 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFFC));
       p.low = memRead(_me0(0xFFFD));
-      debugCallback?.interruptEnterEvt(const InterruptType.ir0());
+      ir0Enter?.execute();
     } else if (t.ie && ir1) {
       // Timer interrupt
       _push8(t.statusRegister);
@@ -107,7 +104,7 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFFA));
       p.low = memRead(_me0(0xFFFB));
-      debugCallback?.interruptEnterEvt(const InterruptType.ir1());
+      ir1Enter?.execute();
     } else if (t.ie && ir2) {
       // Maskable interrupt
       _push8(t.statusRegister);
@@ -115,7 +112,7 @@ class LH5801CPU extends LH5801State {
       _push16(p.value);
       p.high = memRead(_me0(0xFFF8));
       p.low = memRead(_me0(0xFFF9));
-      debugCallback?.interruptEnterEvt(const InterruptType.ir2());
+      ir2Enter?.execute();
     }
 
     int cycles = 2;
@@ -277,7 +274,6 @@ class LH5801CPU extends LH5801State {
         break;
       case 0x4C: // OFF
         _pins.bfFlipflop = false;
-        debugCallback?.bfFlipflopEvt(bf: false);
         break;
       case 0x4D: // BII #(X), i
         _bit(memRead(_me1(x.value)), _readOp8());
@@ -401,7 +397,6 @@ class LH5801CPU extends LH5801State {
 
       case 0xB1: // HLT
         hlt = true;
-        debugCallback?.haltEvt();
         break;
       case 0xBA: // ITA
         _ita();
@@ -412,11 +407,9 @@ class LH5801CPU extends LH5801State {
 
       case 0xC0: // RDP
         _pins.dispFlipflop = false;
-        debugCallback?.dispFlipflopEvt(disp: false);
         break;
       case 0xC1: // SDP
         _pins.dispFlipflop = true;
-        debugCallback?.dispFlipflopEvt(disp: true);
         break;
       case 0xC8: // PSH A
         _push8(a.value);
@@ -864,7 +857,6 @@ class LH5801CPU extends LH5801State {
         break;
       case 0x9A: // RTN
         _rtn();
-        debugCallback?.subroutineExitEvt();
         break;
       case 0x9B: // BZS -i
         cycles += _branchBackward(cyclesTable.additional, cond: t.z == true);
@@ -908,7 +900,6 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xA8: // SPV
         _pins.pvFlipflop = true;
-        debugCallback?.pvFlipflopEvt(pv: true);
         break;
       case 0xA9: // AND (ab)
         _andAccumulator(_readOp16Ind(0));
@@ -947,7 +938,6 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xB8: // RPV
         _pins.pvFlipflop = false;
-        debugCallback?.pvFlipflopEvt(pv: false);
         break;
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
@@ -1071,14 +1061,12 @@ class LH5801CPU extends LH5801State {
         break;
       case 0xE1: // SPU
         _pins.puFlipflop = true;
-        debugCallback?.puFlipflopEvt(pu: true);
         break;
       case 0xE2: // VEJ (E2)
         cycles += _vector(cyclesTable.additional, true, 0xE2);
         break;
       case 0xE3: // RPU
         _pins.puFlipflop = false;
-        debugCallback?.puFlipflopEvt(pu: false);
         break;
       case 0xE4: // VEJ (E4)
         cycles += _vector(cyclesTable.additional, true, 0xE4);
@@ -1407,12 +1395,12 @@ class LH5801CPU extends LH5801State {
   void _rti() {
     _popRegister(p);
     t.statusRegister = _pop8();
-    debugCallback?.interruptExitEvt();
+    irExit?.execute();
   }
 
   void _rtn() {
     _popRegister(p);
-    debugCallback?.subroutineExitEvt();
+    subroutineExit?.execute();
   }
 
   void _sbc(int value) => a.value = _binaryAdd(
@@ -1447,7 +1435,7 @@ class LH5801CPU extends LH5801State {
   void _sjp(int address) {
     _push16(p.value);
     p.value = address;
-    debugCallback?.subroutineEnterEvt();
+    subroutineEnter?.execute();
   }
 
   void _tin() {
@@ -1468,7 +1456,7 @@ class LH5801CPU extends LH5801State {
       final int h = memRead(_me0(0xFF00 + vectorId));
       final int l = memRead(_me0(0xFF00 + vectorId + 1));
       p.value = (h << 8) | l;
-      debugCallback?.subroutineEnterEvt();
+      subroutineEnter?.execute();
     }
     t.z = false;
     return cycles;
