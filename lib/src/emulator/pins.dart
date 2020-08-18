@@ -16,15 +16,13 @@ class _CPUPin {
 
   set pin(bool value) => _pin = value;
 
-  _CPUPin clone() => _CPUPin(resetUponRead: resetUponRead, pin: _pin);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is _CPUPin &&
           runtimeType == other.runtimeType &&
           resetUponRead == other.resetUponRead &&
-          _pin == other._pin;
+          peek == other.peek;
 
   @override
   int get hashCode => resetUponRead.hashCode ^ _pin.hashCode;
