@@ -71,35 +71,20 @@ void main() {
   final LH5801DASM dasm = LH5801DASM(memRead: memRead);
   Instruction instruction;
 
+  stdout.writeln('Assembly Listing:');
   emulator.cpu.p.value = 0x0000;
   do {
     instruction = dasm.dump(emulator.cpu.p.value);
-    stdout.write(
-      '${emulator.cpu.p.value.toUnsigned(16).toRadixString(16).toUpperCase().padLeft(4, '0')}H  ',
-    );
-    stdout.write(formatBytes(instruction.descriptor.bytes));
-    stdout.writeln(instruction.descriptor);
+    stdout.writeln(instruction);
     emulator.cpu.p.value += instruction.descriptor.size;
   } while (emulator.cpu.p.value < program.length);
   stdout.writeln();
 
+  stdout.writeln('Program Execution:');
   int cycles = 0;
   emulator.cpu.p.value = 0x0000;
   while (emulator.cpu.hlt == false) {
     cycles += emulator.step();
   }
   stdout.write('#CPU cycles: $cycles');
-}
-
-String formatBytes(List<int> bytes) {
-  final StringBuffer output = StringBuffer();
-
-  for (int i = 0; i < bytes.length; i++) {
-    output.write(
-      '${bytes[i].toUnsigned(8).toRadixString(16).toUpperCase().padLeft(2, '0')} ',
-    );
-  }
-
-  // An instruction has at most 4 bytes.
-  return output.toString().padRight(12);
 }
