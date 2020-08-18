@@ -31,7 +31,11 @@ void memWrite(int address, int value) {
 
 class LH5801Test extends LH5801 {
   LH5801Test()
-      : super(clockFrequency: 1300000, memRead: memRead, memWrite: memWrite);
+      : super(
+          clockFrequency: 1300000,
+          memRead: memRead,
+          memWrite: memWrite,
+        );
 
   void resetTestEnv() {
     me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));

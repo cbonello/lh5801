@@ -3,7 +3,11 @@ import 'package:meta/meta.dart';
 
 import '../../lh5801.dart';
 
-typedef LH5801CPUInstructionLogger = void Function(Instruction, LH5801Pins, LH5801State);
+typedef LH5801CPUInstructionLogger = void Function(
+  Instruction,
+  LH5801Pins,
+  LH5801State,
+);
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({
@@ -85,6 +89,7 @@ class LH5801CPU extends LH5801State {
       ir0 = _pins.nmiPin;
       ir1 = tm.isInterruptRaised;
       ir2 = _pins.miPin;
+      _pins.nmiPin = _pins.miPin = false;
     }
 
     if (ir0) {
@@ -1184,14 +1189,19 @@ class LH5801CPU extends LH5801State {
     final int sum = left + right + c;
 
     t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-    t.v = ((left & 0x80) == ((right + c) & 0x80)) && ((left & 0x80) != (sum & 0x80));
+    t.v = ((left & 0x80) == ((right + c) & 0x80)) &&
+        ((left & 0x80) != (sum & 0x80));
     t.z = (sum & 0xFF) == 0;
     t.c = (sum & 0x100) != 0;
 
     return sum & 0xFF;
   }
 
-  void _addAccumulator(int value) => a.value = _binaryAdd(a.value, value, carry: t.c);
+  void _addAccumulator(int value) => a.value = _binaryAdd(
+        a.value,
+        value,
+        carry: t.c,
+      );
 
   void _addMemory(int address, int value) {
     final int m = memRead(address);
@@ -1405,7 +1415,11 @@ class LH5801CPU extends LH5801State {
     debugCallback?.subroutineExitEvt();
   }
 
-  void _sbc(int value) => a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
+  void _sbc(int value) => a.value = _binaryAdd(
+        a.value,
+        value ^ 0xFF,
+        carry: t.c,
+      );
 
   void _sde(Register16 register) => memWrite(_me0(register.value--), a.value);
 
