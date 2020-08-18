@@ -1410,8 +1410,9 @@ void testDRRRReg(
   expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(0x42));
-  final int x =
-      emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
+  final int x = emulator.cpu.memRead(
+    (me1 ? 0x10000 : 0) | emulator.cpu.x.value,
+  );
   expect(x, equals(0x14));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
@@ -1434,8 +1435,9 @@ void testDRLRReg(
   expect(emulator.cpu.p.value, equals(bytes.length));
 
   expect(emulator.cpu.a.value, equals(0xB3));
-  final int x =
-      emulator.cpu.memRead((me1 ? 0x10000 : 0) | emulator.cpu.x.value);
+  final int x = emulator.cpu.memRead(
+    (me1 ? 0x10000 : 0) | emulator.cpu.x.value,
+  );
   expect(x, equals(0x36));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
@@ -1959,10 +1961,14 @@ void testSJP(LH5801 emulator) {
 
   expect(emulator.cpu.p.value, equals(ij));
   expect(emulator.cpu.s.value, equals(initialSValue - 2));
-  expect((initialPValue + memBytes.length) & 0xFF,
-      equals(emulator.cpu.memRead(0x6000)));
-  expect((initialPValue + memBytes.length) >> 8,
-      equals(emulator.cpu.memRead(0x6000 - 1)));
+  expect(
+    (initialPValue + memBytes.length) & 0xFF,
+    equals(emulator.cpu.memRead(0x6000)),
+  );
+  expect(
+    (initialPValue + memBytes.length) >> 8,
+    equals(emulator.cpu.memRead(0x6000 - 1)),
+  );
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2057,10 +2063,14 @@ void testVSJ(LH5801 emulator, int expectedCycles, List<int> bytes) {
 
   expect(emulator.cpu.p.value, equals(subroutineAddress));
   expect(emulator.cpu.s.value, equals(initialSValue - 2));
-  expect((initialPValue + memBytes.length) & 0xFF,
-      equals(emulator.cpu.memRead(0x6000)));
-  expect((initialPValue + memBytes.length) >> 8,
-      equals(emulator.cpu.memRead(0x6000 - 1)));
+  expect(
+    (initialPValue + memBytes.length) & 0xFF,
+    equals(emulator.cpu.memRead(0x6000)),
+  );
+  expect(
+    (initialPValue + memBytes.length) >> 8,
+    equals(emulator.cpu.memRead(0x6000 - 1)),
+  );
 
   // Z is reset.
   expect(emulator.cpu.t.h, equals(flags.h));
@@ -2103,10 +2113,14 @@ void _testVSJConditional(
     expect(cycles, equals(21));
     expect(emulator.cpu.p.value, equals(subroutineAddress));
     expect(emulator.cpu.s.value, equals(initialSValue - 2));
-    expect((initialPValue + memBytes.length) & 0xFF,
-        equals(emulator.cpu.memRead(0x6000)));
-    expect((initialPValue + memBytes.length) >> 8,
-        equals(emulator.cpu.memRead(0x6000 - 1)));
+    expect(
+      (initialPValue + memBytes.length) & 0xFF,
+      equals(emulator.cpu.memRead(0x6000)),
+    );
+    expect(
+      (initialPValue + memBytes.length) >> 8,
+      equals(emulator.cpu.memRead(0x6000 - 1)),
+    );
   } else {
     expect(cycles, equals(8));
     expect(emulator.cpu.p.value, equals(initialPValue + memBytes.length));
