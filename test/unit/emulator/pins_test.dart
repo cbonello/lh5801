@@ -3,44 +3,6 @@ import 'package:test/test.dart';
 import 'package:lh5801/lh5801.dart';
 
 void main() {
-  group('_CPUPin', () {
-    test('should be initialized properly', () {
-      final LH5801Pins pins = LH5801Pins();
-
-      expect(pins.resetPin, isFalse);
-    });
-
-    test('reading a "reset on read" pin should should reset a pin upon reading',
-        () {
-      final LH5801Pins pins = LH5801Pins();
-
-      pins.resetPin = true;
-      final bool reset = pins.resetPin;
-      expect(reset, isTrue);
-      expect(pins.resetPin, isFalse);
-    });
-
-    test('testing a "reset on read" pin should should reset the pin value', () {
-      final LH5801Pins pins = LH5801Pins();
-
-      pins.resetPin = true;
-      expect(pins.resetPin == pins.puFlipflop, isFalse);
-      expect(pins.resetPin, isFalse);
-    });
-
-    test(
-      'reading a non "reset on read" pin should should not reset a pin upon reading',
-      () {
-        final LH5801Pins pins = LH5801Pins();
-
-        pins.puFlipflop = true;
-        final bool pu = pins.puFlipflop;
-        expect(pu, isTrue);
-        expect(pins.puFlipflop, isTrue);
-      },
-    );
-  });
-
   group('LH5801Pins', () {
     test('should be initialized properly', () {
       final LH5801Pins pins = LH5801Pins();
@@ -81,6 +43,16 @@ void main() {
 
       expect(pins1, equals(pins2));
       expect(pins1.hashCode, equals(pins2.hashCode));
+    });
+
+    test('toString() should return the expected value', () {
+      final LH5801Pins pins = LH5801Pins();
+      expect(
+        pins.toString(),
+        equals(
+          'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false, inputPorts: 00)',
+        ),
+      );
     });
   });
 }

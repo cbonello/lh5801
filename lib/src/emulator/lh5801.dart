@@ -103,8 +103,8 @@ class LH5801 extends LH5801Pins {
 
   @override
   void reset() {
-    super.reset();
-    cpu.reset();
+    super.reset(); // Reset pins.
+    cpu?.reset(); // Reset registers.
   }
 }
 
