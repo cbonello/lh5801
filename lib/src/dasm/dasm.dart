@@ -50,6 +50,8 @@ class Instruction {
       // 8 hex digits, one optional suffix and one space.
       hexadecimal: () => 2 + (suffix ? 1 : 0) + 1,
     );
+    // An instruction has up-to 5 bytes. -1 is to remove the trailing space
+    // character.
     final int outputSize = 5 * byteStringSize - 1;
 
     for (int i = 0; i < bytes.length; i++) {
@@ -96,7 +98,7 @@ class LH5801DASM {
     for (int i = 0; i < descriptor.operands.length; i++) {
       final Operand operand = descriptor.operands[i];
 
-      // Replaces the generic operand values with their actual value.
+      // Replaces generic operands with their actual value.
       updatedOperands.add(
         operand.maybeWhen(
           imm8: (_) => Operand.imm8(readOp8()),

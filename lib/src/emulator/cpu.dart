@@ -134,7 +134,6 @@ class LH5801CPU extends LH5801State {
     }
 
     tm.incrementClock(cycles);
-
     return cycles;
   }
 
