@@ -14,17 +14,46 @@ class Instruction {
   }) =>
       OperandDump.op16(address, radix: radix, suffix: suffix);
 
+  int addressLength({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
+    final String address = addressToString(radix: radix, suffix: suffix);
+    return address.length;
+  }
+
   String bytesToString({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) =>
       _formatBytes(descriptor.bytes, radix: radix, suffix: suffix);
 
+  int bytesLength({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
+    final String address = bytesToString(radix: radix, suffix: suffix);
+    return address.length;
+  }
+
   String instructionToString({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) =>
       descriptor.instructionToString(radix: radix, suffix: suffix);
+
+  int instructionLength({
+    Radix radix = const Radix.hexadecimal(),
+    bool suffix = false,
+  }) {
+    final int length = radix.when<int>(
+      binary: () =>
+          'BII #(0011010001010110), 01111000'.length + (suffix ? 2 : 0),
+      decimal: () => 'BII #(13398), 120'.length,
+      hexadecimal: () => 'BII #(3456), 78'.length + (suffix ? 2 : 0),
+    );
+    return length;
+  }
 
   @override
   String toString() {

@@ -696,8 +696,8 @@ void main() {
 
       test('Operand.mem1Imm16()', () {
         final InstructionDescriptor expectedDescriptor =
-            instructionTableFD[0xAF];
-        memLoad(0x1234, <int>[0xFD, 0xAF, 0x34, 0x56]);
+            instructionTableFD[0xED];
+        memLoad(0x1234, <int>[0xFD, 0xED, 0x34, 0x56, 0x78]);
 
         instruction = dasm.dump(0x1234);
         expect(instruction.address, equals(0x1234));
@@ -737,70 +737,70 @@ void main() {
         );
         expect(
           instruction.bytesToString(radix: const Radix.binary()),
-          equals('11111101 10101111 00110100 01010110         '),
+          equals('11111101 11101101 00110100 01010110 01111000'),
         );
         expect(
           instruction.bytesToString(
             radix: const Radix.binary(),
             suffix: true,
           ),
-          equals('11111101B 10101111B 00110100B 01010110B          '),
+          equals('11111101B 11101101B 00110100B 01010110B 01111000B'),
         );
         expect(
           instruction.bytesToString(radix: const Radix.decimal()),
-          equals('253 175  52  86    '),
+          equals('253 237  52  86 120'),
         );
         expect(
           instruction.bytesToString(
             radix: const Radix.decimal(),
             suffix: true,
           ),
-          equals('253 175  52  86    '),
+          equals('253 237  52  86 120'),
         );
         expect(
           instruction.bytesToString(),
-          equals('FD AF 34 56   '),
+          equals('FD ED 34 56 78'),
         );
         expect(
           instruction.bytesToString(suffix: true),
-          equals('FDH AFH 34H 56H    '),
+          equals('FDH EDH 34H 56H 78H'),
         );
         expect(
           instruction.instructionToString(radix: const Radix.binary()),
-          equals('BIT #(0011010001010110)'),
+          equals('BII #(0011010001010110), 01111000'),
         );
         expect(
           instruction.instructionToString(
             radix: const Radix.binary(),
             suffix: true,
           ),
-          equals('BIT #(0011010001010110B)'),
+          equals('BII #(0011010001010110B), 01111000B'),
         );
         expect(
           instruction.instructionToString(radix: const Radix.decimal()),
-          equals('BIT #(13398)'),
+          equals('BII #(13398), 120'),
         );
         expect(
           instruction.instructionToString(
             radix: const Radix.decimal(),
             suffix: true,
           ),
-          equals('BIT #(13398)'),
+          equals('BII #(13398), 120'),
         );
         expect(
           instruction.instructionToString(),
-          equals('BIT #(3456)'),
+          equals('BII #(3456), 78'),
         );
         expect(
           instruction.instructionToString(suffix: true),
-          equals('BIT #(3456H)'),
+          equals('BII #(3456H), 78H'),
         );
         expect(
           instruction.toString(),
-          equals('1234  FD AF 34 56     BIT #(3456)'),
+          equals('1234  FD ED 34 56 78  BII #(3456), 78'),
         );
         check(instruction.descriptor, expectedDescriptor);
-        expect(instruction.descriptor.toString(), equals('BIT #(3456)'));
+        expect(instruction.descriptor.toString(), equals('BII #(3456), 78'));
       });
 
       test('Operand.imm8()', () {
@@ -1341,6 +1341,97 @@ void main() {
         );
         check(instruction.descriptor, expectedDescriptor);
         expect(instruction.descriptor.toString(), equals('LDI S, 13, 57'));
+      });
+    });
+
+    group('Instruction', () {
+      final LH5801DASM dasm = LH5801DASM(memRead: memRead);
+      Instruction instruction;
+
+      setUpAll(() {
+        memLoad(0x1234, <int>[0xAA, 0x13, 0x57]);
+      });
+
+      setUp(() {
+        instruction = dasm.dump(0x1234);
+      });
+
+      test('addressLength() should return the expected length', () {
+        expect(
+          instruction.addressLength(radix: const Radix.binary()),
+          equals(16),
+        );
+        expect(
+            instruction.addressLength(
+              radix: const Radix.binary(),
+              suffix: true,
+            ),
+            equals(17));
+        expect(
+          instruction.addressLength(radix: const Radix.decimal()),
+          equals(5),
+        );
+        expect(
+          instruction.addressLength(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(5),
+        );
+        expect(instruction.addressLength(), equals(4));
+        expect(instruction.addressLength(suffix: true), equals(5));
+      });
+
+      test('bytesLength() should return the expected length', () {
+        expect(
+          instruction.bytesLength(radix: const Radix.binary()),
+          equals(44),
+        );
+        expect(
+            instruction.bytesLength(
+              radix: const Radix.binary(),
+              suffix: true,
+            ),
+            equals(49));
+        expect(
+          instruction.bytesLength(radix: const Radix.decimal()),
+          equals(19),
+        );
+        expect(
+          instruction.bytesLength(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(19),
+        );
+        expect(instruction.bytesLength(), equals(14));
+        expect(instruction.bytesLength(suffix: true), equals(19));
+      });
+
+      test('instructionLength() should return the expected length', () {
+        expect(
+          instruction.instructionLength(radix: const Radix.binary()),
+          equals(33),
+        );
+        expect(
+            instruction.instructionLength(
+              radix: const Radix.binary(),
+              suffix: true,
+            ),
+            equals(35));
+        expect(
+          instruction.instructionLength(radix: const Radix.decimal()),
+          equals(17),
+        );
+        expect(
+          instruction.instructionLength(
+            radix: const Radix.decimal(),
+            suffix: true,
+          ),
+          equals(17),
+        );
+        expect(instruction.instructionLength(), equals(15));
+        expect(instruction.instructionLength(suffix: true), equals(17));
       });
     });
   });
