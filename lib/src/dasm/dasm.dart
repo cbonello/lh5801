@@ -14,6 +14,8 @@ class Instruction {
   }) =>
       OperandDump.op16(address, radix: radix, suffix: suffix);
 
+  /// Return the maximum length of the address field for given arguments.
+  /// Usefull for tabulating the disassembly listing.
   int addressLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
@@ -28,6 +30,8 @@ class Instruction {
   }) =>
       _formatBytes(descriptor.bytes, radix: radix, suffix: suffix);
 
+  /// Return the maximum length of the bytes field for given arguments.
+  /// Usefull for tabulating the disassembly listing.
   int bytesLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
@@ -42,10 +46,13 @@ class Instruction {
   }) =>
       descriptor.instructionToString(radix: radix, suffix: suffix);
 
+  /// Return the maximum length of the instruction field for given arguments.
+  /// Usefull for tabulating the disassembly listing.
   int instructionLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) {
+    // 'BII #(ab), i' is encoded in 5 bytes; it's the biggest LH5801 instruction.
     final int length = radix.when<int>(
       binary: () =>
           'BII #(0011010001010110), 01111000'.length + (suffix ? 2 : 0),
