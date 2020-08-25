@@ -8,7 +8,7 @@ Sharp [LH5801](docs/PC1500.TechnicalReferenceManual.pdf?raw=true) 8-bit Micropro
 
 This package is part of an ongoing project of writing a [Sharp PC-1500](https://en.wikipedia.org/wiki/Sharp_PC-1500) emulator with Dart/Flutter.
 
-Package includes a disassembler and an emulator.
+Package also includes a disassembler.
 
 ## Usage
 
