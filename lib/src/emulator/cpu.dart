@@ -1152,7 +1152,7 @@ class LH5801CPU extends LH5801State {
     return op8;
   }
 
-  int _readOp16([int address]) {
+  int _readOp16() {
     final int op8H = _readOp8();
     final int op8L = _readOp8();
     return op8H << 8 | op8L;
