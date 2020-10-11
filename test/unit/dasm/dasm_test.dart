@@ -1345,93 +1345,82 @@ void main() {
     });
 
     group('Instruction', () {
-      final LH5801DASM dasm = LH5801DASM(memRead: memRead);
-      Instruction instruction;
-
-      setUpAll(() {
-        memLoad(0x1234, <int>[0xAA, 0x13, 0x57]);
-      });
-
-      setUp(() {
-        instruction = dasm.dump(0x1234);
-      });
-
       test('addressLength() should return the expected length', () {
         expect(
-          instruction.addressLength(radix: const Radix.binary()),
+          Instruction.addressLength(radix: const Radix.binary()),
           equals(16),
         );
         expect(
-            instruction.addressLength(
+            Instruction.addressLength(
               radix: const Radix.binary(),
               suffix: true,
             ),
             equals(17));
         expect(
-          instruction.addressLength(radix: const Radix.decimal()),
+          Instruction.addressLength(radix: const Radix.decimal()),
           equals(5),
         );
         expect(
-          instruction.addressLength(
+          Instruction.addressLength(
             radix: const Radix.decimal(),
             suffix: true,
           ),
           equals(5),
         );
-        expect(instruction.addressLength(), equals(4));
-        expect(instruction.addressLength(suffix: true), equals(5));
+        expect(Instruction.addressLength(), equals(4));
+        expect(Instruction.addressLength(suffix: true), equals(5));
       });
 
       test('bytesLength() should return the expected length', () {
         expect(
-          instruction.bytesLength(radix: const Radix.binary()),
+          Instruction.bytesLength(radix: const Radix.binary()),
           equals(44),
         );
         expect(
-            instruction.bytesLength(
+            Instruction.bytesLength(
               radix: const Radix.binary(),
               suffix: true,
             ),
             equals(49));
         expect(
-          instruction.bytesLength(radix: const Radix.decimal()),
+          Instruction.bytesLength(radix: const Radix.decimal()),
           equals(19),
         );
         expect(
-          instruction.bytesLength(
+          Instruction.bytesLength(
             radix: const Radix.decimal(),
             suffix: true,
           ),
           equals(19),
         );
-        expect(instruction.bytesLength(), equals(14));
-        expect(instruction.bytesLength(suffix: true), equals(19));
+        expect(Instruction.bytesLength(), equals(14));
+        expect(Instruction.bytesLength(suffix: true), equals(19));
       });
 
       test('instructionLength() should return the expected length', () {
         expect(
-          instruction.instructionLength(radix: const Radix.binary()),
+          Instruction.instructionLength(radix: const Radix.binary()),
           equals(33),
         );
         expect(
-            instruction.instructionLength(
+            Instruction.instructionLength(
               radix: const Radix.binary(),
               suffix: true,
             ),
             equals(35));
         expect(
-          instruction.instructionLength(radix: const Radix.decimal()),
+          Instruction.instructionLength(radix: const Radix.decimal()),
           equals(17),
         );
         expect(
-          instruction.instructionLength(
+          Instruction.instructionLength(
             radix: const Radix.decimal(),
             suffix: true,
           ),
           equals(17),
         );
-        expect(instruction.instructionLength(), equals(15));
-        expect(instruction.instructionLength(suffix: true), equals(17));
+        expect(Instruction.instructionLength(), equals(15));
+        expect(Instruction.instructionLength(suffix: true), equals(17));
       });
     });
   });

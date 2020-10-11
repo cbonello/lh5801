@@ -16,11 +16,15 @@ class Instruction {
 
   /// Return the maximum length of the address field for given arguments.
   /// Usefull for tabulating the disassembly listing.
-  int addressLength({
+  static int addressLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) {
-    final String address = addressToString(radix: radix, suffix: suffix);
+    final String address = OperandDump.op16(
+      0x1FFFF,
+      radix: radix,
+      suffix: suffix,
+    );
     return address.length;
   }
 
@@ -32,12 +36,21 @@ class Instruction {
 
   /// Return the maximum length of the bytes field for given arguments.
   /// Usefull for tabulating the disassembly listing.
-  int bytesLength({
+  static int bytesLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) {
-    final String address = bytesToString(radix: radix, suffix: suffix);
-    return address.length;
+    final int byteStringSize = radix.when<int>(
+      // 8 bits, one optional suffix and one space.
+      binary: () => 8 + (suffix ? 1 : 0) + 1,
+      // 3 digits, no suffix and one space.
+      decimal: () => 3 + 1,
+      // 8 hex digits, one optional suffix and one space.
+      hexadecimal: () => 2 + (suffix ? 1 : 0) + 1,
+    );
+    // An instruction has up-to 5 bytes. -1 is to remove the trailing space
+    // character.
+    return 5 * byteStringSize - 1;
   }
 
   String instructionToString({
@@ -48,7 +61,7 @@ class Instruction {
 
   /// Return the maximum length of the instruction field for given arguments.
   /// Usefull for tabulating the disassembly listing.
-  int instructionLength({
+  static int instructionLength({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
   }) {
