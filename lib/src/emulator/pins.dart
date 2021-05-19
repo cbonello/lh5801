@@ -12,32 +12,32 @@ mixin LH5801PinsObserver {
 
 class LH5801Pins with LH5801PinsObservable {
   LH5801Pins() : _observers = <LH5801PinsObserver>{} {
-    reset();
+    _reset();
   }
 
   /// CPU reset.
-  bool _resetPin;
+  late bool _resetPin;
 
   /// Non-maskable interrupt input (NMI).
-  bool _nmiPin;
+  late bool _nmiPin;
 
   /// Maskable interrupt input (MI).
-  bool _miPin;
+  late bool _miPin;
 
   /// CPU internal PU flipflop output.
-  bool _puFlipflop;
+  late bool _puFlipflop;
 
   /// CPU internal PV flipflop output.
-  bool _pvFlipflop;
+  late bool _pvFlipflop;
 
   /// CPU internal BF flipflops.
-  bool _bfFlipflop;
+  late bool _bfFlipflop;
 
   /// LCD on/off control signal output.
-  bool _dispFlipflop;
+  late bool _dispFlipflop;
 
   /// Input ports through which the CPU receives 8-bit data into the accumulator.
-  int _inputPorts;
+  late int _inputPorts;
 
   final Set<LH5801PinsObserver> _observers;
 
@@ -106,11 +106,15 @@ class LH5801Pins with LH5801PinsObservable {
   bool areInputPortspUpdated(LH5801Pins other) =>
       _inputPorts != other._inputPorts;
 
-  void reset() {
+  void _reset() {
     _resetPin =
         _nmiPin = _miPin = _puFlipflop = _pvFlipflop = _dispFlipflop = false;
     _bfFlipflop = true;
     _inputPorts = 0;
+  }
+
+  void reset() {
+    _reset();
     notifyPinsObservers();
   }
 
