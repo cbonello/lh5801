@@ -20,6 +20,13 @@ To run the example:
 $ dart ./example/main.dart
 ```
 
+## Testing
+
+```bash
+$ pub run test
+00:11 +424: All tests passed!
+```
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
