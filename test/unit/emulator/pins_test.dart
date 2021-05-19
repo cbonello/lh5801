@@ -1,4 +1,4 @@
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:lh5801/lh5801.dart';
@@ -6,6 +6,10 @@ import 'package:lh5801/lh5801.dart';
 class MockLH5801PinsObserver extends Mock implements LH5801PinsObserver {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue<LH5801Pins>(LH5801Pins());
+  });
+
   group('LH5801Pins', () {
     test('should be initialized properly', () {
       final LH5801Pins pins = LH5801Pins();
@@ -66,26 +70,26 @@ void main() {
       pins1.registerPinsObserver(observer);
 
       pins1.resetPin = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.nmiPin = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.miPin = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.puFlipflop = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.pvFlipflop = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.bfFlipflop = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.dispFlipflop = true;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.inputPorts = 8;
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
       pins1.reset();
-      verify(observer.update(any)).called(1);
+      verify(() => observer.update(any())).called(1);
 
       final LH5801Pins _ = pins1.clone();
-      verifyNever(observer.update(any));
+      verifyNever(() => observer.update(any()));
     });
 
     test('clone() should return an identical LH5801Pins instance', () {
