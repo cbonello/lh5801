@@ -16,10 +16,10 @@ jobs:
       run: pub get
 
     - name: Run tests
-      run: pub run test --coverage=/__w/lh5801/lh5801coverage
+      run: pub run test --coverage=/__w/lh5801/lh5801/coverage
 
     - name: Codecov
       uses: codecov/codecov-action@v1.0.13
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: /__w/lh5801/lh5801coverage/lcov.info
+        file: /__w/lh5801/lh5801/coverage/lcov.info
