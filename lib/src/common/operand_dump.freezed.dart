@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'operand_dump.dart';
 
@@ -9,62 +9,70 @@ part of 'operand_dump.dart';
 
 T _$identity<T>(T value) => value;
 
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
+/// @nodoc
 class _$RadixTearOff {
   const _$RadixTearOff();
 
-// ignore: unused_element
   _Binary binary() {
     return const _Binary();
   }
 
-// ignore: unused_element
   _Decimal decimal() {
     return const _Decimal();
   }
 
-// ignore: unused_element
   _Hexadecimal hexadecimal() {
     return const _Hexadecimal();
   }
 }
 
-// ignore: unused_element
+/// @nodoc
 const $Radix = _$RadixTearOff();
 
+/// @nodoc
 mixin _$Radix {
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result binary(),
-    @required Result decimal(),
-    @required Result hexadecimal(),
-  });
+  TResult when<TResult extends Object?>({
+    required TResult Function() binary,
+    required TResult Function() decimal,
+    required TResult Function() hexadecimal,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result binary(),
-    Result decimal(),
-    Result hexadecimal(),
-    @required Result orElse(),
-  });
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? binary,
+    TResult Function()? decimal,
+    TResult Function()? hexadecimal,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result binary(_Binary value),
-    @required Result decimal(_Decimal value),
-    @required Result hexadecimal(_Hexadecimal value),
-  });
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Binary value) binary,
+    required TResult Function(_Decimal value) decimal,
+    required TResult Function(_Hexadecimal value) hexadecimal,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result binary(_Binary value),
-    Result decimal(_Decimal value),
-    Result hexadecimal(_Hexadecimal value),
-    @required Result orElse(),
-  });
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Binary value)? binary,
+    TResult Function(_Decimal value)? decimal,
+    TResult Function(_Hexadecimal value)? hexadecimal,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
+/// @nodoc
 abstract class $RadixCopyWith<$Res> {
   factory $RadixCopyWith(Radix value, $Res Function(Radix) then) =
       _$RadixCopyWithImpl<$Res>;
 }
 
+/// @nodoc
 class _$RadixCopyWithImpl<$Res> implements $RadixCopyWith<$Res> {
   _$RadixCopyWithImpl(this._value, this._then);
 
@@ -73,11 +81,13 @@ class _$RadixCopyWithImpl<$Res> implements $RadixCopyWith<$Res> {
   final $Res Function(Radix) _then;
 }
 
+/// @nodoc
 abstract class _$BinaryCopyWith<$Res> {
   factory _$BinaryCopyWith(_Binary value, $Res Function(_Binary) then) =
       __$BinaryCopyWithImpl<$Res>;
 }
 
+/// @nodoc
 class __$BinaryCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
     implements _$BinaryCopyWith<$Res> {
   __$BinaryCopyWithImpl(_Binary _value, $Res Function(_Binary) _then)
@@ -86,6 +96,8 @@ class __$BinaryCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   @override
   _Binary get _value => super._value as _Binary;
 }
+
+/// @nodoc
 
 class _$_Binary implements _Binary {
   const _$_Binary();
@@ -105,26 +117,22 @@ class _$_Binary implements _Binary {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result binary(),
-    @required Result decimal(),
-    @required Result hexadecimal(),
+  TResult when<TResult extends Object?>({
+    required TResult Function() binary,
+    required TResult Function() decimal,
+    required TResult Function() hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return binary();
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result binary(),
-    Result decimal(),
-    Result hexadecimal(),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? binary,
+    TResult Function()? decimal,
+    TResult Function()? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (binary != null) {
       return binary();
     }
@@ -133,26 +141,22 @@ class _$_Binary implements _Binary {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result binary(_Binary value),
-    @required Result decimal(_Decimal value),
-    @required Result hexadecimal(_Hexadecimal value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Binary value) binary,
+    required TResult Function(_Decimal value) decimal,
+    required TResult Function(_Hexadecimal value) hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return binary(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result binary(_Binary value),
-    Result decimal(_Decimal value),
-    Result hexadecimal(_Hexadecimal value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Binary value)? binary,
+    TResult Function(_Decimal value)? decimal,
+    TResult Function(_Hexadecimal value)? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (binary != null) {
       return binary(this);
     }
@@ -164,11 +168,13 @@ abstract class _Binary implements Radix {
   const factory _Binary() = _$_Binary;
 }
 
+/// @nodoc
 abstract class _$DecimalCopyWith<$Res> {
   factory _$DecimalCopyWith(_Decimal value, $Res Function(_Decimal) then) =
       __$DecimalCopyWithImpl<$Res>;
 }
 
+/// @nodoc
 class __$DecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
     implements _$DecimalCopyWith<$Res> {
   __$DecimalCopyWithImpl(_Decimal _value, $Res Function(_Decimal) _then)
@@ -177,6 +183,8 @@ class __$DecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   @override
   _Decimal get _value => super._value as _Decimal;
 }
+
+/// @nodoc
 
 class _$_Decimal implements _Decimal {
   const _$_Decimal();
@@ -196,26 +204,22 @@ class _$_Decimal implements _Decimal {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result binary(),
-    @required Result decimal(),
-    @required Result hexadecimal(),
+  TResult when<TResult extends Object?>({
+    required TResult Function() binary,
+    required TResult Function() decimal,
+    required TResult Function() hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return decimal();
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result binary(),
-    Result decimal(),
-    Result hexadecimal(),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? binary,
+    TResult Function()? decimal,
+    TResult Function()? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (decimal != null) {
       return decimal();
     }
@@ -224,26 +228,22 @@ class _$_Decimal implements _Decimal {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result binary(_Binary value),
-    @required Result decimal(_Decimal value),
-    @required Result hexadecimal(_Hexadecimal value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Binary value) binary,
+    required TResult Function(_Decimal value) decimal,
+    required TResult Function(_Hexadecimal value) hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return decimal(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result binary(_Binary value),
-    Result decimal(_Decimal value),
-    Result hexadecimal(_Hexadecimal value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Binary value)? binary,
+    TResult Function(_Decimal value)? decimal,
+    TResult Function(_Hexadecimal value)? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (decimal != null) {
       return decimal(this);
     }
@@ -255,12 +255,14 @@ abstract class _Decimal implements Radix {
   const factory _Decimal() = _$_Decimal;
 }
 
+/// @nodoc
 abstract class _$HexadecimalCopyWith<$Res> {
   factory _$HexadecimalCopyWith(
           _Hexadecimal value, $Res Function(_Hexadecimal) then) =
       __$HexadecimalCopyWithImpl<$Res>;
 }
 
+/// @nodoc
 class __$HexadecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
     implements _$HexadecimalCopyWith<$Res> {
   __$HexadecimalCopyWithImpl(
@@ -270,6 +272,8 @@ class __$HexadecimalCopyWithImpl<$Res> extends _$RadixCopyWithImpl<$Res>
   @override
   _Hexadecimal get _value => super._value as _Hexadecimal;
 }
+
+/// @nodoc
 
 class _$_Hexadecimal implements _Hexadecimal {
   const _$_Hexadecimal();
@@ -289,26 +293,22 @@ class _$_Hexadecimal implements _Hexadecimal {
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result binary(),
-    @required Result decimal(),
-    @required Result hexadecimal(),
+  TResult when<TResult extends Object?>({
+    required TResult Function() binary,
+    required TResult Function() decimal,
+    required TResult Function() hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return hexadecimal();
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result binary(),
-    Result decimal(),
-    Result hexadecimal(),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? binary,
+    TResult Function()? decimal,
+    TResult Function()? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (hexadecimal != null) {
       return hexadecimal();
     }
@@ -317,26 +317,22 @@ class _$_Hexadecimal implements _Hexadecimal {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result binary(_Binary value),
-    @required Result decimal(_Decimal value),
-    @required Result hexadecimal(_Hexadecimal value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Binary value) binary,
+    required TResult Function(_Decimal value) decimal,
+    required TResult Function(_Hexadecimal value) hexadecimal,
   }) {
-    assert(binary != null);
-    assert(decimal != null);
-    assert(hexadecimal != null);
     return hexadecimal(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result binary(_Binary value),
-    Result decimal(_Decimal value),
-    Result hexadecimal(_Hexadecimal value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Binary value)? binary,
+    TResult Function(_Decimal value)? decimal,
+    TResult Function(_Hexadecimal value)? hexadecimal,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (hexadecimal != null) {
       return hexadecimal(this);
     }
