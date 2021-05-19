@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../../lh5801.dart';
 import 'flags.dart';
 import 'timer.dart';
@@ -83,20 +81,19 @@ class Register16 extends Object {
 
 class LH5801State {
   LH5801State({
-    Register16 p,
-    Register16 s,
-    Register8 a,
-    Register16 x,
-    Register16 y,
-    Register16 u,
-    @required this.tm,
-    LH5801Flags t,
+    Register16? p,
+    Register16? s,
+    Register8? a,
+    Register16? x,
+    Register16? y,
+    Register16? u,
+    required this.tm,
+    LH5801Flags? t,
     this.ir0 = false,
     this.ir1 = false,
     this.ir2 = false,
     this.hlt = false,
-  })  : assert(tm != null),
-        p = p ?? Register16(),
+  })  : p = p ?? Register16(),
         a = a ?? Register8(),
         s = s ?? Register16(),
         x = x ?? Register16(),
