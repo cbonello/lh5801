@@ -1,6 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lh5801/lh5801.dart';
-import 'package:meta/meta.dart';
 
 import '../common/common.dart';
 import 'cpu.dart';
@@ -12,17 +10,16 @@ abstract class LH5801Command {
 
 class LH5801 extends LH5801Pins {
   LH5801({
-    @required int clockFrequency,
-    @required LH5801MemoryRead memRead,
-    @required LH5801MemoryWrite memWrite,
+    required int clockFrequency,
+    required LH5801MemoryRead memRead,
+    required LH5801MemoryWrite memWrite,
     this.ir0Enter,
     this.ir1Enter,
     this.ir2Enter,
     this.irExit,
     this.subroutineEnter,
     this.subroutineExit,
-  })  : assert(memRead != null),
-        assert(memWrite != null) {
+  }) {
     cpu = LH5801CPU(
       pins: this,
       clockFrequency: clockFrequency,
@@ -60,19 +57,19 @@ class LH5801 extends LH5801Pins {
         'cpu': cpu.saveState(),
       };
 
-  LH5801CPU cpu;
-  final LH5801Command ir0Enter;
-  final LH5801Command ir1Enter;
-  final LH5801Command ir2Enter;
-  final LH5801Command irExit;
-  final LH5801Command subroutineEnter;
-  final LH5801Command subroutineExit;
+  late LH5801CPU cpu;
+  final LH5801Command? ir0Enter;
+  final LH5801Command? ir1Enter;
+  final LH5801Command? ir2Enter;
+  final LH5801Command? irExit;
+  final LH5801Command? subroutineEnter;
+  final LH5801Command? subroutineExit;
 
   LH5801Pins get pins => clone();
 
   LH5801State get state => cpu.clone();
 
-  int step({int address}) {
+  int step({int? address}) {
     cpu.p.value = address ?? cpu.p.value;
     return cpu.step();
   }
@@ -80,7 +77,7 @@ class LH5801 extends LH5801Pins {
   @override
   void reset() {
     super.reset(); // Reset pins.
-    cpu?.reset(); // Reset registers.
+    cpu.reset(); // Reset registers.
   }
 }
 
@@ -105,18 +102,16 @@ class Trace {
 
 class LH5801Traced extends LH5801 {
   LH5801Traced({
-    @required int clockFrequency,
-    @required LH5801MemoryRead memRead,
-    @required LH5801MemoryWrite memWrite,
-    LH5801Command ir0Enter,
-    LH5801Command ir1Enter,
-    LH5801Command ir2Enter,
-    LH5801Command irExit,
-    LH5801Command subroutineEnter,
-    LH5801Command subroutineExit,
-  })  : assert(memRead != null),
-        assert(memWrite != null),
-        traces = <Trace>[],
+    required int clockFrequency,
+    required LH5801MemoryRead memRead,
+    required LH5801MemoryWrite memWrite,
+    LH5801Command? ir0Enter,
+    LH5801Command? ir1Enter,
+    LH5801Command? ir2Enter,
+    LH5801Command? irExit,
+    LH5801Command? subroutineEnter,
+    LH5801Command? subroutineExit,
+  })  : traces = <Trace>[],
         super(
           clockFrequency: clockFrequency,
           memRead: memRead,
@@ -132,7 +127,7 @@ class LH5801Traced extends LH5801 {
   final List<Trace> traces;
 
   @override
-  int step({int address}) {
+  int step({int? address}) {
     cpu.p.value = address ?? cpu.p.value;
     return cpu.step(_logger);
   }
