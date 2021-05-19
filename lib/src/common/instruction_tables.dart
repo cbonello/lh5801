@@ -5,7 +5,7 @@ import '../../lh5801.dart';
 part 'instruction_tables.freezed.dart';
 
 @freezed
-abstract class InstructionCategory with _$InstructionCategory {
+class InstructionCategory with _$InstructionCategory {
   // An illegal or non-implemented instruction.
   const factory InstructionCategory.illegal() = _Illegal;
   // A logical instruction.
@@ -33,7 +33,7 @@ abstract class InstructionCategory with _$InstructionCategory {
 
 // An instruction operand.
 @freezed
-abstract class Operand with _$Operand {
+class Operand with _$Operand {
   const Operand._();
 
   // No operand.
@@ -59,7 +59,6 @@ abstract class Operand with _$Operand {
   // A 16-bit constant.
   const factory Operand.imm16(int value) = _Imm16;
 
-  @late
   String operandToString({
     Radix radix = const Radix.hexadecimal(),
     bool suffix = false,
@@ -130,11 +129,9 @@ class InstructionDescriptor {
   final CyclesCount cycles;
 
   InstructionDescriptor copyWith({
-    List<int> updatedBytes,
-    List<Operand> updatedOperands,
+    List<int>? updatedBytes,
+    List<Operand>? updatedOperands,
   }) {
-    assert(updatedBytes != null || updatedOperands != null);
-
     return InstructionDescriptor(
       category,
       updatedBytes ?? bytes,
