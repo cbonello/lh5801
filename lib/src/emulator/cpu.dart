@@ -1,6 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meta/meta.dart';
-
 import '../../lh5801.dart';
 
 typedef LH5801CPUInstructionLogger = void Function(
@@ -11,20 +8,17 @@ typedef LH5801CPUInstructionLogger = void Function(
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({
-    @required LH5801Pins pins,
-    @required this.clockFrequency,
-    @required this.memRead,
-    @required this.memWrite,
+    required LH5801Pins pins,
+    required this.clockFrequency,
+    required this.memRead,
+    required this.memWrite,
     this.ir0Enter,
     this.ir1Enter,
     this.ir2Enter,
     this.irExit,
     this.subroutineEnter,
     this.subroutineExit,
-  })  : assert(pins != null),
-        _pins = pins,
-        assert(memRead != null),
-        assert(memWrite != null),
+  })  : _pins = pins,
         _dasm = LH5801DASM(memRead: memRead),
         super(
           tm: LH5801Timer(
@@ -68,15 +62,15 @@ class LH5801CPU extends LH5801State {
   final int clockFrequency;
   final LH5801MemoryRead memRead;
   final LH5801MemoryWrite memWrite;
-  final LH5801Command ir0Enter;
-  final LH5801Command ir1Enter;
-  final LH5801Command ir2Enter;
-  final LH5801Command irExit;
-  final LH5801Command subroutineEnter;
-  final LH5801Command subroutineExit;
+  final LH5801Command? ir0Enter;
+  final LH5801Command? ir1Enter;
+  final LH5801Command? ir2Enter;
+  final LH5801Command? irExit;
+  final LH5801Command? subroutineEnter;
+  final LH5801Command? subroutineExit;
   final LH5801DASM _dasm;
 
-  int step([LH5801CPUInstructionLogger logger]) {
+  int step([LH5801CPUInstructionLogger? logger]) {
     if (_pins.resetPin) {
       super.reset();
       _pins.reset();
