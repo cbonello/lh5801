@@ -6,26 +6,6 @@ import 'helpers.dart';
 
 void main() {
   group('LH5801', () {
-    test('should raise an exception for invalid arguments', () {
-      expect(
-        () => LH5801(
-          clockFrequency: 1300000,
-          memRead: null,
-          memWrite: memWrite,
-        ),
-        throwsA(const TypeMatcher<AssertionError>()),
-      );
-
-      expect(
-        () => LH5801(
-          clockFrequency: 1300000,
-          memRead: memRead,
-          memWrite: null,
-        ),
-        throwsA(const TypeMatcher<AssertionError>()),
-      );
-    });
-
     test('should be initialized properly', () {
       final LH5801 emulator = LH5801(
         clockFrequency: 1300000,
@@ -125,7 +105,7 @@ void main() {
     });
 
     group('CPU', () {
-      LH5801 emulator;
+      late LH5801 emulator;
 
       setUp(() {
         emulator = LH5801(
@@ -1646,26 +1626,6 @@ void main() {
   });
 
   group('LH5801Traced', () {
-    test('should raise an exception for invalid arguments', () {
-      expect(
-        () => LH5801Traced(
-          clockFrequency: 1300000,
-          memRead: null,
-          memWrite: memWrite,
-        ),
-        throwsA(const TypeMatcher<AssertionError>()),
-      );
-
-      expect(
-        () => LH5801Traced(
-          clockFrequency: 1300000,
-          memRead: memRead,
-          memWrite: null,
-        ),
-        throwsA(const TypeMatcher<AssertionError>()),
-      );
-    });
-
     test('should be initialized properly', () {
       final LH5801Traced emulator = LH5801Traced(
         clockFrequency: 1300000,
