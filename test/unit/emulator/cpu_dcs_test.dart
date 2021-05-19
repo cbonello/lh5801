@@ -32,7 +32,7 @@ void main() {
 
                   final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
                   expect(addTable.containsKey(key), isTrue);
-                  final ALUResult expected = addTable[key];
+                  final ALUResult expected = addTable[key]!;
 
                   expect(lh5801.cpu.t.c, equals((expected.flags & 0x01) != 0));
                   expect(lh5801.cpu.t.h, equals((expected.flags & 0x10) != 0));
