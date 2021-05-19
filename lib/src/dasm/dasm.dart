@@ -1,9 +1,7 @@
-import 'package:meta/meta.dart';
-
 import '../../lh5801.dart';
 
 class Instruction {
-  Instruction({@required this.address, @required this.descriptor});
+  Instruction({required this.address, required this.descriptor});
 
   final int address;
   final InstructionDescriptor descriptor;
@@ -114,9 +112,7 @@ class Instruction {
 }
 
 class LH5801DASM {
-  LH5801DASM({@required LH5801MemoryRead memRead})
-      : assert(memRead != null),
-        _memRead = memRead;
+  LH5801DASM({required LH5801MemoryRead memRead}) : _memRead = memRead;
 
   final LH5801MemoryRead _memRead;
 
