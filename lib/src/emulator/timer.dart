@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 const int kFrequency2Mhz = 2000000;
 const int kFrequency1Mhz = 1000000;
 const int kFrequency500Khz = 500000;
@@ -32,8 +30,8 @@ abstract class _SubClock {
 
 class LH5801Timer implements _SubClock {
   LH5801Timer({
-    @required int cpuClockFrequency,
-    @required int timerClockFrequency,
+    required int cpuClockFrequency,
+    required int timerClockFrequency,
   }) : _cpuCyclesPerTick = (cpuClockFrequency / timerClockFrequency).round() {
     _value = 0;
     _cpuCycles = 0;
@@ -41,11 +39,11 @@ class LH5801Timer implements _SubClock {
   }
 
   LH5801Timer._({
-    @required int cpuCyclesPerTick,
-    @required int value,
-    @required int cpuCycles,
-    @required bool interruptRaised,
-  })  : _cpuCyclesPerTick = cpuCyclesPerTick,
+    required int cpuCyclesPerTick,
+    required int value,
+    required int cpuCycles,
+    required bool interruptRaised,
+  })   : _cpuCyclesPerTick = cpuCyclesPerTick,
         _value = value,
         _cpuCycles = cpuCycles,
         _interruptRaised = interruptRaised;
@@ -62,8 +60,9 @@ class LH5801Timer implements _SubClock {
         'interruptRaised': _interruptRaised,
       };
 
-  bool _interruptRaised;
-  int _value, _cpuCycles;
+  late bool _interruptRaised;
+  late int _value;
+  late int _cpuCycles;
 
   // Number of CPU cycles during one timer clock-tick.
   final int _cpuCyclesPerTick;
@@ -91,7 +90,7 @@ class LH5801Timer implements _SubClock {
       );
 
   @override
-  bool incrementClock([int cpuCycles]) {
+  bool incrementClock([int? cpuCycles]) {
     final int cpuCyclesIncrenment = cpuCycles ?? _cpuCyclesPerTick;
     if (_cpuCycles + cpuCyclesIncrenment >= _cpuCyclesPerTick) {
       _cpuCycles = (_cpuCycles + cpuCyclesIncrenment) % _cpuCyclesPerTick;
