@@ -36,7 +36,7 @@ void main() {
                     carry,
                   );
                   expect(addTable.containsKey(key), isTrue);
-                  final ALUResult expected = addTable[key];
+                  final ALUResult expected = addTable[key]!;
 
                   expect(lh5801.cpu.t.c, equals((expected.flags & 0x01) != 0));
                   expect(lh5801.cpu.t.h,
