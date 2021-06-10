@@ -17,4 +17,5 @@ coverage/
 
 tools/**/*.exe
 test/**/.test_coverage.dart
+test/**/.test_cov.dart
 coverage_badge.svg
