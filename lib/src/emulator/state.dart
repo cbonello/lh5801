@@ -111,7 +111,9 @@ class LH5801State {
   Register8 a;
 
   // General purpose registers.
-  Register16 x, y, u;
+  Register16 x;
+  Register16 y;
+  Register16 u;
 
   // Timer (9-bit).
   LH5801Timer tm;
