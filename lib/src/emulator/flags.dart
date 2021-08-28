@@ -23,7 +23,11 @@ class LH5801Flags {
         'c': c,
       };
 
-  bool h, v, z, ie, c;
+  bool h;
+  bool v;
+  bool z;
+  bool ie;
+  bool c;
 
   static const int H = 1 << 4;
   static const int V = 1 << 3;
