@@ -135,7 +135,9 @@ class LH5801CPU extends LH5801State {
     final int startP = p.value - 1;
     final CyclesCount cyclesTable = instructionTableFD[opcode].cycles;
     final int cycles = cyclesTable.basic;
-    int o8, p8, o16;
+    int o8;
+    int p8;
+    int o16;
 
     switch (opcode) {
       case 0x01: // SBC #(X)
