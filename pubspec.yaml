@@ -1,7 +1,6 @@
 name: lh5801
 version: 0.3.0
 description: Sharp LH5801 8-bit Microprocessor emulator.
-author: Christophe Bonello
 homepage: https://github.com/cbonello/
 repository: https://github.com/cbonello/lh5801
 issue_tracker: https://github.com/cbonello/lh5801/issues
