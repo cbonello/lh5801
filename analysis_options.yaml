@@ -16,7 +16,6 @@ analyzer:
     missing_return: error
     parameter_assignments: warning
     todo: ignore
-    top_level_function_literal_block: ignore
 
 linter:
   rules:
