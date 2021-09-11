@@ -1,7 +1,6 @@
+import 'package:lh5801/lh5801.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-
-import 'package:lh5801/lh5801.dart';
 
 class MockLH5801PinsObserver extends Mock implements LH5801PinsObserver {}
 
