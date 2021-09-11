@@ -191,8 +191,12 @@ void testSBCRReg(
   expect(emulator.cpu.t.h, isTrue);
 }
 
-void testSBCab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testSBCab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
@@ -255,8 +259,12 @@ void testADCRReg(
   expect(emulator.cpu.t.h, isFalse);
 }
 
-void testADCab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testADCab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
@@ -323,8 +331,12 @@ void testADIRReg(
   expect(emulator.cpu.t.c, isFalse);
 }
 
-void testADIab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testADIab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memBytes = <int>[
     ...bytes,
@@ -408,8 +420,12 @@ void testLDARReg(
   _test(0xFD, isFalse);
 }
 
-void testLDAab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testLDAab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int initialValue, Matcher hFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
     final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -481,8 +497,12 @@ void testCPARReg(
   _test(84, 110, isFalse, isFalse);
 }
 
-void testCPAab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testCPAab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
 
@@ -531,8 +551,12 @@ void testANDRReg(
   _test(0xFF, 0x0F, isFalse);
 }
 
-void testANDab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testANDab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x11234 : 0x1234;
   final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
   final LH5801Flags flags = emulator.cpu.t.clone();
@@ -613,8 +637,12 @@ void testANIRReg(
   _test(0x12, 0x36, isFalse);
 }
 
-void testANIab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testANIab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x16001 : 0x6001;
     final List<int> memBytes = <int>[
@@ -731,8 +759,12 @@ void testORARReg(
   _test(0x00, 0x00, isTrue);
 }
 
-void testORAab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testORAab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int op1, int op2, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x11234 : 0x1234;
     final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
@@ -818,8 +850,12 @@ void testORIRReg(
   _test(0x10, 0x01, isFalse);
 }
 
-void testORIab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testORIab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x10101 : 0x0101;
     final List<int> memBytes = <int>[
@@ -927,8 +963,12 @@ void testEORRReg(
   _test(0x00, 0x00, 0x00, isTrue);
 }
 
-void testEORab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testEORab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(
     int initialOp1Value,
     int initialOp2Value,
@@ -997,8 +1037,12 @@ void testSTARReg(
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
 
-void testSTAab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testSTAab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   final int ab = me1 ? 0x1CB00 : 0xCB00;
   final List<int> memBytes = <int>[...bytes, (ab >> 8) & 0xFF, ab & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
@@ -1049,8 +1093,12 @@ void testBITRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBITab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testBITab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int accValue, int abValue, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
     final List<int> memBytes = <int>[
@@ -1143,8 +1191,12 @@ void testBIIRReg(
   _test(0x10, 0x30, isFalse);
 }
 
-void testBIIab(LH5801 emulator, int expectedCycles, List<int> bytes,
-    {bool me1 = false}) {
+void testBIIab(
+  LH5801 emulator,
+  int expectedCycles,
+  List<int> bytes, {
+  bool me1 = false,
+}) {
   void _test(int memValue, int i, Matcher zFlagMatcher) {
     final int ab = me1 ? 0x1CB00 : 0xCB00;
     final List<int> memBytes = <int>[
@@ -2318,8 +2370,11 @@ void testCIN(LH5801 emulator) {
   _test(84, 110, isFalse, isFalse);
 }
 
-void testRECSEC(LH5801 emulator, List<int> bytes,
-    {bool expectedCarry = false}) {
+void testRECSEC(
+  LH5801 emulator,
+  List<int> bytes, {
+  bool expectedCarry = false,
+}) {
   final LH5801Flags flags = emulator.cpu.t.clone();
 
   memLoad(0x0000, bytes);
