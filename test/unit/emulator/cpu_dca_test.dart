@@ -39,8 +39,10 @@ void main() {
                   final ALUResult expected = addTable[key]!;
 
                   expect(lh5801.cpu.t.c, equals((expected.flags & 0x01) != 0));
-                  expect(lh5801.cpu.t.h,
-                      equals(((expected.flags & 0x10) >> 4) != 0));
+                  expect(
+                    lh5801.cpu.t.h,
+                    equals(((expected.flags & 0x10) >> 4) != 0),
+                  );
 
                   int expectedValue = expected.value;
                   if (lh5801.cpu.t.c == false && lh5801.cpu.t.h == false) {
