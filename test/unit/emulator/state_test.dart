@@ -1,6 +1,5 @@
-import 'package:test/test.dart';
-
 import 'package:lh5801/lh5801.dart';
+import 'package:test/test.dart';
 
 void main() {
   final LH5801Timer tm = LH5801Timer(
@@ -147,10 +146,11 @@ void main() {
     test('toString() should return the expected value', () {
       final LH5801State state = LH5801State(tm: tm);
       expect(
-          state.toString(),
-          equals(
-            'LH5801State(P: 0000, S: 0000, A: 00, X: 0000, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))',
-          ));
+        state.toString(),
+        equals(
+          'LH5801State(P: 0000, S: 0000, A: 00, X: 0000, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))',
+        ),
+      );
     });
   });
 }
