@@ -466,7 +466,9 @@ void main() {
           equals('EOR (U)'),
         );
         expect(
-            instruction!.toString(), equals('1234  2D              EOR (U)'));
+          instruction!.toString(),
+          equals('1234  2D              EOR (U)'),
+        );
         check(instruction!.descriptor, expectedDescriptor);
         expect(instruction!.descriptor.toString(), equals('EOR (U)'));
       });
@@ -1345,11 +1347,12 @@ void main() {
           equals(16),
         );
         expect(
-            Instruction.addressLength(
-              radix: const Radix.binary(),
-              suffix: true,
-            ),
-            equals(17));
+          Instruction.addressLength(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals(17),
+        );
         expect(
           Instruction.addressLength(radix: const Radix.decimal()),
           equals(5),
@@ -1371,11 +1374,12 @@ void main() {
           equals(44),
         );
         expect(
-            Instruction.bytesLength(
-              radix: const Radix.binary(),
-              suffix: true,
-            ),
-            equals(49));
+          Instruction.bytesLength(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals(49),
+        );
         expect(
           Instruction.bytesLength(radix: const Radix.decimal()),
           equals(19),
@@ -1397,11 +1401,12 @@ void main() {
           equals(33),
         );
         expect(
-            Instruction.instructionLength(
-              radix: const Radix.binary(),
-              suffix: true,
-            ),
-            equals(35));
+          Instruction.instructionLength(
+            radix: const Radix.binary(),
+            suffix: true,
+          ),
+          equals(35),
+        );
         expect(
           Instruction.instructionLength(radix: const Radix.decimal()),
           equals(17),
