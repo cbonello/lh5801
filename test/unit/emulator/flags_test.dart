@@ -1,6 +1,5 @@
-import 'package:test/test.dart';
-
 import 'package:lh5801/lh5801.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('LH5801Flags', () {
