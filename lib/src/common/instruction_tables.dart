@@ -64,39 +64,40 @@ class Operand with _$Operand {
     bool suffix = false,
   }) {
     return when<String>(
-        none: () => '',
-        reg: (String registerName) => registerName,
-        mem0Reg: (String registerName) => '($registerName)',
-        mem0Imm16: (int value) =>
-            '(${OperandDump.op16(value, radix: radix, suffix: suffix).trim()})',
-        mem1Reg: (String registerName) => '#($registerName)',
-        mem1Imm16: (int value) =>
-            '#(${OperandDump.op16(value, radix: radix, suffix: suffix).trim()})',
-        imm8: (int value) => OperandDump.op8(
-              value,
-              radix: radix,
-              suffix: suffix,
-            ),
-        dispPlus: (int offset) =>
-            '+${OperandDump.op8(offset, radix: radix, suffix: suffix).trim()}',
-        dispMinus: (int offset) =>
-            '-${OperandDump.op8(offset, radix: radix, suffix: suffix).trim()}',
-        mem0Cst8: (int constant) =>
-            '(${OperandDump.op8(constant, radix: radix, suffix: suffix).trim()})',
-        imm16: (int value) {
-          final String op1 = OperandDump.op8(
-            value >> 8,
-            radix: radix,
-            suffix: suffix,
-          ).trim();
-          final String op2 = OperandDump.op8(
-            value & 0xFF,
-            radix: radix,
-            suffix: suffix,
-          ).trim();
+      none: () => '',
+      reg: (String registerName) => registerName,
+      mem0Reg: (String registerName) => '($registerName)',
+      mem0Imm16: (int value) =>
+          '(${OperandDump.op16(value, radix: radix, suffix: suffix).trim()})',
+      mem1Reg: (String registerName) => '#($registerName)',
+      mem1Imm16: (int value) =>
+          '#(${OperandDump.op16(value, radix: radix, suffix: suffix).trim()})',
+      imm8: (int value) => OperandDump.op8(
+        value,
+        radix: radix,
+        suffix: suffix,
+      ),
+      dispPlus: (int offset) =>
+          '+${OperandDump.op8(offset, radix: radix, suffix: suffix).trim()}',
+      dispMinus: (int offset) =>
+          '-${OperandDump.op8(offset, radix: radix, suffix: suffix).trim()}',
+      mem0Cst8: (int constant) =>
+          '(${OperandDump.op8(constant, radix: radix, suffix: suffix).trim()})',
+      imm16: (int value) {
+        final String op1 = OperandDump.op8(
+          value >> 8,
+          radix: radix,
+          suffix: suffix,
+        ).trim();
+        final String op2 = OperandDump.op8(
+          value & 0xFF,
+          radix: radix,
+          suffix: suffix,
+        ).trim();
 
-          return '$op1, $op2';
-        });
+        return '$op1, $op2';
+      },
+    );
   }
 }
 
