@@ -1,6 +1,5 @@
-import 'package:test/test.dart';
-
 import 'package:lh5801/lh5801.dart';
+import 'package:test/test.dart';
 
 final Map<String, InstructionCategory> expectedCategories =
     <String, InstructionCategory>{
@@ -120,12 +119,16 @@ void testTable(int opcode, List<InstructionDescriptor> table) {
     }
 
     expect(
-        descriptor.mnemonic, equals(descriptor.mnemonic.trim().toUpperCase()));
+      descriptor.mnemonic,
+      equals(descriptor.mnemonic.trim().toUpperCase()),
+    );
   }
 
   for (final InstructionDescriptor instruction in table) {
     expect(
-        instruction.category, equals(expectedCategories[instruction.mnemonic]));
+      instruction.category,
+      equals(expectedCategories[instruction.mnemonic]),
+    );
     expect(instruction.operands.length, equals(2));
   }
 }
