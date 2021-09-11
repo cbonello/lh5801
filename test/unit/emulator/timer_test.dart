@@ -1,6 +1,5 @@
-import 'package:test/test.dart';
-
 import 'package:lh5801/lh5801.dart';
+import 'package:test/test.dart';
 
 // See PC-1500 Technical Reference Manual at page 15.
 final List<int> expectedCounterValues = <int>[
