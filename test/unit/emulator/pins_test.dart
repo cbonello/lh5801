@@ -6,7 +6,7 @@ class MockLH5801PinsObserver extends Mock implements LH5801PinsObserver {}
 
 void main() {
   setUpAll(() {
-    registerFallbackValue<LH5801Pins>(LH5801Pins());
+    registerFallbackValue(LH5801Pins());
   });
 
   group('LH5801Pins', () {
