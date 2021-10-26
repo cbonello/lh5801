@@ -10,13 +10,13 @@ environment:
   sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
-  freezed_annotation: ^0.14.0
+  freezed_annotation: ^0.15.0
 
 dev_dependencies:
   benchmark_harness: ^2.0.0
   build_runner: ^2.0.0
-  freezed: ^0.14.0
+  freezed: ^0.15.0
   lint: ^1.7.0
-  mocktail: ^0.1.0
+  mocktail: ^0.2.0
   test: ^1.17.0
   test_cov: ^1.0.0
