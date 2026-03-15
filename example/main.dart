@@ -16,8 +16,9 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value =
-      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value = address & 0x10000 != 0
+      ? me1[address & 0xFFFF]
+      : me0[address];
   return value;
 }
 
@@ -37,6 +38,23 @@ void main() {
   );
 
   // Invert LCD screen of a Sharp PC-1500 pocket computer.
+  //
+  // 0000  LDI XH, 76      ; X = 0x7600 (start of LCD memory)
+  // 0002  LDI XL, 00
+  // 0004  LDA (X)         ; Load byte from LCD memory
+  // 0005  EAI FF          ; XOR with 0xFF (invert)
+  // 0007  SIN X           ; Store and increment X
+  // 0008  CPI XL, 4E      ; Reached end of block (0x4E bytes)?
+  // 000A  BZR -08         ; No: loop back to 0004
+  // 000C  CPI XH, 77      ; Done second block (0x77xx)?
+  // 000E  BZS +06         ; Yes: jump to HLT
+  // 0010  LDI XH, 77      ; Set up second block at 0x7700
+  // 0012  LDI XL, 00
+  // 0014  BCH -12         ; Jump back to 0004
+  // 0016  HLT
+  //
+  // Processes 2 x 78 bytes (0x7600-0x764D, 0x7700-0x774D).
+  // 790 instructions, 5842 CPU cycles.
   final List<int> program = <int>[
     // LDI XH, 76H
     0x48, 0x76,
@@ -63,7 +81,7 @@ void main() {
     // BCH -12H
     0x9E, 0x12,
     // HLT
-    0xFD, 0xB1
+    0xFD, 0xB1,
   ];
 
   memLoad(emulator.cpu.p.value, program);
@@ -82,9 +100,12 @@ void main() {
 
   stdout.writeln('Program Execution:');
   int cycles = 0;
+  int instructions = 0;
   emulator.cpu.p.value = 0x0000;
   while (emulator.cpu.hlt == false) {
     cycles += emulator.step();
+    instructions++;
   }
-  stdout.write('#CPU cycles: $cycles');
+  stdout.writeln('#Instructions: $instructions');
+  stdout.writeln('#CPU cycles: $cycles');
 }
