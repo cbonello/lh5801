@@ -165,7 +165,7 @@ class LH5801State {
 
   @override
   String toString() {
-    return 'LH5801State(P: ${OperandDump.op16(p.value)}, S: ${OperandDump.op16(s.value)}, A: ${OperandDump.op8(a.value)}, X: ${OperandDump.op16(x.value)}, Y: ${OperandDump.op16(y.value)}, U: ${OperandDump.op16(u.value)}, TM: $tm, IR0: $tm, IR1: $ir1, IR2: $ir2, HLT: $hlt))';
+    return 'LH5801State(P: ${OperandDump.op16(p.value)}, S: ${OperandDump.op16(s.value)}, A: ${OperandDump.op8(a.value)}, X: ${OperandDump.op16(x.value)}, Y: ${OperandDump.op16(y.value)}, U: ${OperandDump.op16(u.value)}, TM: $tm, IR0: $ir0, IR1: $ir1, IR2: $ir2, HLT: $hlt)';
   }
 
   @override

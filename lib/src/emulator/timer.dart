@@ -72,8 +72,8 @@ class LH5801Timer implements _SubClock {
   int get value => _value;
 
   set value(int value) {
-    _value = value;
-    _interruptRaised = value == 0x1FF;
+    _value = value & 0x1FF;
+    _interruptRaised = _value == 0x1FF;
   }
 
   @override
@@ -104,10 +104,10 @@ class LH5801Timer implements _SubClock {
   }
 
   @override
-  bool get isInterruptRaised {
-    final bool isRaised = _interruptRaised;
+  bool get isInterruptRaised => _interruptRaised;
+
+  void acknowledgeInterrupt() {
     _interruptRaised = false;
-    return isRaised;
   }
 
   @override

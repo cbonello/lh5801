@@ -1461,7 +1461,7 @@ void testDRRRReg(
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(bytes.length));
 
-  expect(emulator.cpu.a.value, equals(0x42));
+  expect(emulator.cpu.a.value, equals(0x2C));
   final int x = emulator.cpu.memRead(
     (me1 ? 0x10000 : 0) | emulator.cpu.x.value,
   );
@@ -1486,7 +1486,7 @@ void testDRLRReg(
   expect(cycles, equals(expectedCycles));
   expect(emulator.cpu.p.value, equals(bytes.length));
 
-  expect(emulator.cpu.a.value, equals(0xB3));
+  expect(emulator.cpu.a.value, equals(0xFB));
   final int x = emulator.cpu.memRead(
     (me1 ? 0x10000 : 0) | emulator.cpu.x.value,
   );

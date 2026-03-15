@@ -78,7 +78,7 @@ class LH5801CPU extends LH5801State {
       p.low = memRead(_me0(0xFFFF));
     } else {
       ir0 = _pins.nmiPin;
-      ir1 = tm.isInterruptRaised;
+      ir1 = ir1 || tm.isInterruptRaised;
       ir2 = _pins.miPin;
       _pins.nmiPin = _pins.miPin = false;
     }
@@ -95,6 +95,7 @@ class LH5801CPU extends LH5801State {
       // Timer interrupt
       _push8(t.statusRegister);
       t.ie = ir1 = false;
+      tm.acknowledgeInterrupt();
       _push16(p.value);
       p.high = memRead(_me0(0xFFFA));
       p.low = memRead(_me0(0xFFFB));
@@ -1161,7 +1162,7 @@ class LH5801CPU extends LH5801State {
     return memRead((b << 16) | ab);
   }
 
-  int unsignedByteToInt(int value) {
+  int _unsignedByteToInt(int value) {
     if (value & 0x80 != 0) {
       return -((0xff & ~value) + 1);
     }
@@ -1174,7 +1175,7 @@ class LH5801CPU extends LH5801State {
     final int sum = left + right + c;
 
     t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-    t.v = ((left & 0x80) == ((right + c) & 0x80)) &&
+    t.v = ((left & 0x80) == (right & 0x80)) &&
         ((left & 0x80) != (sum & 0x80));
     t.z = (sum & 0xFF) == 0;
     t.c = (sum & 0x100) != 0;
@@ -1245,7 +1246,8 @@ class LH5801CPU extends LH5801State {
 
   void _bit(int value1, int value2) => t.z = (value1 & value2) == 0;
 
-  void _cpi(int value1, int value2) => _binaryAdd(value1, (value2 ^ 0xFF) + 1);
+  void _cpi(int value1, int value2) =>
+      _binaryAdd(value1, value2 ^ 0xFF, carry: true);
 
   void _cin() {
     final int m = memRead(_me0(x.value));
@@ -1275,16 +1277,14 @@ class LH5801CPU extends LH5801State {
 
   void _drl(int address) {
     final int m = memRead(address);
-    final int tmp = (m << 8) | a.value;
-    a.value = m;
-    memWrite(address, (tmp >> 4) & 0xFF);
+    memWrite(address, ((m << 4) | (a.value >> 4)) & 0xFF);
+    a.value = ((a.value << 4) | (m >> 4)) & 0xFF;
   }
 
   void _drr(int address) {
     final int m = memRead(address);
-    final int tmp = (a.value << 8) | m;
-    a.value = tmp;
-    memWrite(address, (tmp >> 4) & 0xFF);
+    memWrite(address, ((m >> 4) | (a.value << 4)) & 0xFF);
+    a.value = ((a.value >> 4) | (m << 4)) & 0xFF;
   }
 
   void _eorAccumulator(int value) {
@@ -1321,7 +1321,7 @@ class LH5801CPU extends LH5801State {
 
   int _lop(int addCyclesTable, int d) {
     u.low--;
-    if (unsignedByteToInt(u.low) >= 0) {
+    if (_unsignedByteToInt(u.low) >= 0) {
       p.value -= d;
       return addCyclesTable;
     }

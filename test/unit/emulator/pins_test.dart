@@ -39,7 +39,7 @@ void main() {
     });
 
     test(
-      'is...Updated()/areInputPortspUpdated() should detected pins update',
+      'is...Updated()/areInputPortsUpdated() should detected pins update',
       () {
         final LH5801Pins pins1 = LH5801Pins();
         final LH5801Pins pins2 = pins1.clone();
@@ -59,7 +59,7 @@ void main() {
         pins1.dispFlipflop = true;
         expect(pins1.isDispUpdated(pins2), isTrue);
         pins1.inputPorts = 8;
-        expect(pins1.areInputPortspUpdated(pins2), isTrue);
+        expect(pins1.areInputPortsUpdated(pins2), isTrue);
       },
     );
 

@@ -1,11 +1,7 @@
 import 'package:lh5801/lh5801.dart';
 
-import '../common/common.dart';
-import 'cpu.dart';
-import 'pins.dart';
-
 abstract class LH5801Command {
-  void execute() => throw UnimplementedError();
+  void execute();
 }
 
 class LH5801 extends LH5801Pins {
@@ -25,12 +21,21 @@ class LH5801 extends LH5801Pins {
       clockFrequency: clockFrequency,
       memRead: memRead,
       memWrite: memWrite,
+      ir0Enter: ir0Enter,
+      ir1Enter: ir1Enter,
+      ir2Enter: ir2Enter,
+      irExit: irExit,
+      subroutineEnter: subroutineEnter,
+      subroutineExit: subroutineExit,
     )..reset();
   }
 
   void restoreState(Map<String, dynamic> state) {
     if (cpu.clockFrequency != state['clockFrequency'] as int) {
-      throw Exception();
+      throw LH5801Error(
+        'clock frequency mismatch: expected ${cpu.clockFrequency}, '
+        'got ${state['clockFrequency']}',
+      );
     }
 
     resetPin = state['resetPin'] as bool;
@@ -45,17 +50,17 @@ class LH5801 extends LH5801Pins {
   }
 
   Map<String, dynamic> saveState() => <String, dynamic>{
-        'clockFrequency': cpu.clockFrequency,
-        'resetPin': resetPin,
-        'nmiPin': nmiPin,
-        'miPin': miPin,
-        'puFlipflop': puFlipflop,
-        'pvFlipflop': pvFlipflop,
-        'bfFlipflop': bfFlipflop,
-        'dispFlipflop': dispFlipflop,
-        'inputPorts': inputPorts,
-        'cpu': cpu.saveState(),
-      };
+    'clockFrequency': cpu.clockFrequency,
+    'resetPin': resetPin,
+    'nmiPin': nmiPin,
+    'miPin': miPin,
+    'puFlipflop': puFlipflop,
+    'pvFlipflop': pvFlipflop,
+    'bfFlipflop': bfFlipflop,
+    'dispFlipflop': dispFlipflop,
+    'inputPorts': inputPorts,
+    'cpu': cpu.saveState(),
+  };
 
   late LH5801CPU cpu;
   final LH5801Command? ir0Enter;
@@ -111,18 +116,18 @@ class LH5801Traced extends LH5801 {
     LH5801Command? irExit,
     LH5801Command? subroutineEnter,
     LH5801Command? subroutineExit,
-  })  : traces = <Trace>[],
-        super(
-          clockFrequency: clockFrequency,
-          memRead: memRead,
-          memWrite: memWrite,
-          ir0Enter: ir0Enter,
-          ir1Enter: ir1Enter,
-          ir2Enter: ir2Enter,
-          irExit: irExit,
-          subroutineEnter: subroutineEnter,
-          subroutineExit: subroutineExit,
-        );
+  }) : traces = <Trace>[],
+       super(
+         clockFrequency: clockFrequency,
+         memRead: memRead,
+         memWrite: memWrite,
+         ir0Enter: ir0Enter,
+         ir1Enter: ir1Enter,
+         ir2Enter: ir2Enter,
+         irExit: irExit,
+         subroutineEnter: subroutineEnter,
+         subroutineExit: subroutineExit,
+       );
 
   final List<Trace> traces;
 

@@ -96,7 +96,7 @@ static void GenerateAddTableAsArray(FILE *file)
                     {
                         statusRegister |= FLAG_C;
                     }
-                    if (((op1 & 0x80) == ((op2 + carry) & 0x80)) && ((op1 & 0x80) != (result & 0x80)))
+                    if (((op1 & 0x80) == (op2 & 0x80)) && ((op1 & 0x80) != (result & 0x80)))
                     {
                         statusRegister |= FLAG_V;
                     }
@@ -165,7 +165,7 @@ static void GenerateAddTableAsMap(FILE *file)
                     {
                         statusRegister |= FLAG_C;
                     }
-                    if (((op1 & 0x80) == ((op2 + carry) & 0x80)) && ((op1 & 0x80) != (result & 0x80)))
+                    if (((op1 & 0x80) == (op2 & 0x80)) && ((op1 & 0x80) != (result & 0x80)))
                     {
                         statusRegister |= FLAG_V;
                     }

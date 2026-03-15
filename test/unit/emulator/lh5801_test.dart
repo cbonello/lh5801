@@ -33,7 +33,7 @@ void main() {
 
         expect(
           () => emulator2.restoreState(state),
-          throwsA(const TypeMatcher<Exception>()),
+          throwsA(isA<LH5801Error>()),
         );
       });
 
@@ -1888,15 +1888,15 @@ void main() {
 
       const String expected = '0000  48 76           LDI XH, 76\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false, inputPorts: 00)\n'
-          'LH5801State(P: 0002, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          'LH5801State(P: 0002, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: false, IR1: false, IR2: false, HLT: false)\n'
           '\n'
           '0002  4A 00           LDI XL, 00\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false, inputPorts: 00)\n'
-          'LH5801State(P: 0004, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          'LH5801State(P: 0004, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: false, IR1: false, IR2: false, HLT: false)\n'
           '\n'
           '0004  05              LDA (X)\n'
           'LH5801Pins(reset: false, NMI: false, MI: false, PU: false, PV: false, BF: true, DISP: false, inputPorts: 00)\n'
-          'LH5801State(P: 0005, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: LH5801Timer(value: 000, interrupt: false), IR1: false, IR2: false, HLT: false))\n'
+          'LH5801State(P: 0005, S: 0000, A: 00, X: 7600, Y: 0000, U: 0000, TM: LH5801Timer(value: 000, interrupt: false), IR0: false, IR1: false, IR2: false, HLT: false)\n'
           '\n';
 
       expect(output.toString(), equals(expected));

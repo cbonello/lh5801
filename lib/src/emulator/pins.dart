@@ -7,7 +7,7 @@ mixin LH5801PinsObservable {
 }
 
 mixin LH5801PinsObserver {
-  void update(LH5801Pins pins) => throw UnimplementedError;
+  void update(LH5801Pins pins) => throw UnimplementedError();
 }
 
 class LH5801Pins with LH5801PinsObservable {
@@ -99,11 +99,11 @@ class LH5801Pins with LH5801PinsObservable {
 
   int get inputPorts => _inputPorts;
   set inputPorts(int value) {
-    _inputPorts = value;
+    _inputPorts = value & 0xFF;
     notifyPinsObservers();
   }
 
-  bool areInputPortspUpdated(LH5801Pins other) =>
+  bool areInputPortsUpdated(LH5801Pins other) =>
       _inputPorts != other._inputPorts;
 
   void _reset() {
