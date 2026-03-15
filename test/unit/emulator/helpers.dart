@@ -50,12 +50,12 @@ void testResetPin(LH5801 emulator) {
 
   memLoad(0xFFFE, <int>[intAddress >> 8, intAddress & 0xFF]);
   memLoad(intAddress, memBytes);
-  emulator.resetPin = true;
+  emulator.pins.resetPin = true;
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
-  expect(emulator.resetPin, isFalse);
+  expect(emulator.pins.resetPin, isFalse);
 }
 
 void testIR0(LH5801 emulator) {
@@ -67,7 +67,7 @@ void testIR0(LH5801 emulator) {
 
   memLoad(0xFFFC, <int>[intAddress >> 8, intAddress & 0xFF]);
   memLoad(intAddress, memBytes);
-  emulator.nmiPin = true;
+  emulator.pins.nmiPin = true;
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
@@ -75,7 +75,7 @@ void testIR0(LH5801 emulator) {
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
-  expect(emulator.nmiPin, isFalse);
+  expect(emulator.pins.nmiPin, isFalse);
   expect(emulator.cpu.t.ie, isFalse);
   expect(emulator.cpu.ir0, isFalse);
   expect(emulator.cpu.ir1, isFalse);
@@ -128,7 +128,7 @@ void testIR2(LH5801 emulator) {
 
   memLoad(0xFFF8, <int>[intAddress >> 8, intAddress & 0xFF]);
   memLoad(intAddress, memBytes);
-  emulator.miPin = true;
+  emulator.pins.miPin = true;
   emulator.cpu.p.value = initialPC;
   emulator.cpu.s.value = stackAddress;
   emulator.cpu.t.statusRegister = statusRegister;
@@ -136,7 +136,7 @@ void testIR2(LH5801 emulator) {
   expect(cycles, equals(5));
   expect(emulator.cpu.p.value, equals(intAddress + memBytes.length));
 
-  expect(emulator.miPin, isFalse);
+  expect(emulator.pins.miPin, isFalse);
   expect(emulator.cpu.t.ie, isFalse);
   expect(emulator.cpu.ir0, isFalse);
   expect(emulator.cpu.ir1, isFalse);
@@ -2412,7 +2412,7 @@ void testRPUSPU(LH5801 emulator, List<int> bytes, {bool expectedPU = false}) {
   expect(cycles, equals(4));
   expect(emulator.cpu.p.value, equals(bytes.length));
 
-  expect(emulator.puFlipflop, equals(expectedPU));
+  expect(emulator.pins.puFlipflop, equals(expectedPU));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2425,7 +2425,7 @@ void testRPVSPV(LH5801 emulator, List<int> bytes, {bool expectedPV = false}) {
   expect(cycles, equals(4));
   expect(emulator.cpu.p.value, equals(bytes.length));
 
-  expect(emulator.pvFlipflop, equals(expectedPV));
+  expect(emulator.pins.pvFlipflop, equals(expectedPV));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2438,7 +2438,7 @@ void testSDPRDP(LH5801 emulator, List<int> bytes, {bool expectedDisp = false}) {
   expect(cycles, equals(8));
   expect(emulator.cpu.p.value, equals(bytes.length));
 
-  expect(emulator.dispFlipflop, equals(expectedDisp));
+  expect(emulator.pins.dispFlipflop, equals(expectedDisp));
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2500,13 +2500,13 @@ void testOFF(LH5801 emulator) {
   final List<int> memBytes = <int>[0xFD, 0x4C];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  emulator.bfFlipflop = true;
+  emulator.pins.bfFlipflop = true;
   memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(8));
   expect(emulator.cpu.p.value, equals(memBytes.length));
 
-  expect(emulator.bfFlipflop, isFalse);
+  expect(emulator.pins.bfFlipflop, isFalse);
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2515,14 +2515,14 @@ void testATP(LH5801 emulator) {
   final List<int> memBytes = <int>[0xFD, 0xCC];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
-  emulator.inputPorts = 0x00;
+  emulator.pins.inputPorts = 0x00;
   emulator.cpu.a.value = 0x07;
   memLoad(0x0000, memBytes);
   final int cycles = emulator.step(address: 0x0000);
   expect(cycles, equals(9));
   expect(emulator.cpu.p.value, equals(memBytes.length));
 
-  expect(emulator.inputPorts, emulator.cpu.a.value);
+  expect(emulator.pins.inputPorts, emulator.cpu.a.value);
 
   expect(emulator.cpu.t.statusRegister, equals(statusRegister));
 }
@@ -2532,7 +2532,7 @@ void testITA(LH5801 emulator) {
     final List<int> memBytes = <int>[0xFD, 0xBA];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
-    emulator.inputPorts = inputPortsValue;
+    emulator.pins.inputPorts = inputPortsValue;
     memLoad(0x0000, memBytes);
     final int cycles = emulator.step(address: 0x0000);
     expect(cycles, equals(9));

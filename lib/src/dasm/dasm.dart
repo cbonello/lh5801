@@ -7,15 +7,14 @@ class Instruction {
   final InstructionDescriptor descriptor;
 
   String addressToString({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
-  }) =>
-      OperandDump.op16(address, radix: radix, suffix: suffix);
+  }) => OperandDump.op16(address, radix: radix, suffix: suffix);
 
   /// Return the maximum length of the address field for given arguments.
   /// Usefull for tabulating the disassembly listing.
   static int addressLength({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
   }) {
     final String address = OperandDump.op16(
@@ -23,53 +22,51 @@ class Instruction {
       radix: radix,
       suffix: suffix,
     );
+
     return address.length;
   }
 
   String bytesToString({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
-  }) =>
-      _formatBytes(descriptor.bytes, radix: radix, suffix: suffix);
+  }) => _formatBytes(descriptor.bytes, radix: radix, suffix: suffix);
 
   /// Return the maximum length of the bytes field for given arguments.
   /// Usefull for tabulating the disassembly listing.
   static int bytesLength({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
   }) {
-    final int byteStringSize = radix.when<int>(
-      // 8 bits, one optional suffix and one space.
-      binary: () => 8 + (suffix ? 1 : 0) + 1,
-      // 3 digits, no suffix and one space.
-      decimal: () => 3 + 1,
-      // 8 hex digits, one optional suffix and one space.
-      hexadecimal: () => 2 + (suffix ? 1 : 0) + 1,
-    );
+    final int byteStringSize = switch (radix) {
+      Radix.binary => 8 + (suffix ? 1 : 0) + 1,
+      Radix.decimal => 3 + 1,
+      Radix.hexadecimal => 2 + (suffix ? 1 : 0) + 1,
+    };
+
     // An instruction has up-to 5 bytes. -1 is to remove the trailing space
     // character.
     return 5 * byteStringSize - 1;
   }
 
   String instructionToString({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
-  }) =>
-      descriptor.instructionToString(radix: radix, suffix: suffix);
+  }) => descriptor.instructionToString(radix: radix, suffix: suffix);
 
   /// Return the maximum length of the instruction field for given arguments.
   /// Usefull for tabulating the disassembly listing.
   static int instructionLength({
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
   }) {
     // 'BII #(ab), i' is encoded in 5 bytes; it's the biggest LH5801 instruction.
-    final int length = radix.when<int>(
-      binary: () =>
+    final int length = switch (radix) {
+      Radix.binary =>
           'BII #(0011010001010110), 01111000'.length + (suffix ? 2 : 0),
-      decimal: () => 'BII #(13398), 120'.length,
-      hexadecimal: () => 'BII #(3456), 78'.length + (suffix ? 2 : 0),
-    );
+      Radix.decimal => 'BII #(13398), 120'.length,
+      Radix.hexadecimal => 'BII #(3456), 78'.length + (suffix ? 2 : 0),
+    };
+
     return length;
   }
 
@@ -80,23 +77,21 @@ class Instruction {
     output.write('${addressToString()}  ');
     output.write('${_formatBytes(descriptor.bytes)}  ');
     output.write(descriptor);
+
     return output.toString();
   }
 
   String _formatBytes(
     List<int> bytes, {
-    Radix radix = const Radix.hexadecimal(),
+    Radix radix = Radix.hexadecimal,
     bool suffix = false,
   }) {
     final StringBuffer output = StringBuffer();
-    final int byteStringSize = radix.when<int>(
-      // 8 bits, one optional suffix and one space.
-      binary: () => 8 + (suffix ? 1 : 0) + 1,
-      // 3 digits, no suffix and one space.
-      decimal: () => 3 + 1,
-      // 8 hex digits, one optional suffix and one space.
-      hexadecimal: () => 2 + (suffix ? 1 : 0) + 1,
-    );
+    final int byteStringSize = switch (radix) {
+      Radix.binary => 8 + (suffix ? 1 : 0) + 1,
+      Radix.decimal => 3 + 1,
+      Radix.hexadecimal => 2 + (suffix ? 1 : 0) + 1,
+    };
     // An instruction has up-to 5 bytes. -1 is to remove the trailing space
     // character.
     final int outputSize = 5 * byteStringSize - 1;
@@ -123,12 +118,14 @@ class LH5801DASM {
     int readOp8() {
       final int value = _memRead(addr++);
       updatedBytes.add(value);
+
       return value;
     }
 
     int readOp16() {
       final int high = readOp8();
       final int low = readOp8();
+
       return high << 8 | low;
     }
 
@@ -144,17 +141,15 @@ class LH5801DASM {
       final Operand operand = descriptor.operands[i];
 
       // Replaces generic operands with their actual value.
-      updatedOperands.add(
-        operand.maybeWhen(
-          imm8: (_) => Operand.imm8(readOp8()),
-          imm16: (_) => Operand.imm16(readOp16()),
-          mem0Imm16: (_) => Operand.mem0Imm16(readOp16()),
-          mem1Imm16: (_) => Operand.mem1Imm16(readOp16()),
-          dispPlus: (_) => Operand.dispPlus(readOp8()),
-          dispMinus: (_) => Operand.dispMinus(readOp8()),
-          orElse: () => operand,
-        ),
-      );
+      updatedOperands.add(switch (operand) {
+        OperandImm8() => Operand.imm8(readOp8()),
+        OperandImm16() => Operand.imm16(readOp16()),
+        OperandMem0Imm16() => Operand.mem0Imm16(readOp16()),
+        OperandMem1Imm16() => Operand.mem1Imm16(readOp16()),
+        OperandDispPlus() => Operand.dispPlus(readOp8()),
+        OperandDispMinus() => Operand.dispMinus(readOp8()),
+        _ => operand,
+      });
     }
 
     assert(updatedBytes.length == descriptor.size);

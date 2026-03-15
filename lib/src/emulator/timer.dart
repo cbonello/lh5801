@@ -43,10 +43,10 @@ class LH5801Timer implements _SubClock {
     required int value,
     required int cpuCycles,
     required bool interruptRaised,
-  })   : _cpuCyclesPerTick = cpuCyclesPerTick,
-        _value = value,
-        _cpuCycles = cpuCycles,
-        _interruptRaised = interruptRaised;
+  }) : _cpuCyclesPerTick = cpuCyclesPerTick,
+       _value = value,
+       _cpuCycles = cpuCycles,
+       _interruptRaised = interruptRaised;
 
   void restoreState(Map<String, dynamic> json) {
     _value = json['value'] as int;
@@ -55,10 +55,10 @@ class LH5801Timer implements _SubClock {
   }
 
   Map<String, dynamic> saveState() => <String, dynamic>{
-        'value': _value,
-        'cpuCycles': _cpuCycles,
-        'interruptRaised': _interruptRaised,
-      };
+    'value': _value,
+    'cpuCycles': _cpuCycles,
+    'interruptRaised': _interruptRaised,
+  };
 
   late bool _interruptRaised;
   late int _value;
@@ -83,23 +83,26 @@ class LH5801Timer implements _SubClock {
   }
 
   LH5801Timer clone() => LH5801Timer._(
-        cpuCyclesPerTick: _cpuCyclesPerTick,
-        value: _value,
-        cpuCycles: _cpuCycles,
-        interruptRaised: _interruptRaised,
-      );
+    cpuCyclesPerTick: _cpuCyclesPerTick,
+    value: _value,
+    cpuCycles: _cpuCycles,
+    interruptRaised: _interruptRaised,
+  );
 
   @override
   bool incrementClock([int? cpuCycles]) {
     final int cpuCyclesIncrenment = cpuCycles ?? _cpuCyclesPerTick;
     if (_cpuCycles + cpuCyclesIncrenment >= _cpuCyclesPerTick) {
       _cpuCycles = (_cpuCycles + cpuCyclesIncrenment) % _cpuCyclesPerTick;
-      // The LH5801 timer is a 9-bit linear-feedback shift register with taps at bits 9 and 3.
+      // The LH5801 timer is a 9-bit linear-feedback shift register with taps
+      //at bits 9 and 3.
       final int nextValue =
           ((_value << 1) & 0x1FE) | (((_value >> 8) ^ (_value >> 3)) & 1);
       value = nextValue;
+
       return _interruptRaised;
     }
+
     return false;
   }
 
@@ -112,7 +115,9 @@ class LH5801Timer implements _SubClock {
 
   @override
   String toString() =>
-      'LH5801Timer(value: ${_value.toUnsigned(9).toRadixString(16).toUpperCase().padLeft(3, '0')}, interrupt: $_interruptRaised)';
+      'LH5801Timer(value: '
+      '${_value.toUnsigned(9).toRadixString(16).toUpperCase().padLeft(3, '0')}, '
+      'interrupt: $_interruptRaised)';
 
   @override
   bool operator ==(Object other) =>

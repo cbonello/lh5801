@@ -16,12 +16,12 @@ class LH5801Flags {
   }
 
   Map<String, dynamic> saveState() => <String, dynamic>{
-        'h': h,
-        'v': v,
-        'z': z,
-        'ie': ie,
-        'c': c,
-      };
+    'h': h,
+    'v': v,
+    'z': z,
+    'ie': ie,
+    'c': c,
+  };
 
   bool h;
   bool v;

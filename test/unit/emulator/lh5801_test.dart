@@ -21,9 +21,9 @@ void main() {
           clockFrequency: 1300000,
           memRead: memRead,
           memWrite: memWrite,
-        )
-          ..resetPin = true
-          ..inputPorts = 0x45;
+        );
+        emulator1.pins.resetPin = true;
+        emulator1.pins.inputPorts = 0x45;
         final Map<String, dynamic> state = emulator1.saveState();
         final LH5801 emulator2 = LH5801(
           clockFrequency: 1300,
@@ -42,9 +42,9 @@ void main() {
           clockFrequency: 1300000,
           memRead: memRead,
           memWrite: memWrite,
-        )
-          ..resetPin = true
-          ..inputPorts = 0x45;
+        );
+        emulator1.pins.resetPin = true;
+        emulator1.pins.inputPorts = 0x45;
         final Map<String, dynamic> state = emulator1.saveState();
         final LH5801 emulator2 = LH5801(
           clockFrequency: 1300000,
@@ -62,9 +62,9 @@ void main() {
         clockFrequency: 1300000,
         memRead: memRead,
         memWrite: memWrite,
-      )
-        ..nmiPin = true
-        ..inputPorts = 0x94;
+      );
+      emulator.pins.nmiPin = true;
+      emulator.pins.inputPorts = 0x94;
 
       final LH5801Pins pins = emulator.pins;
       expect(pins.resetPin, isFalse);

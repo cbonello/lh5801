@@ -36,7 +36,8 @@ class LH5801Pins with LH5801PinsObservable {
   /// LCD on/off control signal output.
   late bool _dispFlipflop;
 
-  /// Input ports through which the CPU receives 8-bit data into the accumulator.
+  /// Input ports through which the CPU receives 8-bit data into the
+  /// accumulator.
   late int _inputPorts;
 
   final Set<LH5801PinsObserver> _observers;
@@ -107,8 +108,8 @@ class LH5801Pins with LH5801PinsObservable {
       _inputPorts != other._inputPorts;
 
   void _reset() {
-    _resetPin =
-        _nmiPin = _miPin = _puFlipflop = _pvFlipflop = _dispFlipflop = false;
+    _resetPin = _nmiPin = _miPin = _puFlipflop = _pvFlipflop = _dispFlipflop =
+        false;
     _bfFlipflop = true;
     _inputPorts = 0;
   }
@@ -141,7 +142,9 @@ class LH5801Pins with LH5801PinsObservable {
 
   @override
   String toString() {
-    return 'LH5801Pins(reset: $_resetPin, NMI: $_nmiPin, MI: $_miPin, PU: $_puFlipflop, PV: $_pvFlipflop, BF: $_bfFlipflop, DISP: $_dispFlipflop, inputPorts: ${OperandDump.op8(_inputPorts)})';
+    return 'LH5801Pins(reset: $_resetPin, NMI: $_nmiPin, MI: $_miPin, '
+        'PU: $_puFlipflop, PV: $_pvFlipflop, BF: $_bfFlipflop, '
+        'DISP: $_dispFlipflop, inputPorts: ${OperandDump.op8(_inputPorts)})';
   }
 
   @override

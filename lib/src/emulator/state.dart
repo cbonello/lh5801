@@ -1,6 +1,4 @@
 import '../../lh5801.dart';
-import 'flags.dart';
-import 'timer.dart';
 
 class Register8 extends Object {
   Register8([int value = 0x00]) : _value = value & 0xFF;
@@ -93,13 +91,13 @@ class LH5801State {
     this.ir1 = false,
     this.ir2 = false,
     this.hlt = false,
-  })  : p = p ?? Register16(),
-        a = a ?? Register8(),
-        s = s ?? Register16(),
-        x = x ?? Register16(),
-        y = y ?? Register16(),
-        u = u ?? Register16(),
-        t = t ?? LH5801Flags();
+  }) : p = p ?? Register16(),
+       a = a ?? Register8(),
+       s = s ?? Register16(),
+       x = x ?? Register16(),
+       y = y ?? Register16(),
+       u = u ?? Register16(),
+       t = t ?? LH5801Flags();
 
   // Program counter.
   Register16 p;
@@ -149,23 +147,27 @@ class LH5801State {
   }
 
   LH5801State clone() => LH5801State(
-        p: p.clone(),
-        s: s.clone(),
-        a: a.clone(),
-        x: x.clone(),
-        y: y.clone(),
-        u: u.clone(),
-        tm: tm.clone(),
-        t: t.clone(),
-        ir0: ir0,
-        ir1: ir1,
-        ir2: ir2,
-        hlt: hlt,
-      );
+    p: p.clone(),
+    s: s.clone(),
+    a: a.clone(),
+    x: x.clone(),
+    y: y.clone(),
+    u: u.clone(),
+    tm: tm.clone(),
+    t: t.clone(),
+    ir0: ir0,
+    ir1: ir1,
+    ir2: ir2,
+    hlt: hlt,
+  );
 
   @override
   String toString() {
-    return 'LH5801State(P: ${OperandDump.op16(p.value)}, S: ${OperandDump.op16(s.value)}, A: ${OperandDump.op8(a.value)}, X: ${OperandDump.op16(x.value)}, Y: ${OperandDump.op16(y.value)}, U: ${OperandDump.op16(u.value)}, TM: $tm, IR0: $ir0, IR1: $ir1, IR2: $ir2, HLT: $hlt)';
+    return 'LH5801State(P: ${OperandDump.op16(p.value)}, '
+        'S: ${OperandDump.op16(s.value)}, A: ${OperandDump.op8(a.value)}, '
+        'X: ${OperandDump.op16(x.value)}, Y: ${OperandDump.op16(y.value)}, '
+        'U: ${OperandDump.op16(u.value)}, TM: $tm, IR0: $ir0, IR1: $ir1, '
+        'IR2: $ir2, HLT: $hlt)';
   }
 
   @override

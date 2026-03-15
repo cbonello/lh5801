@@ -1,10 +1,7 @@
 import '../../lh5801.dart';
 
-typedef LH5801CPUInstructionLogger = void Function(
-  Instruction,
-  LH5801Pins,
-  LH5801State,
-);
+typedef LH5801CPUInstructionLogger =
+    void Function(Instruction, LH5801Pins, LH5801State);
 
 class LH5801CPU extends LH5801State {
   LH5801CPU({
@@ -18,14 +15,14 @@ class LH5801CPU extends LH5801State {
     this.irExit,
     this.subroutineEnter,
     this.subroutineExit,
-  })  : _pins = pins,
-        _dasm = LH5801DASM(memRead: memRead),
-        super(
-          tm: LH5801Timer(
-            cpuClockFrequency: clockFrequency,
-            timerClockFrequency: kFrequency31Khz,
-          ),
-        );
+  }) : _pins = pins,
+       _dasm = LH5801DASM(memRead: memRead),
+       super(
+         tm: LH5801Timer(
+           cpuClockFrequency: clockFrequency,
+           timerClockFrequency: kFrequency31Khz,
+         ),
+       );
 
   void restoreState(Map<String, dynamic> state) {
     p.restoreState(state['p'] as Map<String, dynamic>);
@@ -43,20 +40,20 @@ class LH5801CPU extends LH5801State {
   }
 
   Map<String, dynamic> saveState() => <String, dynamic>{
-        'p': p.saveState(),
-        's': s.saveState(),
-        'a': a.saveState(),
-        'x': x.saveState(),
-        'y': y.saveState(),
-        'u': u.saveState(),
-        'tm': tm.saveState(),
-        't': t.saveState(),
-        'ir0': ir0,
-        'ir1': ir1,
-        'ir2': ir2,
-        'hlt': hlt,
-        'clockFrequency': clockFrequency,
-      };
+    'p': p.saveState(),
+    's': s.saveState(),
+    'a': a.saveState(),
+    'x': x.saveState(),
+    'y': y.saveState(),
+    'u': u.saveState(),
+    'tm': tm.saveState(),
+    't': t.saveState(),
+    'ir0': ir0,
+    'ir1': ir1,
+    'ir2': ir2,
+    'hlt': hlt,
+    'clockFrequency': clockFrequency,
+  };
 
   final LH5801Pins _pins;
   final int clockFrequency;
@@ -129,6 +126,7 @@ class LH5801CPU extends LH5801State {
     }
 
     tm.incrementClock(cycles);
+
     return cycles;
   }
 
@@ -462,7 +460,8 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode FD${OperandDump.op8(opcode)} at address ${OperandDump.op16(startP)}',
+          'illegal opcode FD${OperandDump.op8(opcode)} at address '
+          '${OperandDump.op16(startP)}',
         );
     }
 
@@ -1135,7 +1134,8 @@ class LH5801CPU extends LH5801State {
 
       default:
         throw LH5801Error(
-          'illegal opcode ${OperandDump.op8(opcode)} at address ${OperandDump.op16(startP)}',
+          'illegal opcode ${OperandDump.op8(opcode)} at address '
+          '${OperandDump.op16(startP)}',
         );
     }
 
@@ -1148,17 +1148,20 @@ class LH5801CPU extends LH5801State {
   int _readOp8() {
     final int op8 = memRead(p.value);
     p.value += 1;
+
     return op8;
   }
 
   int _readOp16() {
     final int op8H = _readOp8();
     final int op8L = _readOp8();
+
     return op8H << 8 | op8L;
   }
 
   int _readOp16Ind(int b) {
     final int ab = _readOp16();
+
     return memRead((b << 16) | ab);
   }
 
@@ -1166,6 +1169,7 @@ class LH5801CPU extends LH5801State {
     if (value & 0x80 != 0) {
       return -((0xff & ~value) + 1);
     }
+
     return value;
   }
 
@@ -1175,19 +1179,15 @@ class LH5801CPU extends LH5801State {
     final int sum = left + right + c;
 
     t.h = (((left & 0x0F) + (right & 0x0F) + c) & 0x10) != 0;
-    t.v = ((left & 0x80) == (right & 0x80)) &&
-        ((left & 0x80) != (sum & 0x80));
+    t.v = ((left & 0x80) == (right & 0x80)) && ((left & 0x80) != (sum & 0x80));
     t.z = (sum & 0xFF) == 0;
     t.c = (sum & 0x100) != 0;
 
     return sum & 0xFF;
   }
 
-  void _addAccumulator(int value) => a.value = _binaryAdd(
-        a.value,
-        value,
-        carry: t.c,
-      );
+  void _addAccumulator(int value) =>
+      a.value = _binaryAdd(a.value, value, carry: t.c);
 
   void _addMemory(int address, int value) {
     final int m = memRead(address);
@@ -1229,8 +1229,10 @@ class LH5801CPU extends LH5801State {
 
     if (cond) {
       p.value += offset;
+
       return addCyclesTable;
     }
+
     return 0;
   }
 
@@ -1239,8 +1241,10 @@ class LH5801CPU extends LH5801State {
 
     if (cond) {
       p.value -= offset;
+
       return addCyclesTable;
     }
+
     return 0;
   }
 
@@ -1266,6 +1270,7 @@ class LH5801CPU extends LH5801State {
     } else if (t.c && t.h == false) {
       result += 0xFA;
     }
+
     return result & 0xFF;
   }
 
@@ -1323,8 +1328,10 @@ class LH5801CPU extends LH5801State {
     u.low--;
     if (_unsignedByteToInt(u.low) >= 0) {
       p.value -= d;
+
       return addCyclesTable;
     }
+
     return 0;
   }
 
@@ -1342,12 +1349,14 @@ class LH5801CPU extends LH5801State {
 
   int _pop8() {
     s.value++;
+
     return memRead(_me0(s.value));
   }
 
   int _pop16() {
     final int h = _pop8();
     final int l = _pop8();
+
     return h << 8 | l;
   }
 
@@ -1383,7 +1392,8 @@ class LH5801CPU extends LH5801State {
     final int accumulator = a.value;
     a.value = LH5801Flags.boolToInt(t.c) << 7 | (accumulator >> 1);
     t.h = a.value & 0x08 != 0;
-    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
+    t.v =
+        ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
         ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
     t.z = a.value == 0;
     t.c = (accumulator & 0x01) != 0;
@@ -1400,11 +1410,8 @@ class LH5801CPU extends LH5801State {
     subroutineExit?.execute();
   }
 
-  void _sbc(int value) => a.value = _binaryAdd(
-        a.value,
-        value ^ 0xFF,
-        carry: t.c,
-      );
+  void _sbc(int value) =>
+      a.value = _binaryAdd(a.value, value ^ 0xFF, carry: t.c);
 
   void _sde(Register16 register) => memWrite(_me0(register.value--), a.value);
 
@@ -1421,7 +1428,8 @@ class LH5801CPU extends LH5801State {
     final int accumulator = a.value;
     a.value >>= 1;
     t.h = (a.value & 0x08) != 0;
-    t.v = ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
+    t.v =
+        ((accumulator & 0x01) != 0 && (a.value & 0x02) != 0) ||
         ((accumulator & 0x02) != 0 && (a.value & 0x01) != 0);
     t.z = a.value == 0;
     t.c = (accumulator & 0x01) != 0;
@@ -1456,6 +1464,7 @@ class LH5801CPU extends LH5801State {
       subroutineEnter?.execute();
     }
     t.z = false;
+
     return cycles;
   }
 

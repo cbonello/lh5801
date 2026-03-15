@@ -4,7 +4,7 @@ abstract class LH5801Command {
   void execute();
 }
 
-class LH5801 extends LH5801Pins {
+class LH5801 {
   LH5801({
     required int clockFrequency,
     required LH5801MemoryRead memRead,
@@ -15,9 +15,9 @@ class LH5801 extends LH5801Pins {
     this.irExit,
     this.subroutineEnter,
     this.subroutineExit,
-  }) {
+  }) : pins = LH5801Pins() {
     cpu = LH5801CPU(
-      pins: this,
+      pins: pins,
       clockFrequency: clockFrequency,
       memRead: memRead,
       memWrite: memWrite,
@@ -38,31 +38,32 @@ class LH5801 extends LH5801Pins {
       );
     }
 
-    resetPin = state['resetPin'] as bool;
-    nmiPin = state['nmiPin'] as bool;
-    miPin = state['miPin'] as bool;
-    puFlipflop = state['puFlipflop'] as bool;
-    pvFlipflop = state['pvFlipflop'] as bool;
-    bfFlipflop = state['bfFlipflop'] as bool;
-    dispFlipflop = state['dispFlipflop'] as bool;
-    inputPorts = state['inputPorts'] as int;
+    pins.resetPin = state['resetPin'] as bool;
+    pins.nmiPin = state['nmiPin'] as bool;
+    pins.miPin = state['miPin'] as bool;
+    pins.puFlipflop = state['puFlipflop'] as bool;
+    pins.pvFlipflop = state['pvFlipflop'] as bool;
+    pins.bfFlipflop = state['bfFlipflop'] as bool;
+    pins.dispFlipflop = state['dispFlipflop'] as bool;
+    pins.inputPorts = state['inputPorts'] as int;
     cpu.restoreState(state['cpu'] as Map<String, dynamic>);
   }
 
   Map<String, dynamic> saveState() => <String, dynamic>{
     'clockFrequency': cpu.clockFrequency,
-    'resetPin': resetPin,
-    'nmiPin': nmiPin,
-    'miPin': miPin,
-    'puFlipflop': puFlipflop,
-    'pvFlipflop': pvFlipflop,
-    'bfFlipflop': bfFlipflop,
-    'dispFlipflop': dispFlipflop,
-    'inputPorts': inputPorts,
+    'resetPin': pins.resetPin,
+    'nmiPin': pins.nmiPin,
+    'miPin': pins.miPin,
+    'puFlipflop': pins.puFlipflop,
+    'pvFlipflop': pins.pvFlipflop,
+    'bfFlipflop': pins.bfFlipflop,
+    'dispFlipflop': pins.dispFlipflop,
+    'inputPorts': pins.inputPorts,
     'cpu': cpu.saveState(),
   };
 
   late LH5801CPU cpu;
+  final LH5801Pins pins;
   final LH5801Command? ir0Enter;
   final LH5801Command? ir1Enter;
   final LH5801Command? ir2Enter;
@@ -70,20 +71,29 @@ class LH5801 extends LH5801Pins {
   final LH5801Command? subroutineEnter;
   final LH5801Command? subroutineExit;
 
-  LH5801Pins get pins => clone();
-
   LH5801State get state => cpu.clone();
 
   int step({int? address}) {
     cpu.p.value = address ?? cpu.p.value;
+
     return cpu.step();
   }
 
-  @override
   void reset() {
-    super.reset(); // Reset pins.
-    cpu.reset(); // Reset registers.
+    pins.reset();
+    cpu.reset();
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LH5801 &&
+          runtimeType == other.runtimeType &&
+          pins == other.pins &&
+          cpu == other.cpu;
+
+  @override
+  int get hashCode => pins.hashCode ^ cpu.hashCode;
 }
 
 class Trace {
@@ -107,33 +117,23 @@ class Trace {
 
 class LH5801Traced extends LH5801 {
   LH5801Traced({
-    required int clockFrequency,
-    required LH5801MemoryRead memRead,
-    required LH5801MemoryWrite memWrite,
-    LH5801Command? ir0Enter,
-    LH5801Command? ir1Enter,
-    LH5801Command? ir2Enter,
-    LH5801Command? irExit,
-    LH5801Command? subroutineEnter,
-    LH5801Command? subroutineExit,
-  }) : traces = <Trace>[],
-       super(
-         clockFrequency: clockFrequency,
-         memRead: memRead,
-         memWrite: memWrite,
-         ir0Enter: ir0Enter,
-         ir1Enter: ir1Enter,
-         ir2Enter: ir2Enter,
-         irExit: irExit,
-         subroutineEnter: subroutineEnter,
-         subroutineExit: subroutineExit,
-       );
+    required super.clockFrequency,
+    required super.memRead,
+    required super.memWrite,
+    super.ir0Enter,
+    super.ir1Enter,
+    super.ir2Enter,
+    super.irExit,
+    super.subroutineEnter,
+    super.subroutineExit,
+  }) : traces = <Trace>[];
 
   final List<Trace> traces;
 
   @override
   int step({int? address}) {
     cpu.p.value = address ?? cpu.p.value;
+
     return cpu.step(_logger);
   }
 

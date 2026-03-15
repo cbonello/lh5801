@@ -13,25 +13,25 @@ void main() {
 
       test('should print a binary value without suffix', () {
         expect(
-          OperandDump.op8(0xF5, radix: const Radix.binary()),
+          OperandDump.op8(0xF5, radix: Radix.binary),
           equals('11110101'),
         );
       });
 
       test("should print a binary value with the 'B' suffix", () {
         expect(
-          OperandDump.op8(0x5, radix: const Radix.binary(), suffix: true),
+          OperandDump.op8(0x5, radix: Radix.binary, suffix: true),
           equals('00000101B'),
         );
       });
 
       test('should print a decimal value without suffix', () {
         expect(
-          OperandDump.op8(21, radix: const Radix.decimal()),
+          OperandDump.op8(21, radix: Radix.decimal),
           equals(' 21'),
         );
         expect(
-          OperandDump.op8(234, radix: const Radix.decimal(), suffix: true),
+          OperandDump.op8(234, radix: Radix.decimal, suffix: true),
           equals('234'),
         );
       });
@@ -61,25 +61,25 @@ void main() {
 
       test('should print a binary value without suffix', () {
         expect(
-          OperandDump.op16(0xF0FF, radix: const Radix.binary()),
+          OperandDump.op16(0xF0FF, radix: Radix.binary),
           equals('1111000011111111'),
         );
       });
 
       test("should print a binary value with the 'B' suffix", () {
         expect(
-          OperandDump.op16(0x124, radix: const Radix.binary(), suffix: true),
+          OperandDump.op16(0x124, radix: Radix.binary, suffix: true),
           equals('0000000100100100B'),
         );
       });
 
       test('should print a decimal value without suffix', () {
         expect(
-          OperandDump.op16(21, radix: const Radix.decimal()),
+          OperandDump.op16(21, radix: Radix.decimal),
           equals('   21'),
         );
         expect(
-          OperandDump.op16(65534, radix: const Radix.decimal(), suffix: true),
+          OperandDump.op16(65534, radix: Radix.decimal, suffix: true),
           equals('65534'),
         );
       });
