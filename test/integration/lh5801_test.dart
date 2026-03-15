@@ -16,8 +16,10 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value =
-      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value = address & 0x10000 != 0
+      ? me1[address & 0xFFFF]
+      : me0[address];
+
   return value;
 }
 
@@ -67,7 +69,7 @@ void main() {
           // BCH -12H
           0x9E, 0x12,
           // HLT
-          0xFD, 0xB1
+          0xFD, 0xB1,
         ]);
 
         emulator.cpu.p.value = 0x0000;
