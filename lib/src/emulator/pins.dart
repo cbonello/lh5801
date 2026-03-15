@@ -107,6 +107,18 @@ class LH5801Pins with LH5801PinsObservable {
   bool areInputPortsUpdated(LH5801Pins other) =>
       _inputPorts != other._inputPorts;
 
+  void restoreState(Map<String, dynamic> state) {
+    _resetPin = state['resetPin'] as bool;
+    _nmiPin = state['nmiPin'] as bool;
+    _miPin = state['miPin'] as bool;
+    _puFlipflop = state['puFlipflop'] as bool;
+    _pvFlipflop = state['pvFlipflop'] as bool;
+    _bfFlipflop = state['bfFlipflop'] as bool;
+    _dispFlipflop = state['dispFlipflop'] as bool;
+    _inputPorts = (state['inputPorts'] as int) & 0xFF;
+    notifyPinsObservers();
+  }
+
   void _reset() {
     _resetPin = _nmiPin = _miPin = _puFlipflop = _pvFlipflop = _dispFlipflop =
         false;

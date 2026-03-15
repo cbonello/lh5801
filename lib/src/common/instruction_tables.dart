@@ -206,6 +206,16 @@ class CyclesCount {
 
   final int basic;
   final int additional;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CyclesCount &&
+          basic == other.basic &&
+          additional == other.additional;
+
+  @override
+  int get hashCode => basic.hashCode ^ additional.hashCode;
 }
 
 // An instruction.

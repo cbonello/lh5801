@@ -38,14 +38,7 @@ class LH5801 {
       );
     }
 
-    pins.resetPin = state['resetPin'] as bool;
-    pins.nmiPin = state['nmiPin'] as bool;
-    pins.miPin = state['miPin'] as bool;
-    pins.puFlipflop = state['puFlipflop'] as bool;
-    pins.pvFlipflop = state['pvFlipflop'] as bool;
-    pins.bfFlipflop = state['bfFlipflop'] as bool;
-    pins.dispFlipflop = state['dispFlipflop'] as bool;
-    pins.inputPorts = state['inputPorts'] as int;
+    pins.restoreState(state);
     cpu.restoreState(state['cpu'] as Map<String, dynamic>);
   }
 

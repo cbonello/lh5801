@@ -24,7 +24,9 @@ class LH5801ClockControl {
 
 abstract class _SubClock {
   void reset();
+
   void incrementClock(int cpuCycles);
+
   bool get isInterruptRaised;
 }
 
@@ -95,9 +97,10 @@ class LH5801Timer implements _SubClock {
 
   @override
   bool incrementClock([int? cpuCycles]) {
-    final int cpuCyclesIncrenment = cpuCycles ?? _cpuCyclesPerTick;
-    if (_cpuCycles + cpuCyclesIncrenment >= _cpuCyclesPerTick) {
-      _cpuCycles = (_cpuCycles + cpuCyclesIncrenment) % _cpuCyclesPerTick;
+    // TODO: Handle multiple timer ticks when cpuCycles > _cpuCyclesPerTick.
+    final int cpuCyclesIncrement = cpuCycles ?? _cpuCyclesPerTick;
+    if (_cpuCycles + cpuCyclesIncrement >= _cpuCyclesPerTick) {
+      _cpuCycles = (_cpuCycles + cpuCyclesIncrement) % _cpuCyclesPerTick;
       // The LH5801 timer is a 9-bit linear-feedback shift register with taps
       //at bits 9 and 3.
       final int nextValue =

@@ -16,8 +16,10 @@ void memLoad(int address, List<int> data) {
 }
 
 int memRead(int address) {
-  final int value =
-      address & 0x10000 != 0 ? me1[address & 0xFFFF] : me0[address];
+  final int value = address & 0x10000 != 0
+      ? me1[address & 0xFFFF]
+      : me0[address];
+
   return value;
 }
 
@@ -31,13 +33,13 @@ void memWrite(int address, int value) {
 
 void main() {
   group('LH5801DASM', () {
-    test('should be intialized successfully', () {
+    test('should be initialized successfully', () {
       expect(LH5801DASM(memRead: memRead), isA<LH5801DASM>());
     });
 
     group('dump()', () {
       final LH5801DASM dasm = LH5801DASM(memRead: memRead);
-      late Instruction? instruction;
+      Instruction? instruction;
 
       setUp(() {
         me0.setRange(0, 64 * 1024, List<int>.filled(64 * 1024, 0));
@@ -64,10 +66,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -75,29 +74,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11111100                                    '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11111100B                                        '),
         );
         expect(
@@ -105,16 +92,10 @@ void main() {
           equals('252                '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('252                '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('FC            '),
-        );
+        expect(instruction!.bytesToString(), equals('FC            '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('FCH                '),
@@ -124,10 +105,7 @@ void main() {
           equals('ILL'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('ILL'),
         );
         expect(
@@ -135,20 +113,11 @@ void main() {
           equals('ILL'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('ILL'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('ILL'),
-        );
-        expect(
-          instruction!.instructionToString(suffix: true),
-          equals('ILL'),
-        );
+        expect(instruction!.instructionToString(), equals('ILL'));
+        expect(instruction!.instructionToString(suffix: true), equals('ILL'));
         expect(instruction!.toString(), equals('1234  FC              ILL'));
         expect(instruction!.descriptor.toString(), equals('ILL'));
       });
@@ -169,10 +138,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -180,29 +146,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11111101 01001100                           '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11111101B 01001100B                              '),
         );
         expect(
@@ -210,16 +164,10 @@ void main() {
           equals('253  76            '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('253  76            '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('FD 4C         '),
-        );
+        expect(instruction!.bytesToString(), equals('FD 4C         '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('FDH 4CH            '),
@@ -229,10 +177,7 @@ void main() {
           equals('OFF'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('OFF'),
         );
         expect(
@@ -240,20 +185,11 @@ void main() {
           equals('OFF'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('OFF'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('OFF'),
-        );
-        expect(
-          instruction!.instructionToString(suffix: true),
-          equals('OFF'),
-        );
+        expect(instruction!.instructionToString(), equals('OFF'));
+        expect(instruction!.instructionToString(suffix: true), equals('OFF'));
         expect(instruction!.toString(), equals('1234  FD 4C           OFF'));
         check(instruction!.descriptor, expectedDescriptor);
         expect(instruction!.descriptor.toString(), equals('OFF'));
@@ -275,10 +211,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -286,29 +219,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11111101 00001000                           '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11111101B 00001000B                              '),
         );
         expect(
@@ -316,16 +237,10 @@ void main() {
           equals('253   8            '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('253   8            '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('FD 08         '),
-        );
+        expect(instruction!.bytesToString(), equals('FD 08         '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('FDH 08H            '),
@@ -335,10 +250,7 @@ void main() {
           equals('LDX X'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('LDX X'),
         );
         expect(
@@ -346,20 +258,11 @@ void main() {
           equals('LDX X'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('LDX X'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('LDX X'),
-        );
-        expect(
-          instruction!.instructionToString(suffix: true),
-          equals('LDX X'),
-        );
+        expect(instruction!.instructionToString(), equals('LDX X'));
+        expect(instruction!.instructionToString(suffix: true), equals('LDX X'));
         expect(instruction!.toString(), equals('1234  FD 08           LDX X'));
         check(instruction!.descriptor, expectedDescriptor);
         expect(instruction!.descriptor.toString(), equals('LDX X'));
@@ -380,10 +283,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -391,29 +291,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('00101101                                    '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('00101101B                                        '),
         );
         expect(
@@ -421,16 +309,10 @@ void main() {
           equals(' 45                '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals(' 45                '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('2D            '),
-        );
+        expect(instruction!.bytesToString(), equals('2D            '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('2DH                '),
@@ -440,10 +322,7 @@ void main() {
           equals('EOR (U)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('EOR (U)'),
         );
         expect(
@@ -451,16 +330,10 @@ void main() {
           equals('EOR (U)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('EOR (U)'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('EOR (U)'),
-        );
+        expect(instruction!.instructionToString(), equals('EOR (U)'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('EOR (U)'),
@@ -488,10 +361,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -499,29 +369,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('10100001 00010011 01010111                  '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('10100001B 00010011B 01010111B                    '),
         );
         expect(
@@ -529,16 +387,10 @@ void main() {
           equals('161  19  87        '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('161  19  87        '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('A1 13 57      '),
-        );
+        expect(instruction!.bytesToString(), equals('A1 13 57      '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('A1H 13H 57H        '),
@@ -548,10 +400,7 @@ void main() {
           equals('SBC (0001001101010111)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('SBC (0001001101010111B)'),
         );
         expect(
@@ -559,16 +408,10 @@ void main() {
           equals('SBC (4951)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('SBC (4951)'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('SBC (1357)'),
-        );
+        expect(instruction!.instructionToString(), equals('SBC (1357)'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('SBC (1357H)'),
@@ -597,10 +440,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -608,29 +448,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11111101 00001110                           '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11111101B 00001110B                              '),
         );
         expect(
@@ -638,16 +466,10 @@ void main() {
           equals('253  14            '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('253  14            '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('FD 0E         '),
-        );
+        expect(instruction!.bytesToString(), equals('FD 0E         '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('FDH 0EH            '),
@@ -657,10 +479,7 @@ void main() {
           equals('STA #(X)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('STA #(X)'),
         );
         expect(
@@ -668,16 +487,10 @@ void main() {
           equals('STA #(X)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('STA #(X)'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('STA #(X)'),
-        );
+        expect(instruction!.instructionToString(), equals('STA #(X)'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('STA #(X)'),
@@ -706,10 +519,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -717,29 +527,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11111101 11101101 00110100 01010110 01111000'),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11111101B 11101101B 00110100B 01010110B 01111000B'),
         );
         expect(
@@ -747,16 +545,10 @@ void main() {
           equals('253 237  52  86 120'),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('253 237  52  86 120'),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('FD ED 34 56 78'),
-        );
+        expect(instruction!.bytesToString(), equals('FD ED 34 56 78'));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('FDH EDH 34H 56H 78H'),
@@ -766,10 +558,7 @@ void main() {
           equals('BII #(0011010001010110), 01111000'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('BII #(0011010001010110B), 01111000B'),
         );
         expect(
@@ -777,16 +566,10 @@ void main() {
           equals('BII #(13398), 120'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('BII #(13398), 120'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('BII #(3456), 78'),
-        );
+        expect(instruction!.instructionToString(), equals('BII #(3456), 78'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('BII #(3456H), 78H'),
@@ -814,10 +597,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -825,29 +605,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11101111 00110100 01010110 01111000         '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11101111B 00110100B 01010110B 01111000B          '),
         );
         expect(
@@ -855,16 +623,10 @@ void main() {
           equals('239  52  86 120    '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('239  52  86 120    '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('EF 34 56 78   '),
-        );
+        expect(instruction!.bytesToString(), equals('EF 34 56 78   '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('EFH 34H 56H 78H    '),
@@ -874,10 +636,7 @@ void main() {
           equals('ADI (0011010001010110), 01111000'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('ADI (0011010001010110B), 01111000B'),
         );
         expect(
@@ -885,16 +644,10 @@ void main() {
           equals('ADI (13398), 120'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('ADI (13398), 120'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('ADI (3456), 78'),
-        );
+        expect(instruction!.instructionToString(), equals('ADI (3456), 78'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('ADI (3456H), 78H'),
@@ -922,10 +675,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -933,29 +683,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('10001111 00000101                           '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('10001111B 00000101B                              '),
         );
         expect(
@@ -963,16 +701,10 @@ void main() {
           equals('143   5            '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('143   5            '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('8F 05         '),
-        );
+        expect(instruction!.bytesToString(), equals('8F 05         '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('8FH 05H            '),
@@ -982,10 +714,7 @@ void main() {
           equals('BVS +00000101'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('BVS +00000101B'),
         );
         expect(
@@ -993,16 +722,10 @@ void main() {
           equals('BVS +5'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('BVS +5'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('BVS +05'),
-        );
+        expect(instruction!.instructionToString(), equals('BVS +05'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('BVS +05H'),
@@ -1030,10 +753,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -1041,29 +761,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('10011001 00100110                           '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('10011001B 00100110B                              '),
         );
         expect(
@@ -1071,16 +779,10 @@ void main() {
           equals('153  38            '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('153  38            '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('99 26         '),
-        );
+        expect(instruction!.bytesToString(), equals('99 26         '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('99H 26H            '),
@@ -1090,10 +792,7 @@ void main() {
           equals('BZR -00100110'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('BZR -00100110B'),
         );
         expect(
@@ -1101,16 +800,10 @@ void main() {
           equals('BZR -38'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('BZR -38'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('BZR -26'),
-        );
+        expect(instruction!.instructionToString(), equals('BZR -26'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('BZR -26H'),
@@ -1138,10 +831,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -1149,29 +839,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('11110110                                    '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('11110110B                                        '),
         );
         expect(
@@ -1179,16 +857,10 @@ void main() {
           equals('246                '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('246                '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('F6            '),
-        );
+        expect(instruction!.bytesToString(), equals('F6            '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('F6H                '),
@@ -1198,10 +870,7 @@ void main() {
           equals('VEJ (11110110)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('VEJ (11110110B)'),
         );
         expect(
@@ -1209,16 +878,10 @@ void main() {
           equals('VEJ (246)'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('VEJ (246)'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('VEJ (F6)'),
-        );
+        expect(instruction!.instructionToString(), equals('VEJ (F6)'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('VEJ (F6H)'),
@@ -1246,10 +909,7 @@ void main() {
           equals('0001001000110100'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.binary, suffix: true),
           equals('0001001000110100B'),
         );
         expect(
@@ -1257,29 +917,17 @@ void main() {
           equals(' 4660'),
         );
         expect(
-          instruction!.addressToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.addressToString(radix: Radix.decimal, suffix: true),
           equals(' 4660'),
         );
-        expect(
-          instruction!.addressToString(),
-          equals('1234'),
-        );
-        expect(
-          instruction!.addressToString(suffix: true),
-          equals('1234H'),
-        );
+        expect(instruction!.addressToString(), equals('1234'));
+        expect(instruction!.addressToString(suffix: true), equals('1234H'));
         expect(
           instruction!.bytesToString(radix: Radix.binary),
           equals('10101010 00010011 01010111                  '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.binary, suffix: true),
           equals('10101010B 00010011B 01010111B                    '),
         );
         expect(
@@ -1287,16 +935,10 @@ void main() {
           equals('170  19  87        '),
         );
         expect(
-          instruction!.bytesToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.bytesToString(radix: Radix.decimal, suffix: true),
           equals('170  19  87        '),
         );
-        expect(
-          instruction!.bytesToString(),
-          equals('AA 13 57      '),
-        );
+        expect(instruction!.bytesToString(), equals('AA 13 57      '));
         expect(
           instruction!.bytesToString(suffix: true),
           equals('AAH 13H 57H        '),
@@ -1306,10 +948,7 @@ void main() {
           equals('LDI S, 00010011, 01010111'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.binary, suffix: true),
           equals('LDI S, 00010011B, 01010111B'),
         );
         expect(
@@ -1317,16 +956,10 @@ void main() {
           equals('LDI S, 19, 87'),
         );
         expect(
-          instruction!.instructionToString(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          instruction!.instructionToString(radix: Radix.decimal, suffix: true),
           equals('LDI S, 19, 87'),
         );
-        expect(
-          instruction!.instructionToString(),
-          equals('LDI S, 13, 57'),
-        );
+        expect(instruction!.instructionToString(), equals('LDI S, 13, 57'));
         expect(
           instruction!.instructionToString(suffix: true),
           equals('LDI S, 13H, 57H'),
@@ -1342,26 +975,14 @@ void main() {
 
     group('Instruction', () {
       test('addressLength() should return the expected length', () {
+        expect(Instruction.addressLength(radix: Radix.binary), equals(16));
         expect(
-          Instruction.addressLength(radix: Radix.binary),
-          equals(16),
-        );
-        expect(
-          Instruction.addressLength(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          Instruction.addressLength(radix: Radix.binary, suffix: true),
           equals(17),
         );
+        expect(Instruction.addressLength(radix: Radix.decimal), equals(5));
         expect(
-          Instruction.addressLength(radix: Radix.decimal),
-          equals(5),
-        );
-        expect(
-          Instruction.addressLength(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          Instruction.addressLength(radix: Radix.decimal, suffix: true),
           equals(5),
         );
         expect(Instruction.addressLength(), equals(4));
@@ -1369,26 +990,14 @@ void main() {
       });
 
       test('bytesLength() should return the expected length', () {
+        expect(Instruction.bytesLength(radix: Radix.binary), equals(44));
         expect(
-          Instruction.bytesLength(radix: Radix.binary),
-          equals(44),
-        );
-        expect(
-          Instruction.bytesLength(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          Instruction.bytesLength(radix: Radix.binary, suffix: true),
           equals(49),
         );
+        expect(Instruction.bytesLength(radix: Radix.decimal), equals(19));
         expect(
-          Instruction.bytesLength(radix: Radix.decimal),
-          equals(19),
-        );
-        expect(
-          Instruction.bytesLength(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          Instruction.bytesLength(radix: Radix.decimal, suffix: true),
           equals(19),
         );
         expect(Instruction.bytesLength(), equals(14));
@@ -1396,26 +1005,14 @@ void main() {
       });
 
       test('instructionLength() should return the expected length', () {
+        expect(Instruction.instructionLength(radix: Radix.binary), equals(33));
         expect(
-          Instruction.instructionLength(radix: Radix.binary),
-          equals(33),
-        );
-        expect(
-          Instruction.instructionLength(
-            radix: Radix.binary,
-            suffix: true,
-          ),
+          Instruction.instructionLength(radix: Radix.binary, suffix: true),
           equals(35),
         );
+        expect(Instruction.instructionLength(radix: Radix.decimal), equals(17));
         expect(
-          Instruction.instructionLength(radix: Radix.decimal),
-          equals(17),
-        );
-        expect(
-          Instruction.instructionLength(
-            radix: Radix.decimal,
-            suffix: true,
-          ),
+          Instruction.instructionLength(radix: Radix.decimal, suffix: true),
           equals(17),
         );
         expect(Instruction.instructionLength(), equals(15));

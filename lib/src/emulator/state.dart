@@ -1,6 +1,6 @@
 import '../../lh5801.dart';
 
-class Register8 extends Object {
+class Register8 {
   Register8([int value = 0x00]) : _value = value & 0xFF;
 
   int _value;
@@ -32,7 +32,7 @@ class Register8 extends Object {
   int get hashCode => value.hashCode;
 }
 
-class Register16 extends Object {
+class Register16 {
   Register16([int value = 0x0000]) {
     this.value = value;
   }
