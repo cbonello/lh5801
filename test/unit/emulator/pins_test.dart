@@ -4,6 +4,10 @@ import 'package:test/test.dart';
 
 class MockLH5801PinsObserver extends Mock implements LH5801PinsObserver {}
 
+class _RawObservable with LH5801PinsObservable {}
+
+class _RawObserver with LH5801PinsObserver {}
+
 void main() {
   setUpAll(() {
     registerFallbackValue(LH5801Pins());
@@ -102,6 +106,20 @@ void main() {
 
       expect(pins1, equals(pins2));
       expect(pins1.hashCode, equals(pins2.hashCode));
+    });
+
+    test('LH5801PinsObservable mixin defaults should throw', () {
+      final _RawObservable raw = _RawObservable();
+      expect(() => raw.registerPinsObserver(MockLH5801PinsObserver()),
+          throwsA(isA<UnimplementedError>()));
+      expect(() => raw.notifyPinsObservers(),
+          throwsA(isA<UnimplementedError>()));
+    });
+
+    test('LH5801PinsObserver mixin default should throw', () {
+      final _RawObserver observer = _RawObserver();
+      expect(() => observer.update(LH5801Pins()),
+          throwsA(isA<UnimplementedError>()));
     });
 
     test('toString() should return the expected value', () {

@@ -1,4 +1,4 @@
-library lh5801;
+library;
 
 export 'src/common/common.dart';
 export 'src/dasm/dasm.dart';

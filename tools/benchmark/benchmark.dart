@@ -15,7 +15,7 @@ class ArrayBenchmark extends BenchmarkBase {
     for (final bool carry in <bool>[true, false]) {
       for (int op1 = 0; op1 < 256; op1++) {
         for (int op2 = 0; op2 < 256; op2++) {
-          final array_table.ALUResult expected =
+          final array_table.ALUResult _ =
               array_table.addTable[op1 & 0xFF][op2 & 0xFF][carry ? 1 : 0];
         }
       }
@@ -36,7 +36,7 @@ class MapBenchmark extends BenchmarkBase {
       for (int op1 = 0; op1 < 256; op1++) {
         for (int op2 = 0; op2 < 256; op2++) {
           final String key = map_table.generateTableKey(op1, op2, carry);
-          final map_table.ALUResult expected = map_table.addTable[key];
+          final map_table.ALUResult? _ = map_table.addTable[key];
         }
       }
     }

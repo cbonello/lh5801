@@ -342,7 +342,7 @@ class LH5801CPU extends LH5801State {
         _dca(memRead(_me1(x.value)));
         break;
       case 0x8E: // CDV
-        // TODO(cbonello): implement CDV instruction
+        tm.resetDivider();
         break;
 
       case 0x98: // PSH Y

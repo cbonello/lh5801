@@ -98,6 +98,92 @@ void main() {
       testTable(0x00, instructionTable);
     });
   });
+
+  group('Operand', () {
+    test('hashCode should be consistent with equality', () {
+      expect(
+        const Operand.none().hashCode,
+        equals(const Operand.none().hashCode),
+      );
+      expect(
+        const Operand.reg('X').hashCode,
+        equals(const Operand.reg('X').hashCode),
+      );
+      expect(
+        const Operand.mem0Reg('X').hashCode,
+        equals(const Operand.mem0Reg('X').hashCode),
+      );
+      expect(
+        const Operand.mem0Imm16(0x1234).hashCode,
+        equals(const Operand.mem0Imm16(0x1234).hashCode),
+      );
+      expect(
+        const Operand.mem1Reg('Y').hashCode,
+        equals(const Operand.mem1Reg('Y').hashCode),
+      );
+      expect(
+        const Operand.mem1Imm16(0x5678).hashCode,
+        equals(const Operand.mem1Imm16(0x5678).hashCode),
+      );
+      expect(
+        const Operand.imm8(0x42).hashCode,
+        equals(const Operand.imm8(0x42).hashCode),
+      );
+      expect(
+        const Operand.dispPlus(0x10).hashCode,
+        equals(const Operand.dispPlus(0x10).hashCode),
+      );
+      expect(
+        const Operand.dispMinus(0x08).hashCode,
+        equals(const Operand.dispMinus(0x08).hashCode),
+      );
+      expect(
+        const Operand.mem0Cst8(0xC0).hashCode,
+        equals(const Operand.mem0Cst8(0xC0).hashCode),
+      );
+      expect(
+        const Operand.imm16(0xABCD).hashCode,
+        equals(const Operand.imm16(0xABCD).hashCode),
+      );
+    });
+
+    test('Operands should work in sets', () {
+      final Set<Operand> operands = {
+        const Operand.none(),
+        const Operand.reg('X'),
+        const Operand.mem0Reg('Y'),
+        const Operand.mem0Imm16(0x1234),
+        const Operand.mem1Reg('U'),
+        const Operand.mem1Imm16(0x5678),
+        const Operand.imm8(0x42),
+        const Operand.dispPlus(0x10),
+        const Operand.dispMinus(0x08),
+        const Operand.mem0Cst8(0xC0),
+        const Operand.imm16(0xABCD),
+      };
+      expect(operands.length, equals(11));
+      expect(operands.contains(const Operand.none()), isTrue);
+      expect(operands.contains(const Operand.reg('X')), isTrue);
+    });
+  });
+
+  group('InstructionDescriptor', () {
+    test('copyWith should preserve original values when args are null', () {
+      const InstructionDescriptor desc = InstructionDescriptor(
+        InstructionCategory.logicalOperation,
+        <int>[0x01],
+        1,
+        'ADC',
+        <Operand>[Operand.reg('X'), Operand.none()],
+        CyclesCount(6, 0),
+      );
+
+      final InstructionDescriptor copy = desc.copyWith();
+      expect(copy.bytes, same(desc.bytes));
+      expect(copy.operands, same(desc.operands));
+      expect(copy.mnemonic, equals('ADC'));
+    });
+  });
 }
 
 void testTable(int opcode, List<InstructionDescriptor> table) {

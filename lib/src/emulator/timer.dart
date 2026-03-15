@@ -24,7 +24,7 @@ class LH5801ClockControl {
 
 abstract class _SubClock {
   void reset();
-  void incrementClock(int cpuCycles) {}
+  void incrementClock(int cpuCycles);
   bool get isInterruptRaised;
 }
 
@@ -80,6 +80,10 @@ class LH5801Timer implements _SubClock {
   void reset() {
     _cpuCycles = 0;
     _interruptRaised = false;
+  }
+
+  void resetDivider() {
+    _cpuCycles = 0;
   }
 
   LH5801Timer clone() => LH5801Timer._(

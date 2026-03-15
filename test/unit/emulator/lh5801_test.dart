@@ -1563,9 +1563,21 @@ void main() {
         });
 
         group('CDV [page 42]', () {
-          // test('CDV', () {
-          //   ;
-          // });
+          test('CDV should reset the clock divider', () {
+            final List<int> memBytes = <int>[0xFD, 0x8E];
+            final int statusRegister = emulator.cpu.t.statusRegister;
+
+            // Advance the timer so _cpuCycles is non-zero.
+            emulator.cpu.tm.incrementClock(5);
+
+            memLoad(0x0000, memBytes);
+            final int cycles = emulator.step(address: 0x0000);
+            expect(cycles, equals(8));
+            expect(emulator.cpu.p.value, equals(memBytes.length));
+
+            // Flags should be unchanged.
+            expect(emulator.cpu.t.statusRegister, equals(statusRegister));
+          });
         });
 
         group('ATP [page 42]', () {
