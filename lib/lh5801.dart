@@ -1,5 +1,6 @@
 library;
 
+export 'src/asm/asm.dart';
 export 'src/common/common.dart';
 export 'src/dasm/dasm.dart';
 export 'src/emulator/cpu.dart';
