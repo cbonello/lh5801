@@ -6,20 +6,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image:  google/dart:latest
-
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+
+    - uses: dart-lang/setup-dart@v1
+      with:
+        sdk: stable
 
     - name: Install dependencies
-      run: pub get
+      run: dart pub get
 
-    - name: Run tests
-      run: pub run test_cov
+    - name: Analyze
+      run: dart analyze
+
+    - name: Run tests with coverage
+      run: dart test --coverage=coverage
+
+    - name: Convert coverage to lcov
+      run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
     - name: Codecov
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: coverage/lcov.info
+        files: coverage/lcov.info
