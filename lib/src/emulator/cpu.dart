@@ -81,24 +81,24 @@ class LH5801CPU extends LH5801State {
     }
 
     if (ir0) {
-      // Non-maskable interrupt
+      // Non-maskable interrupt — clears HLT.
       _push8(t.statusRegister);
-      t.ie = ir0 = false;
+      t.ie = ir0 = hlt = false;
       _push16(p.value);
       p.high = memRead(_me0(0xFFFC));
       p.low = memRead(_me0(0xFFFD));
       ir0Enter?.execute();
     } else if (t.ie && ir1) {
-      // Timer interrupt
+      // Timer interrupt — clears HLT.
       _push8(t.statusRegister);
-      t.ie = ir1 = false;
+      t.ie = ir1 = hlt = false;
       tm.acknowledgeInterrupt();
       _push16(p.value);
       p.high = memRead(_me0(0xFFFA));
       p.low = memRead(_me0(0xFFFB));
       ir1Enter?.execute();
     } else if (t.ie && ir2) {
-      // Maskable interrupt
+      // Maskable interrupt — clears HLT.
       _push8(t.statusRegister);
       t.ie = hlt = ir2 = false;
       _push16(p.value);
