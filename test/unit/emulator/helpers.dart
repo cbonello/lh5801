@@ -1943,7 +1943,7 @@ void testSBIAcc(LH5801 emulator) {
 void testJMP(LH5801 emulator) {
   const int initialPValue = 0x4000;
   const int ij = 0x4100;
-  final List<int> memBytes = <int>[0xFD, 0xBA, ij >> 8, ij & 0xFF];
+  final List<int> memBytes = <int>[0xBA, ij >> 8, ij & 0xFF];
   final int statusRegister = emulator.cpu.t.statusRegister;
 
   emulator.cpu.p.value = initialPValue;
@@ -2478,7 +2478,7 @@ void testATP(LH5801 emulator) {
 
 void testITA(LH5801 emulator) {
   void test(int inputPortsValue, Matcher zFlagMatcher) {
-    final List<int> memBytes = <int>[0xBA];
+    final List<int> memBytes = <int>[0xFD, 0xBA];
     final LH5801Flags flags = emulator.cpu.t.clone();
 
     emulator.pins.inputPorts = inputPortsValue;
