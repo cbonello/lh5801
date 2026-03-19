@@ -392,8 +392,8 @@ class LH5801CPU extends LH5801State {
       case 0xB1: // HLT
         hlt = true;
         break;
-      case 0xBA: // ITA
-        _ita();
+      case 0xBA: // JMP i, j
+        p.value = _me0(_readOp16());
         break;
       case 0xBE: // RIE
         t.ie = false;
@@ -939,8 +939,8 @@ class LH5801CPU extends LH5801State {
       case 0xB9: // ANI A, i
         _andAccumulator(_readOp8());
         break;
-      case 0xBA: // JMP i, j
-        p.value = _me0(_readOp16());
+      case 0xBA: // ITA
+        _ita();
         break;
       case 0xBB: // ORI A, i
         _orAccumulator(_readOp8());

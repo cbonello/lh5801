@@ -145,7 +145,7 @@ void main() {
       test('JMP 1234', () {
         final AsmResult result = asm.assemble('JMP 1234');
         expect(result.hasErrors, isFalse);
-        expect(result.bytes, equals([0xBA, 0x12, 0x34]));
+        expect(result.bytes, equals([0xFD, 0xBA, 0x12, 0x34]));
       });
 
       test('SJP 4000', () {

@@ -1154,13 +1154,13 @@ final List<InstructionDescriptor> instructionTableFD = <InstructionDescriptor>[
   _illegalInstruction(<int>[0xFD, 0xB8]),
   _illegalInstruction(<int>[0xFD, 0xB9]),
   const InstructionDescriptor(
-    // ITA
-    InstructionCategory.inputOutput,
+    // JMP i, j
+    InstructionCategory.jump,
     <int>[0xFD, 0xBA],
-    2,
-    'ITA',
-    <Operand>[Operand.none(), Operand.none()],
-    CyclesCount(9, 0),
+    4,
+    'JMP',
+    <Operand>[Operand.imm16(0x0000), Operand.none()],
+    CyclesCount(12, 0),
   ),
   _illegalInstruction(<int>[0xFD, 0xBB]),
   _illegalInstruction(<int>[0xFD, 0xBC]),
@@ -2789,13 +2789,13 @@ final List<InstructionDescriptor> instructionTable = <InstructionDescriptor>[
     CyclesCount(7, 0),
   ),
   const InstructionDescriptor(
-    // JMP i, j
-    InstructionCategory.jump,
+    // ITA
+    InstructionCategory.inputOutput,
     <int>[0xBA],
-    3,
-    'JMP',
-    <Operand>[Operand.imm16(0x0000), Operand.none()],
-    CyclesCount(12, 0),
+    1,
+    'ITA',
+    <Operand>[Operand.none(), Operand.none()],
+    CyclesCount(9, 0),
   ),
   const InstructionDescriptor(
     // ORI A, i
