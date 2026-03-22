@@ -459,10 +459,11 @@ class LH5801CPU extends LH5801State {
         break;
 
       default:
-        throw LH5801Error(
-          'illegal opcode FD${OperandDump.op8(opcode)} at address '
-          '${OperandDump.op16(startP)}',
-        );
+        // Undefined extended opcodes are treated as NOPs, matching real
+        // LH5801 hardware behaviour where they consume one cycle without
+        // side-effects. The ROM relies on this when calling into unmapped
+        // CE-150 address space ($A000-$BFFF) which returns $FF.
+        break;
     }
 
     return cycles;
@@ -1133,10 +1134,12 @@ class LH5801CPU extends LH5801State {
         break;
 
       default:
-        throw LH5801Error(
-          'illegal opcode ${OperandDump.op8(opcode)} at address '
-          '${OperandDump.op16(startP)}',
-        );
+        // Undefined opcodes are treated as NOPs, matching real LH5801
+        // hardware behaviour. The ROM's cold start path can execute
+        // through unmapped memory (all $FF) when a corrupt RTN pops a
+        // garbage return address; the CPU slides through NOPs until it
+        // re-enters mapped ROM.
+        break;
     }
 
     return cycles;
@@ -1281,9 +1284,11 @@ class LH5801CPU extends LH5801State {
   void _decRegister16(Register16 register) => register.value--;
 
   void _drl(int address) {
+    // DRL rotates 3 nibbles left: [AH][MH][ML] → [MH][ML][AH].
+    // A's low nibble is preserved, not part of the rotation.
     final int m = memRead(address);
-    memWrite(address, ((m << 4) | (a.value >> 4)) & 0xFF);
-    a.value = ((a.value << 4) | (m >> 4)) & 0xFF;
+    memWrite(address, ((m & 0x0F) << 4) | ((a.value >> 4) & 0x0F));
+    a.value = (m & 0xF0) | (a.value & 0x0F);
   }
 
   void _drr(int address) {

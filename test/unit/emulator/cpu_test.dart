@@ -40,7 +40,7 @@ void main() {
       expect(cpu1.hashCode, equals(cpu2.hashCode));
     });
 
-    test('should detect invalid opcodes', () {
+    test('should treat invalid opcodes as NOPs', () {
       final LH5801CPU cpu = LH5801CPU(
         pins: LH5801Pins(),
         clockFrequency: 1300000,
@@ -50,11 +50,13 @@ void main() {
 
       cpu.p.value = 0x1234;
       memLoad(cpu.p.value, <int>[0xFF]);
-      expect(() => cpu.step(), throwsA(const TypeMatcher<LH5801Error>()));
+      final int cycles1 = cpu.step();
+      expect(cycles1, equals(0));
 
       cpu.p.value = 0x4321;
       memLoad(cpu.p.value, <int>[0xFD, 0xFF]);
-      expect(() => cpu.step(), throwsA(const TypeMatcher<LH5801Error>()));
+      final int cycles2 = cpu.step();
+      expect(cycles2, equals(0));
     });
   });
 }
