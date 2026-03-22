@@ -928,6 +928,8 @@ class LH5801CPU extends LH5801State {
       case 0xB3: // ADI A, i
         _addAccumulator(_readOp8());
         break;
+      case 0xB4: // NOP (undocumented)
+        break;
       case 0xB5: // LDI A, i
         _ldi(_readOp8());
         break;
