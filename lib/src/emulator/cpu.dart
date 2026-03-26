@@ -1294,9 +1294,11 @@ class LH5801CPU extends LH5801State {
   }
 
   void _drr(int address) {
+    // DRR: AL → MH, MH → ML, ML → AL. A's high nibble preserved.
+    // New M = [AL][MH], New A = [AH][ML].  final int m = memRead(address);
     final int m = memRead(address);
     memWrite(address, ((m >> 4) | (a.value << 4)) & 0xFF);
-    a.value = ((a.value >> 4) | (m << 4)) & 0xFF;
+    a.value = (a.value & 0xF0) | (m & 0x0F);
   }
 
   void _eorAccumulator(int value) {
