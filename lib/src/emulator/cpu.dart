@@ -131,7 +131,6 @@ class LH5801CPU extends LH5801State {
   }
 
   int _stepExtendedInstruction(int opcode) {
-    final int startP = p.value - 1;
     final CyclesCount cyclesTable = instructionTableFD[opcode].cycles;
     final int cycles = cyclesTable.basic;
     int o8;
@@ -470,7 +469,6 @@ class LH5801CPU extends LH5801State {
   }
 
   int _stepOpcode(int opcode) {
-    final int startP = p.value - 1;
     final CyclesCount cyclesTable = instructionTable[opcode].cycles;
     int cycles = cyclesTable.basic;
     int o8;
