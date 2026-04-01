@@ -30,9 +30,8 @@ void main() {
                   lh5801.step(address: 0x0000);
                   expect(lh5801.cpu.p.value, equals(bytes.length));
 
-                  final String key = generateTableKey(op1, op2 ^ 0xFF, carry);
-                  expect(addTable.containsKey(key), isTrue);
-                  final ALUResult expected = addTable[key]!;
+                  final ALUResult expected =
+                      addTable[op1][op2 ^ 0xFF][carry ? 1 : 0];
 
                   expect(lh5801.cpu.t.c, equals((expected.flags & 0x01) != 0));
                   expect(lh5801.cpu.t.h, equals((expected.flags & 0x10) != 0));
