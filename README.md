@@ -24,7 +24,7 @@ $ dart ./example/main.dart
 
 ```bash
 $ dart test
-00:03 +430: All tests passed!
+00:03 +474: All tests passed!
 ```
 
 ## Features and bugs
